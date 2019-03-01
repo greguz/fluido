@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "strictNullChecks": true,
+    "target": "es6"
+  },
+  "include": ["src/index.ts"]
+}

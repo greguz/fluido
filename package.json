@@ -1,0 +1,36 @@
+{
+  "name": "fluido",
+  "version": "0.1.0",
+  "description": "Yet another streaming lib",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "test:ts": "tsc --noEmit",
+    "test:lint": "tslint -c tslint.json src/**/*.ts",
+    "test": "npm run test:ts && npm run test:lint",
+    "types": "rimraf types && tsc --emitDeclarationOnly --declaration --declarationDir types",
+    "build": "rimraf dist && tsc",
+    "prepublishOnly": "npm run test && npm run types && npm run build"
+  },
+  "keywords": [],
+  "author": "Giacomo Gregoletto",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^10.12.27",
+    "rimraf": "^2.6.3",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.13.1",
+    "typescript": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/greguz/fluido.git"
+  }
+}
