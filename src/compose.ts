@@ -6,7 +6,7 @@ import {
   Writable
 } from "stream";
 
-type Callback = (err?: any) => any;
+import { Callback } from "./callback";
 
 /**
  * Compose a stream pipeline into a single readable stream
