@@ -27,6 +27,9 @@ function toBuffer(chunks: any[]) {
   return result;
 }
 
+/**
+ * Collect all chunks into a single entry
+ */
 export function collect(encoding?: string | false | undefined) {
   let chunks: any[] = [];
 

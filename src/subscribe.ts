@@ -1,5 +1,8 @@
 import { finished, pipeline, Readable, Transform } from "stream";
 
+/**
+ * Pump streams and return the last value output from the pipeline
+ */
 export function subscribe<T = any>(source: Readable, ...targets: Transform[]) {
   return new Promise<T>((resolve, reject) => {
     // Validate args
