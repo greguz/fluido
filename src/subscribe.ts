@@ -4,11 +4,11 @@ export function subscribe<T = any>(source: Readable, ...targets: Transform[]) {
   return new Promise<T>((resolve, reject) => {
     // Validate args
     if (!(source instanceof Readable)) {
-      throw new Error("The first stream must be a readable");
+      throw new Error("The first argument must be a readable stream");
     }
     for (let i = 0; i < targets.length; i++) {
       if (!(targets[i] instanceof Transform)) {
-        throw new Error("The others stream must be transforms");
+        throw new Error("The other arguments must be transform streams");
       }
     }
 

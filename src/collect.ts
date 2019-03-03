@@ -9,7 +9,7 @@ function toString(chunks: any[], encoding: string) {
     } else if (chunk instanceof Uint8Array) {
       result += decoder.decode(chunk);
     } else {
-      throw new Error("Invalid chunk");
+      throw new Error("Chunk must be buffer, string or Uint8Array");
     }
   }
   return result;
@@ -21,7 +21,7 @@ function toBuffer(chunks: any[]) {
     if (Buffer.isBuffer(chunk) || chunk instanceof Uint8Array) {
       result = Buffer.concat([result, chunk]);
     } else {
-      throw new Error("Invalid chunk");
+      throw new Error("Chunk must be buffer, string or Uint8Array");
     }
   }
   return result;
