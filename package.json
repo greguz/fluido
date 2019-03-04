@@ -12,7 +12,9 @@
     "build": "rimraf dist && tsc",
     "prepublishOnly": "npm run test && npm run types && npm run build"
   },
-  "keywords": [],
+  "keywords": [
+    "stream"
+  ],
   "author": "Giacomo Gregoletto",
   "license": "MIT",
   "devDependencies": {
@@ -23,7 +25,7 @@
     "typescript": "^3.3.3"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "files": [
     "dist",
