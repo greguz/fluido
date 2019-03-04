@@ -9,8 +9,8 @@ export function subscribe<T = any>(source: Readable, ...targets: Transform[]) {
     if (!(source instanceof Readable)) {
       throw new Error("The first argument must be a readable stream");
     }
-    for (let i = 0; i < targets.length; i++) {
-      if (!(targets[i] instanceof Transform)) {
+    for (const target of targets) {
+      if (!(target instanceof Transform)) {
         throw new Error("The other arguments must be transform streams");
       }
     }
@@ -22,12 +22,12 @@ export function subscribe<T = any>(source: Readable, ...targets: Transform[]) {
     const listener = (data: T) => (value = data);
 
     // Last stream in pipeline
-    const target = targets.length <= 0 ? source : targets[targets.length - 1];
+    const last = targets.length <= 0 ? source : targets[targets.length - 1];
 
     // Final callback
     const callback = (err?: any) => {
       // Clean listener
-      target.removeListener("data", listener);
+      last.removeListener("data", listener);
 
       // Close promise
       if (err) {
@@ -38,7 +38,7 @@ export function subscribe<T = any>(source: Readable, ...targets: Transform[]) {
     };
 
     // Collect the data from the stream
-    target.addListener("data", listener);
+    last.addListener("data", listener);
 
     // Handle single stream or pipeline
     if (targets.length <= 0) {

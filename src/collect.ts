@@ -35,11 +35,9 @@ export function collect(encoding?: string | false | undefined) {
 
   return new Transform({
     objectMode: true,
-    transform(chunk, encoding, callback) {
+    transform(chunk, enc, callback) {
       // Cast any string to buffer and save
-      chunks.push(
-        typeof chunk === "string" ? Buffer.from(chunk, encoding) : chunk
-      );
+      chunks.push(typeof chunk === "string" ? Buffer.from(chunk, enc) : chunk);
       callback();
     },
     flush(callback) {

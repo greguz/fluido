@@ -60,7 +60,7 @@ function concurrent(options: TransformOptions & TransformMethods<any>) {
   let cbFlush: Callback | undefined;
   let cbDestroy: Callback | undefined;
 
-  function transform(
+  function trnsfrm(
     this: Transform,
     chunk: any,
     encoding: string,
@@ -133,9 +133,9 @@ function concurrent(options: TransformOptions & TransformMethods<any>) {
 
   return new Transform({
     ...options,
-    transform,
+    destroy,
     flush,
-    destroy
+    transform: trnsfrm
   });
 }
 

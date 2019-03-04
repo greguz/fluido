@@ -48,7 +48,11 @@ export interface WritableMethods<T> {
   /**
    * https://nodejs.org/api/stream.html#stream_writable_writev_chunks_callback
    */
-  writev?(this: Writable, entries: WritableEntry<T>[], callback: Callback): any;
+  writev?(
+    this: Writable,
+    entries: Array<WritableEntry<T>>,
+    callback: Callback
+  ): any;
   /**
    * https://nodejs.org/api/stream.html#stream_writable_final_callback
    */
