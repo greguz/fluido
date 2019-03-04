@@ -9,6 +9,7 @@ export type Writable = Writable;
 export * from "./callback";
 export * from "./collect";
 export * from "./duplex";
+export * from "./duplexify";
 export * from "./pump";
 export * from "./pumpify";
 export * from "./readable";
