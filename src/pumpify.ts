@@ -9,9 +9,9 @@ import {
 import { Callback } from "./callback";
 
 /**
- * Compose a stream pipeline into a single readable stream
+ * Combine an array of streams into a single readable stream
  */
-export function compose(streams: any[], options?: ReadableOptions): Readable {
+export function pumpify(streams: any[], options?: ReadableOptions): Readable {
   // Validate pipeline
   for (let i = 0; i < streams.length; i++) {
     const stream = streams[i];
