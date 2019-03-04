@@ -1,4 +1,4 @@
-import { Duplex, Readable, Transform, Writable } from "stream";
+import { finished, Duplex, Readable, Transform, Writable } from "stream";
 
 import { Callback } from "./callback";
 
@@ -49,19 +49,33 @@ export function duplexify(
     throw new TypeError();
   }
 
-  let listener: any;
+  let clean: VoidFunction | undefined;
 
   return new Duplex({
     ...options,
     writev: undefined,
     read() {
-      if (listener) {
-        listener = (data: any) => {
+      if (!clean) {
+        const dataListener = (data: any) => {
           if (!this.push(data)) {
             rs.pause();
           }
         };
-        rs.addListener("data", listener);
+
+        rs.addListener("data", dataListener);
+
+        const unsubscribe = finished(rs, err => {
+          if (err) {
+            this.emit("error", err);
+          } else {
+            this.push(null);
+          }
+        });
+
+        clean = () => {
+          rs.removeListener("data", dataListener);
+          unsubscribe();
+        };
       } else {
         rs.resume();
       }
@@ -73,8 +87,8 @@ export function duplexify(
       ws.end(callback);
     },
     destroy(err: any, callback: Callback) {
-      if (listener) {
-        rs.removeListener("data", listener);
+      if (clean) {
+        clean();
       }
       rs.destroy(err);
       ws.destroy(err);
