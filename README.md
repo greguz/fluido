@@ -1,5 +1,7 @@
 # fluido
 
+[![npm version](https://badge.fury.io/js/fluido.svg)](https://badge.fury.io/js/fluido) [![Dependencies Status](https://david-dm.org/greguz/fluido.svg)](https://david-dm.org/greguz/fluido.svg)
+
 It means _fluid_ in Italian, and yes, this is **yet another streaming lib**.
 
 ## Why
