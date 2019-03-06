@@ -27,3 +27,7 @@ export function isReadableStrictly(value: any): value is Readable {
 export function isWritableStrictly(value: any): value is Writable {
   return isWritable(value) && !isReadable(value);
 }
+
+export function isDuplexStrictly(value: any): value is Duplex {
+  return isDuplex(value) && !isTransform(value);
+}
