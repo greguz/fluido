@@ -1,8 +1,8 @@
-import { finished, Duplex, Readable, Transform, Writable } from "stream";
+import { finished, Duplex, Readable, Writable } from "stream";
 
 import { Callback } from "./callback";
-
 import { DuplexOptions } from "./duplex";
+import { isReadableStrictly, isWritableStrictly } from "./is";
 
 function voidReadable(): Readable {
   return new Readable({
@@ -32,21 +32,13 @@ export function duplexify(
   options?: DuplexOptions
 ): Duplex {
   const rs = readable || voidReadable();
-  if (
-    !(rs instanceof Readable) ||
-    rs instanceof Duplex ||
-    rs instanceof Transform
-  ) {
-    throw new TypeError();
+  if (!isReadableStrictly(rs)) {
+    throw new TypeError("First argument must be a readable stream");
   }
 
   const ws = writable || voidWritable();
-  if (
-    !(ws instanceof Writable) ||
-    ws instanceof Duplex ||
-    ws instanceof Transform
-  ) {
-    throw new TypeError();
+  if (!isWritableStrictly(ws)) {
+    throw new TypeError("Second argument must be a writable stream");
   }
 
   let clean: VoidFunction | undefined;

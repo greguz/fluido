@@ -1,16 +1,17 @@
 import { finished, pipeline, Readable, Transform } from "stream";
 
+import { isReadable, isTransform } from "./is";
+
 /**
  * Pump streams and return the last value output from the pipeline
  */
 export function subscribe<T = any>(source: Readable, ...targets: Transform[]) {
   return new Promise<T>((resolve, reject) => {
-    // Validate args
-    if (!(source instanceof Readable)) {
+    if (!isReadable(source)) {
       throw new Error("The first argument must be a readable stream");
     }
     for (const target of targets) {
-      if (!(target instanceof Transform)) {
+      if (!isTransform(target)) {
         throw new Error("The other arguments must be transform streams");
       }
     }

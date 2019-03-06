@@ -1,26 +1,20 @@
-import {
-  pipeline,
-  Readable,
-  ReadableOptions,
-  Transform,
-  Writable
-} from "stream";
+import { pipeline, Readable, ReadableOptions, Writable } from "stream";
 
 import { Callback } from "./callback";
+import { isReadable, isTransform } from "./is";
 
 /**
  * Combine an array of streams into a single readable stream
  */
 export function pumpify(streams: any[], options?: ReadableOptions): Readable {
-  // Validate pipeline
   for (let i = 0; i < streams.length; i++) {
     const stream = streams[i];
     if (i === 0) {
-      if (!(stream instanceof Readable)) {
+      if (!isReadable(stream)) {
         throw new Error("The first stream must be a readable");
       }
     } else {
-      if (!(stream instanceof Transform)) {
+      if (!isTransform(stream)) {
         throw new Error("The other streams must be transforms");
       }
     }

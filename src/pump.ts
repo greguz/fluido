@@ -1,11 +1,13 @@
-import { pipeline, Readable, Transform, Writable } from "stream";
+import { pipeline, Readable, Writable } from "stream";
+
+import { isReadable, isTransform, isWritable } from "./is";
 
 /**
  * Pump streaming pipeline
  */
 export function pump(source: Readable, ...targets: Writable[]) {
   return new Promise<void>((resolve, reject) => {
-    if (!(source instanceof Readable)) {
+    if (!isReadable(source)) {
       throw new Error("First argument must be a readable stream");
     }
     if (targets.length <= 0) {
@@ -13,11 +15,11 @@ export function pump(source: Readable, ...targets: Writable[]) {
     }
     for (let i = 0; i < targets.length; i++) {
       if (i >= targets.length - 1) {
-        if (!(targets[i] instanceof Writable)) {
+        if (!isWritable(targets[i])) {
           throw new Error("The last argument must be a writable stream");
         }
       } else {
-        if (!(targets[i] instanceof Transform)) {
+        if (!isTransform(targets[i])) {
           throw new Error("The middle arguments must be transform streams");
         }
       }
