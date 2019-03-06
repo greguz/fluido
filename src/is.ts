@@ -19,3 +19,11 @@ export function isTransform(value: any): value is Transform {
 export function isStream(value: any): value is Readable | Writable {
   return isReadable(value) || isWritable(value);
 }
+
+export function isReadableStrictly(value: any): value is Readable {
+  return isReadable(value) && !isWritable(value);
+}
+
+export function isWritableStrictly(value: any): value is Writable {
+  return isWritable(value) && !isReadable(value);
+}
