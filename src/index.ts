@@ -10,6 +10,7 @@ export * from "./callback";
 export * from "./collect";
 export * from "./duplex";
 export * from "./duplexify";
+export * from "./finished";
 export * from "./is";
 export * from "./pump";
 export * from "./pumpify";
