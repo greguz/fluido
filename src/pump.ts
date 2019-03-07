@@ -1,33 +1,49 @@
-import { pipeline, Readable, Writable } from "stream";
+import { pipeline } from "stream";
 
-import { isReadable, isTransform, isWritable } from "./is";
+import { isReadable, isTransform } from "./is";
+
+/**
+ * Returns the last array element
+ */
+function last<T>(arr: T[]): T | undefined {
+  return arr.length > 0 ? arr[arr.length - 1] : undefined;
+}
+
+/**
+ * Returns true when the argument is a function
+ */
+function isFunction(value: any): value is (...args: any[]) => any {
+  return typeof value === "function";
+}
 
 /**
  * Pump streaming pipeline
  */
-export function pump(source: Readable, ...targets: Writable[]) {
-  return new Promise<void>((resolve, reject) => {
-    if (!isReadable(source)) {
-      throw new Error("First argument must be a readable stream");
-    }
-    if (targets.length <= 0) {
-      throw new Error("Missing target stream");
-    }
-    for (let i = 0; i < targets.length; i++) {
-      if (i >= targets.length - 1) {
-        if (!isWritable(targets[i])) {
-          throw new Error("The last argument must be a writable stream");
-        }
-      } else {
-        if (!isTransform(targets[i])) {
-          throw new Error("The middle arguments must be transform streams");
-        }
+export function pump(...args: any[]): any {
+  if (!isFunction(last(args))) {
+    return new Promise((resolve, reject) =>
+      pump(...args, (err?: any) => (err ? reject(err) : resolve()))
+    );
+  }
+
+  // Ensure at least two streams to pipe
+  if (args.length < 3) {
+    throw new Error("Expected at least two streams to pipe");
+  }
+
+  // Validate types
+  for (let i = 0; i < args.length - 1; i++) {
+    if (i === 0) {
+      if (!isReadable(args[i])) {
+        throw new Error("First argument must be a readable stream");
+      }
+    } else {
+      if (!isTransform(args[i])) {
+        throw new Error("The middle arguments must be transform streams");
       }
     }
-    pipeline.apply(null, [
-      source,
-      ...targets,
-      (err?: any) => (err ? reject(err) : resolve())
-    ]);
-  });
+  }
+
+  // Pump the pipeline
+  return pipeline.apply(null, args);
 }
