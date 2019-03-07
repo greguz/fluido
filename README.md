@@ -14,3 +14,88 @@ a lot of those _hacks_ are not necessary anymore.
 This package aims to be a streaming toolkit that makes advantage of
 the last improvements of Node.js, and remove all the unecessary
 _hacky_ code and dependencies.
+
+## API
+
+#### writable(options)
+
+Create a new writable stream.
+
+#### readable(options)
+
+Create a new readable stream.
+
+#### duplex(options)
+
+Create a new duplex stream.
+
+#### transform(options)
+
+Create a new transform stream.
+
+#### isStream(value)
+
+Returns true when value is a stream instance.
+
+#### isWritable(value)
+
+Returns true when value is a writable stream instance.
+Keep in mind that transform and duplex streams are writable instances.
+
+#### isReadable(value)
+
+Returns true when value is a writable stream instance.
+Keep in mind that transform and duplex streams are readable instances.
+
+#### isDuplex(value)
+
+Returns true when value is a duplex stream instance.
+Keep in mind that a transform stream is a duplex instance.
+
+#### isTransform(value)
+
+Returns true when value is a transform stream instance.
+
+#### isWritableStrictly(value)
+
+Returns true when value is **strictly** a writable stream instance.
+
+#### isReadableStrictly(value)
+
+Returns true when value is **strictly** a readable stream instance.
+
+#### isDuplexStrictly(value)
+
+Returns true when value is **strictly** a duplex stream instance.
+
+#### isClosed(stream)
+
+Returns true when the stream is closed.
+
+#### finished(stream, callback)
+
+Fire callback when the stream closes.
+If callback is `undefined` returns a promise.
+
+#### pump(...streams, callback)
+
+Pump a streams pipeline and handle all possible errors.
+Returs the last piped stream or if callback is `undefined`
+returns a promise.
+
+#### collect(encoding)
+
+Returns a transform stream that collect all streamed data. Useful with **subscribe** API.
+
+#### subscribe(...streams)
+
+Pump a stream pipeline and returns a promise that will resolve with
+the last value emitted by the pipeline.
+
+#### pumpify(streams, options)
+
+Cast a pipeline into a single readable stream.
+
+#### duplexify(readable, writable, options)
+
+Join a readable and a writable stream into a single duplex stream.
