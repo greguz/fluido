@@ -1,6 +1,6 @@
 import { pipeline } from "stream";
 
-import { isReadable, isTransform } from "./is";
+import { isReadable, isTransform, isWritable } from "./is";
 
 /**
  * Returns the last array element
@@ -31,17 +31,27 @@ export function pump(...args: any[]): any {
     throw new Error("Expected at least two streams to pipe");
   }
 
+  // Extract streams from arguments
+  const head = args[0];
+  const body = args.slice(1, args.length - 2);
+  const tail = args[args.length - 2];
+
   // Validate types
-  for (let i = 0; i < args.length - 1; i++) {
-    if (i === 0) {
-      if (!isReadable(args[i])) {
-        throw new Error("First argument must be a readable stream");
-      }
-    } else {
-      if (!isTransform(args[i])) {
-        throw new Error("The middle arguments must be transform streams");
-      }
+  if (!isReadable(head)) {
+    throw new Error("First stream must be a readable stream");
+  }
+  for (let i = 0; i < body.length; i++) {
+    if (!isTransform(body[i])) {
+      throw new Error("Middle streams be transform streams");
     }
+  }
+  if (!isWritable(tail)) {
+    throw new Error("Last stream must be a writable stream");
+  }
+
+  // Start data flow if the last stream is a transform instance
+  if (isTransform(tail) && (tail as any).readableFlowing === null) {
+    tail.resume();
   }
 
   // Pump the pipeline
