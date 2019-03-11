@@ -40,8 +40,8 @@ export function pump(...args: any[]): any {
   if (!isReadable(head)) {
     throw new Error("First stream must be a readable stream");
   }
-  for (let i = 0; i < body.length; i++) {
-    if (!isTransform(body[i])) {
+  for (const ts of body) {
+    if (!isTransform(ts)) {
       throw new Error("Middle streams be transform streams");
     }
   }
