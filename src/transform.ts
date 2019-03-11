@@ -14,27 +14,27 @@ export interface TransformOptions extends ReadableOptions, WritableOptions {
   concurrency?: number;
 }
 
-export interface TransformMethods<T> {
+export interface TransformMethods<R, W> {
   /**
    * https://nodejs.org/api/stream.html#stream_transform_transform_chunk_encoding_callback
    */
   transform?(
     this: Transform,
-    chunk: T,
+    chunk: R,
     encoding: string,
-    callback: TransformCallback<T>
+    callback: TransformCallback<W>
   ): any;
   /**
    * https://nodejs.org/api/stream.html#stream_transform_flush_callback
    */
-  flush?(this: Transform, callback: TransformCallback<T>): any;
+  flush?(this: Transform, callback: TransformCallback<W>): any;
   /**
    * https://nodejs.org/api/stream.html#stream_writable_destroy_err_callback
    */
   destroy?(this: Transform, err: any, callback: (err?: any) => any): any;
 }
 
-function concurrent(options: TransformOptions & TransformMethods<any>) {
+function concurrent(options: TransformOptions & TransformMethods<any, any>) {
   const concurrency = options.concurrency as number;
 
   if (
@@ -142,8 +142,8 @@ function concurrent(options: TransformOptions & TransformMethods<any>) {
 /**
  * Create a transform stream
  */
-export function transform<T = any>(
-  options?: TransformOptions & TransformMethods<T>
+export function transform<R = any, W = any>(
+  options?: TransformOptions & TransformMethods<R, W>
 ) {
   if (options && options.concurrency !== undefined) {
     return concurrent(options);

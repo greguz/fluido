@@ -5,8 +5,10 @@ import { WritableOptions, WritableMethods } from "./writable";
 
 export type DuplexOptions = ReadableOptions & WritableOptions;
 
-export type DuplexMethods<T> = ReadableMethods<T> & WritableMethods<T>;
+export type DuplexMethods<R, W> = ReadableMethods<R> & WritableMethods<W>;
 
-export function duplex<T = any>(options?: DuplexOptions & DuplexMethods<T>) {
+export function duplex<R = any, W = any>(
+  options?: DuplexOptions & DuplexMethods<R, W>
+) {
   return new Duplex(options);
 }
