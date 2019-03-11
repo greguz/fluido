@@ -5,7 +5,7 @@ import { Callback } from "./callback";
 import { ReadableOptions } from "./readable";
 import { WritableOptions } from "./writable";
 
-export type TransformCallback<T> = (err?: any, data?: T) => any;
+export type TransformCallback<T = any> = (err?: any, data?: T) => any;
 
 export interface TransformOptions extends ReadableOptions, WritableOptions {
   /**
