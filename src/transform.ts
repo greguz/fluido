@@ -1,4 +1,4 @@
-import { Transform } from "stream";
+import { PassThrough, Transform } from "stream";
 
 import { ReadableOptions } from "./readable";
 import { Callback } from "./utils";
@@ -142,9 +142,11 @@ function concurrent(options: TransformOptions & TransformMethods<any, any>) {
  * Create a transform stream
  */
 export function transform<R = any, W = any>(
-  options?: TransformOptions & TransformMethods<R, W>
+  options: TransformOptions & TransformMethods<R, W> = {}
 ) {
-  if (options && options.concurrency !== undefined) {
+  if (!options.transform && !options.flush && !options.destroy) {
+    return new PassThrough();
+  } else if (options.concurrency !== undefined) {
     return concurrent(options);
   } else {
     return new Transform(options);
