@@ -1,7 +1,6 @@
-import { Duplex, PassThrough, Readable, Transform, Writable } from "stream";
+import { Duplex, PassThrough, Transform, Writable } from "stream";
 
 import { DuplexOptions } from "./duplex";
-import { ReadableOptions } from "./readable";
 import { TransformOptions } from "./transform";
 import { WritableOptions } from "./writable";
 
@@ -16,18 +15,6 @@ export function voidDuplex(options?: DuplexOptions): Duplex {
     },
     write(chunk, encoding, callback) {
       callback();
-    }
-  });
-}
-
-/**
- * Returns a void readable stream
- */
-export function voidReadable(options?: ReadableOptions): Readable {
-  return new Readable({
-    ...options,
-    read() {
-      this.push(null);
     }
   });
 }

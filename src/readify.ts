@@ -1,9 +1,8 @@
 import { pipeline, Readable, Transform } from "stream";
 
 import { isReadable, isTransform } from "./is";
-import { ReadableOptions } from "./readable";
+import { ReadableOptions, voidReadable } from "./readable";
 import { Callback, last } from "./utils";
-import { voidReadable } from "./void";
 
 /**
  * Combine an array of streams into a single readable stream

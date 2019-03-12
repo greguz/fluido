@@ -39,10 +39,26 @@ export interface ReadableMethods<T> {
 }
 
 /**
+ * Returns a void readable stream
+ */
+export function voidReadable(options?: ReadableOptions): Readable {
+  return new Readable({
+    ...options,
+    read() {
+      this.push(null);
+    }
+  });
+}
+
+/**
  * Create a readable stream
  */
 export function readable<T = any>(
-  options?: ReadableOptions & ReadableMethods<T>
+  options: ReadableOptions & ReadableMethods<T> = {}
 ) {
-  return new Readable(options);
+  if (!options.read) {
+    return voidReadable();
+  } else {
+    return new Readable(options);
+  }
 }
