@@ -17,4 +17,5 @@ export * from "./readable";
 export * from "./subscribe";
 export * from "./transform";
 export { Callback, Stream } from "./utils";
+export * from "./void";
 export * from "./writable";
