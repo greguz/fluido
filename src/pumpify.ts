@@ -9,7 +9,7 @@ import { writify } from "./writify";
  * Combine an array of streams into a single stream
  */
 export function pumpify(
-  streams: Array<Stream>,
+  streams: Stream[],
   options?: ReadableOptions | WritableOptions
 ): Stream {
   if (streams.length <= 0) {
