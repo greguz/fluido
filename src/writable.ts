@@ -1,6 +1,6 @@
 import { Writable } from "stream";
 
-import { Callback } from "./callback";
+import { Callback } from "./utils";
 
 export interface WritableOptions {
   /**

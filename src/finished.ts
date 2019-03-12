@@ -1,7 +1,7 @@
 import { finished as _finished, Readable, Writable } from "stream";
 
-import { Callback } from "./callback";
 import { isClosed, isStream } from "./is";
+import { Callback } from "./utils";
 
 function finished(stream: Readable | Writable): Promise<void>;
 function finished(stream: Readable | Writable, callback: Callback): void;

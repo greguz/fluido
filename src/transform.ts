@@ -1,8 +1,7 @@
 import { Transform } from "stream";
 
-import { Callback } from "./callback";
-
 import { ReadableOptions } from "./readable";
+import { Callback } from "./utils";
 import { WritableOptions } from "./writable";
 
 export type TransformCallback<T = any> = (err?: any, data?: T) => any;

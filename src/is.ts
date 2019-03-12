@@ -1,5 +1,7 @@
 import { Duplex, Readable, Transform, Writable } from "stream";
 
+import { Stream } from "./utils";
+
 export function isReadable(value: any): value is Readable {
   return value instanceof Readable;
 }
@@ -16,7 +18,7 @@ export function isTransform(value: any): value is Transform {
   return value instanceof Transform;
 }
 
-export function isStream(value: any): value is Readable | Writable {
+export function isStream(value: any): value is Stream {
   return isReadable(value) || isWritable(value);
 }
 
@@ -32,7 +34,7 @@ export function isDuplexStrictly(value: any): value is Duplex {
   return isDuplex(value) && !isTransform(value);
 }
 
-export function isClosed(stream: Readable | Writable): boolean {
+export function isClosed(stream: Stream): boolean {
   if (!isStream(stream)) {
     throw new TypeError("Argument must be a stream instance");
   }

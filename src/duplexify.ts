@@ -1,8 +1,8 @@
 import { finished, Duplex, Readable, Writable } from "stream";
 
-import { Callback } from "./callback";
 import { DuplexOptions } from "./duplex";
 import { isReadableStrictly, isWritableStrictly } from "./is";
+import { Callback } from "./utils";
 
 function voidReadable(): Readable {
   return new Readable({

@@ -6,7 +6,6 @@ export type Readable = Readable;
 export type Transform = Transform;
 export type Writable = Writable;
 
-export * from "./callback";
 export * from "./collect";
 export * from "./duplex";
 export * from "./duplexify";
@@ -17,4 +16,5 @@ export * from "./pumpify";
 export * from "./readable";
 export * from "./subscribe";
 export * from "./transform";
+export * from "./utils";
 export * from "./writable";
