@@ -1,12 +1,16 @@
-import { pipeline, Readable, ReadableOptions, Writable } from "stream";
+import { pipeline, Readable, Transform, Writable } from "stream";
 
 import { isReadable, isTransform } from "./is";
+import { ReadableOptions } from "./readable";
 import { Callback } from "./utils";
 
 /**
  * Combine an array of streams into a single readable stream
  */
-export function pumpify(streams: any[], options?: ReadableOptions): Readable {
+export function pumpify(
+  streams: Array<Readable | Transform>,
+  options?: ReadableOptions
+): Readable {
   for (let i = 0; i < streams.length; i++) {
     const stream = streams[i];
     if (i === 0) {
