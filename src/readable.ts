@@ -1,5 +1,7 @@
 import { Readable, ReadableOptions } from "stream";
 
+import { read } from "./void";
+
 export interface ReadableOptions {
   /**
    * Whether this stream should automatically call .destroy()
@@ -39,26 +41,10 @@ export interface ReadableMethods<T> {
 }
 
 /**
- * Returns a void readable stream
- */
-export function voidReadable(options?: ReadableOptions): Readable {
-  return new Readable({
-    ...options,
-    read() {
-      this.push(null);
-    }
-  });
-}
-
-/**
- * Create a readable stream
+ * Creates a readable stream
  */
 export function readable<T = any>(
-  options: ReadableOptions & ReadableMethods<T> = {}
-) {
-  if (!options.read) {
-    return voidReadable();
-  } else {
-    return new Readable(options);
-  }
+  options?: ReadableOptions & ReadableMethods<T>
+): Readable {
+  return new Readable({ read, ...options });
 }

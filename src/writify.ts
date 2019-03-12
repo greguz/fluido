@@ -2,8 +2,7 @@ import { pipeline, Transform, Writable } from "stream";
 
 import { isTransform, isWritable } from "./is";
 import { Callback, first } from "./utils";
-import { voidWritable } from "./void";
-import { WritableOptions } from "./writable";
+import { writable, WritableOptions } from "./writable";
 
 /**
  * Combine an array of streams into a single writable stream
@@ -27,7 +26,7 @@ export function writify(
 
   // Handle simple cases
   if (streams.length <= 0) {
-    return voidWritable(options);
+    return writable(options);
   } else if (streams.length === 1) {
     return streams[0];
   }
@@ -39,7 +38,7 @@ export function writify(
   let endReached = false;
   let endError: any;
 
-  return new Writable({
+  return writable({
     ...options,
     write(chunk, encoding, callback) {
       if (!target) {

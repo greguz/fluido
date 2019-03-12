@@ -1,7 +1,8 @@
-import { PassThrough, Transform } from "stream";
+import { Transform } from "stream";
 
 import { ReadableOptions } from "./readable";
 import { Callback } from "./utils";
+import { transform as voidTransform } from "./void";
 import { WritableOptions } from "./writable";
 
 export type TransformCallback<T = any> = (err?: any, data?: T) => any;
@@ -139,16 +140,14 @@ function concurrent(options: TransformOptions & TransformMethods<any, any>) {
 }
 
 /**
- * Create a transform stream
+ * Creates a transform stream
  */
 export function transform<R = any, W = any>(
-  options: TransformOptions & TransformMethods<R, W> = {}
-) {
-  if (!options.transform && !options.flush && !options.destroy) {
-    return new PassThrough();
-  } else if (options.concurrency !== undefined) {
+  options?: TransformOptions & TransformMethods<R, W>
+): Transform {
+  if (options && options.concurrency !== undefined) {
     return concurrent(options);
   } else {
-    return new Transform(options);
+    return new Transform({ transform: voidTransform, ...options });
   }
 }

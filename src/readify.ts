@@ -1,7 +1,7 @@
 import { pipeline, Readable, Transform } from "stream";
 
 import { isReadable, isTransform } from "./is";
-import { ReadableOptions, voidReadable } from "./readable";
+import { readable, ReadableOptions } from "./readable";
 import { Callback, last } from "./utils";
 
 /**
@@ -26,7 +26,7 @@ export function readify(
 
   // Handle simple cases
   if (streams.length <= 0) {
-    return voidReadable(options);
+    return readable(options);
   } else if (streams.length === 1) {
     return streams[0];
   }
@@ -34,7 +34,7 @@ export function readify(
   let source: Readable | undefined;
   let cbDestroy: Callback | undefined;
 
-  return new Readable({
+  return readable({
     ...options,
     read() {
       if (!source) {

@@ -108,19 +108,3 @@ type of streams in input.
 #### duplexify(readable, writable, options)
 
 Join a readable and a writable stream into a single duplex stream.
-
-#### voidReadable(options)
-
-Returns an empty readable stream.
-
-#### voidWritable(options)
-
-Returns an empty writable stream.
-
-#### voidDuplex(options)
-
-Returns an empty duplex stream.
-
-#### voidTransform(options)
-
-Returns a passthrough transform stream.

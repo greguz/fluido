@@ -1,5 +1,6 @@
 import { Writable } from "stream";
 
+import { write } from "./void";
 import { Callback } from "./utils";
 
 export interface WritableOptions {
@@ -63,8 +64,11 @@ export interface WritableMethods<T> {
   destroy?(this: Writable, err: any, callback: Callback): any;
 }
 
+/**
+ * Creates a writable stream
+ */
 export function writable<T = any>(
   options?: WritableOptions & WritableMethods<T>
-) {
-  return new Writable(options);
+): Writable {
+  return new Writable({ write, ...options });
 }
