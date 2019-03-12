@@ -1,6 +1,7 @@
 import { finished, pipeline, Readable, Transform } from "stream";
 
 import { isReadable, isTransform } from "./is";
+import { last } from "./utils";
 
 /**
  * Pump streams and return the last value output from the pipeline
@@ -23,12 +24,12 @@ export function subscribe<T = any>(source: Readable, ...targets: Transform[]) {
     const listener = (data: T) => (value = data);
 
     // Last stream in pipeline
-    const last = targets.length <= 0 ? source : targets[targets.length - 1];
+    const emitter = last(targets) || source;
 
     // Final callback
     const callback = (err?: any) => {
       // Clean listener
-      last.removeListener("data", listener);
+      emitter.removeListener("data", listener);
 
       // Close promise
       if (err) {
@@ -39,7 +40,7 @@ export function subscribe<T = any>(source: Readable, ...targets: Transform[]) {
     };
 
     // Collect the data from the stream
-    last.addListener("data", listener);
+    emitter.addListener("data", listener);
 
     // Handle single stream or pipeline
     if (targets.length <= 0) {

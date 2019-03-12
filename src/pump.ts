@@ -1,13 +1,7 @@
 import { pipeline } from "stream";
 
 import { isReadable, isTransform, isWritable } from "./is";
-
-/**
- * Returns the last array element
- */
-function last<T>(arr: T[]): T | undefined {
-  return arr.length > 0 ? arr[arr.length - 1] : undefined;
-}
+import { last } from "./utils";
 
 /**
  * Returns true when the argument is a function

@@ -16,5 +16,5 @@ export * from "./pumpify";
 export * from "./readable";
 export * from "./subscribe";
 export * from "./transform";
-export * from "./utils";
+export { Callback, Stream } from "./utils";
 export * from "./writable";
