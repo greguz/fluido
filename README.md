@@ -17,13 +17,13 @@ _hacky_ code and dependencies.
 
 ## API
 
-#### writable(options)
-
-Create a new writable stream.
-
 #### readable(options)
 
 Create a new readable stream.
+
+#### writable(options)
+
+Create a new writable stream.
 
 #### duplex(options)
 
@@ -37,15 +37,15 @@ Create a new transform stream.
 
 Returns true when value is a stream instance.
 
-#### isWritable(value)
-
-Returns true when value is a writable stream instance.
-Keep in mind that transform and duplex streams are writable instances.
-
 #### isReadable(value)
 
 Returns true when value is a writable stream instance.
 Keep in mind that transform and duplex streams are readable instances.
+
+#### isWritable(value)
+
+Returns true when value is a writable stream instance.
+Keep in mind that transform and duplex streams are writable instances.
 
 #### isDuplex(value)
 
@@ -56,13 +56,13 @@ Keep in mind that a transform stream is a duplex instance.
 
 Returns true when value is a transform stream instance.
 
-#### isWritableStrictly(value)
-
-Returns true when value is **strictly** a writable stream instance.
-
 #### isReadableStrictly(value)
 
 Returns true when value is **strictly** a readable stream instance.
+
+#### isWritableStrictly(value)
+
+Returns true when value is **strictly** a writable stream instance.
 
 #### isDuplexStrictly(value)
 
@@ -92,10 +92,35 @@ Returns a transform stream that collect all streamed data. Useful with **subscri
 Pump a stream pipeline and returns a promise that will resolve with
 the last value emitted by the pipeline.
 
+#### readify(streams, options)
+
+Concat multiple streams into a single readable stream.
+
+#### writify(streams, options)
+
+Concat multiple streams into a single writable stream.
+
 #### pumpify(streams, options)
 
-Cast a pipeline into a single readable stream.
+Internally use **readify** and **writify**, guess the output by looking at the
+type of streams in input.
 
 #### duplexify(readable, writable, options)
 
 Join a readable and a writable stream into a single duplex stream.
+
+#### voidReadable(options)
+
+Returns an empty readable stream.
+
+#### voidWritable(options)
+
+Returns an empty writable stream.
+
+#### voidDuplex(options)
+
+Returns an empty duplex stream.
+
+#### voidTransform(options)
+
+Returns a passthrough transform stream.
