@@ -1,4 +1,3 @@
 /node_modules
-/dist
-/types
 npm-debug.log
+/index.js
