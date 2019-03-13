@@ -5,6 +5,6 @@ import { read } from './void'
 /**
  * Creates a readable stream
  */
-export function readable(options) {
+export function readable (options) {
   return new Readable({ read, ...options })
 }

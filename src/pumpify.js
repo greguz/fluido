@@ -4,7 +4,7 @@ import { writify } from './writify'
 import { isReadableStrictly, isWritableStrictly } from './is'
 import { first, last } from './utils'
 
-export function pumpify(streams, options) {
+export function pumpify (streams, options) {
   if (streams.length <= 0) {
     throw new Error('Expected at least one stream')
   } else if (streams.length === 1) {

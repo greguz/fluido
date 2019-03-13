@@ -2,6 +2,6 @@ import { Writable } from 'stream'
 
 import { write } from './void'
 
-export function writable(options) {
+export function writable (options) {
   return new Writable({ write, ...options })
 }

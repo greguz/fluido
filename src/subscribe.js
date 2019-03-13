@@ -4,7 +4,7 @@ import { finished } from './finished'
 import { isReadable, isTransform } from './is'
 import { isFunction, last } from './utils'
 
-export function subscribe(...args) {
+export function subscribe (...args) {
   if (!isFunction(last(args))) {
     return new Promise((resolve, reject) =>
       subscribe(...args, err => (err ? reject(err) : resolve()))

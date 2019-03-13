@@ -3,7 +3,7 @@ import { pipeline } from 'stream'
 import { isReadable, isTransform, isWritable } from './is'
 import { isFunction, last } from './utils'
 
-export function pump(...args) {
+export function pump (...args) {
   if (!isFunction(last(args))) {
     return new Promise((resolve, reject) =>
       pump(...args, err => (err ? reject(err) : resolve()))

@@ -4,7 +4,7 @@ import { isClosed, isReadable, isTransform } from './is'
 import { readable } from './readable'
 import { last } from './utils'
 
-export function readify(streams, options) {
+export function readify (streams, options) {
   for (let i = 0; i < streams.length; i++) {
     if (i === 0) {
       if (!isReadable(streams[i])) {
@@ -29,7 +29,7 @@ export function readify(streams, options) {
 
   return readable({
     ...options,
-    read() {
+    read () {
       if (source.readableFlowing === null) {
         const listener = chunk => {
           if (!this.push(chunk)) {
@@ -54,7 +54,7 @@ export function readify(streams, options) {
         source.resume()
       }
     },
-    destroy(err, callback) {
+    destroy (err, callback) {
       if (!cbDestroy && !isClosed(source)) {
         cbDestroy = callback
         source.destroy(err)

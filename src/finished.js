@@ -2,7 +2,7 @@ import { finished as _finished } from 'stream'
 
 import { isClosed, isStream } from './is'
 
-export function finished(stream, callback) {
+export function finished (stream, callback) {
   if (callback === undefined) {
     return new Promise((resolve, reject) =>
       finished(stream, err => (err ? reject(err) : resolve()))

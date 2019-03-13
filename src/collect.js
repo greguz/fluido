@@ -1,6 +1,6 @@
 import { Transform } from 'stream'
 
-function toString(chunks, encoding) {
+function toString (chunks, encoding) {
   const decoder = new TextDecoder(encoding)
   let result = ''
   for (const chunk of chunks) {
@@ -15,7 +15,7 @@ function toString(chunks, encoding) {
   return result
 }
 
-function toBuffer(chunks) {
+function toBuffer (chunks) {
   let result = Buffer.from([])
   for (const chunk of chunks) {
     if (Buffer.isBuffer(chunk) || chunk instanceof Uint8Array) {
@@ -27,16 +27,16 @@ function toBuffer(chunks) {
   return result
 }
 
-export function collect(encoding) {
+export function collect (encoding) {
   let chunks = []
 
   return new Transform({
     objectMode: true,
-    transform(chunk, ce, callback) {
+    transform (chunk, ce, callback) {
       chunks.push(typeof chunk === 'string' ? Buffer.from(chunk, ce) : chunk)
       callback()
     },
-    flush(callback) {
+    flush (callback) {
       if (encoding === undefined) {
         if (Buffer.isBuffer(chunks[0])) {
           encoding = 'buffer'
@@ -62,7 +62,7 @@ export function collect(encoding) {
       chunks = []
       callback(err, data)
     },
-    destroy(err, callback) {
+    destroy (err, callback) {
       chunks = []
       callback(err)
     }

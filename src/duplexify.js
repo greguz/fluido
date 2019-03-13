@@ -4,7 +4,7 @@ import { finished } from './finished'
 import { isClosed, isReadableStrictly, isWritableStrictly } from './is'
 import { read as vRead, write as vWrite } from './void'
 
-function bothFinished(readable, writable, callback) {
+function bothFinished (readable, writable, callback) {
   if (!readable && !writable) {
     process.nextTick(callback)
   } else if (!readable || !writable) {
@@ -18,7 +18,7 @@ function bothFinished(readable, writable, callback) {
   }
 }
 
-export function duplexify(readable, writable, options) {
+export function duplexify (readable, writable, options) {
   if (readable && !isReadableStrictly(readable)) {
     throw new TypeError('First argument must be a readable stream')
   }
@@ -26,7 +26,7 @@ export function duplexify(readable, writable, options) {
     throw new TypeError('Second argument must be a writable stream')
   }
 
-  function read() {
+  function read () {
     if (readable.readableFlowing === null) {
       readable.on('data', data => {
         if (!this.push(data)) {
@@ -46,15 +46,15 @@ export function duplexify(readable, writable, options) {
     }
   }
 
-  function write(chunk, encoding, callback) {
+  function write (chunk, encoding, callback) {
     writable.write(chunk, encoding, callback)
   }
 
-  function final(callback) {
+  function final (callback) {
     writable.end(callback)
   }
 
-  function destroy(err, callback) {
+  function destroy (err, callback) {
     bothFinished(readable, writable, callback)
     if (readable && !isClosed(readable)) {
       readable.destroy(err)

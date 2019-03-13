@@ -1,6 +1,6 @@
 import { Transform } from 'stream'
 
-export function concurrent(options) {
+export function concurrent (options) {
   const {
     concurrency,
     transform: _transform,
@@ -27,7 +27,7 @@ export function concurrent(options) {
   let cbFlush
   let cbDestroy
 
-  function transform(chunk, encoding, callback) {
+  function transform (chunk, encoding, callback) {
     if (!erTransform && !cbDestroy) {
       job.call(this, chunk, encoding)
     }
@@ -39,7 +39,7 @@ export function concurrent(options) {
     }
   }
 
-  function job(chunk, encoding) {
+  function job (chunk, encoding) {
     jobs++
 
     _transform.call(this, chunk, encoding, (err, data) => {
@@ -71,7 +71,7 @@ export function concurrent(options) {
     })
   }
 
-  function flush(callback) {
+  function flush (callback) {
     cbFlush = err => {
       if (err || !_flush) {
         callback(err)
@@ -85,7 +85,7 @@ export function concurrent(options) {
     }
   }
 
-  function destroy(err, callback) {
+  function destroy (err, callback) {
     cbDestroy = _destroy ? _destroy.bind(this, err, callback) : callback
 
     if (jobs <= 0 && cbDestroy) {

@@ -4,7 +4,7 @@ import { isTransform, isWritable } from './is'
 import { first } from './utils'
 import { writable } from './writable'
 
-export function writify(streams, options) {
+export function writify (streams, options) {
   for (let i = 0; i < streams.length; i++) {
     if (i === streams.length - 1) {
       if (!isWritable(streams[i])) {
@@ -32,7 +32,7 @@ export function writify(streams, options) {
 
   return writable({
     ...options,
-    write(chunk, encoding, callback) {
+    write (chunk, encoding, callback) {
       if (!target) {
         target = first(streams)
 
@@ -52,7 +52,7 @@ export function writify(streams, options) {
         target.write(chunk, encoding, callback)
       }
     },
-    final(callback) {
+    final (callback) {
       if (endReached) {
         callback(endError)
       } else {
@@ -60,7 +60,7 @@ export function writify(streams, options) {
         target.end()
       }
     },
-    destroy(err, callback) {
+    destroy (err, callback) {
       if (endReached) {
         callback(err)
       } else {
