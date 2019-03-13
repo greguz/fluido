@@ -2,6 +2,11 @@
 
 import { Readable, Writable, Duplex, Transform } from 'stream'
 
+export declare type Readable = Readable
+export declare type Writable = Writable
+export declare type Duplex = Duplex
+export declare type Transform = Transform
+
 export declare type Callback = (err?: any) => any
 
 export interface ReadableOptions {
