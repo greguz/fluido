@@ -1,4 +1,4 @@
-import { transform } from './transform'
+import { Transform } from 'stream'
 
 function toString(chunks, encoding) {
   const decoder = new TextDecoder(encoding)
@@ -30,7 +30,7 @@ function toBuffer(chunks) {
 export function collect(encoding) {
   let chunks = []
 
-  return transform({
+  return new Transform({
     objectMode: true,
     transform(chunk, ce, callback) {
       chunks.push(typeof chunk === 'string' ? Buffer.from(chunk, ce) : chunk)
