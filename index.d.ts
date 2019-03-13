@@ -1,17 +1,9 @@
 /// <reference types="node" />
 
-import {
-  Duplex as _Duplex,
-  Readable as _Readable,
-  Transform as _Transform,
-  Writable as _Writable
-} from 'stream'
+import { Readable, Writable, Duplex, Transform } from 'stream'
 
 export declare type Callback = (err?: any) => any
 
-export interface Readable extends _Readable {
-  readableFlowing: null | false | true
-}
 export interface ReadableOptions {
   autoDestroy?: boolean
   encoding?: string
@@ -26,7 +18,6 @@ export declare function readable<T = any>(
   options?: ReadableOptions & ReadableMethods<T>
 ): Readable
 
-export interface Writable extends _Writable {}
 export interface WritableOptions {
   autoDestroy?: boolean
   decodeStrings?: boolean
@@ -55,9 +46,6 @@ export declare function writable<T = any>(
 
 export declare type Stream = Readable | Writable
 
-export interface Duplex extends _Duplex {
-  readableFlowing: null | false | true
-}
 export declare type DuplexOptions = ReadableOptions & WritableOptions
 export declare type DuplexMethods<R = any, W = any> = ReadableMethods<R> &
   WritableMethods<W>
@@ -65,9 +53,6 @@ export declare function duplex<R = any, W = any>(
   options?: DuplexOptions & DuplexMethods<R, W>
 ): Duplex
 
-export interface Transform extends _Transform {
-  readableFlowing: null | false | true
-}
 export declare type TransformCallback<T = any> = (err?: any, data?: T) => any
 export interface TransformOptions extends ReadableOptions, WritableOptions {
   concurrency?: number
