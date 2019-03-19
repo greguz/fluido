@@ -47,9 +47,17 @@ export function writify (streams, options) {
       }
 
       if (endReached) {
-        callback(endError || new Error('Premature close'))
+        return callback(endError || new Error('Premature close'))
+      }
+
+      if (!target.write(chunk, encoding)) {
+        cbClose = callback
+        target.once('drain', () => {
+          cbClose = undefined
+          callback()
+        })
       } else {
-        target.write(chunk, encoding, callback)
+        callback()
       }
     },
     final (callback) {
