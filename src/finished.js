@@ -1,17 +1,38 @@
-import { finished as _finished } from 'stream'
+import { finished as eos } from 'stream'
 
-import { isStream } from './is'
+import { last, isFunction, noop } from './utils'
 
-export function finished (stream, callback) {
-  if (callback === undefined) {
+function compose (fna, fnb) {
+  return () => {
+    fna()
+    fnb()
+  }
+}
+
+export function finished (...args) {
+  if (!isFunction(last(args))) {
     return new Promise((resolve, reject) =>
-      finished(stream, err => (err ? reject(err) : resolve()))
+      finished(...args, err => (err ? reject(err) : resolve()))
     )
   }
 
-  if (!isStream(stream)) {
-    callback(new TypeError('Expected a stream'))
-  } else {
-    _finished(stream, callback)
+  const callback = args.pop()
+
+  if (args.length <= 0) {
+    return process.nextTick(callback)
+  } else if (args.length === 1) {
+    return eos(args[0], callback)
   }
+
+  let ended = 0
+  let error = null
+
+  const end = err => {
+    error = error || err
+    if (++ended >= args.length) {
+      callback(error)
+    }
+  }
+
+  return args.reduce((acc, stream) => compose(acc, eos(stream, end)), noop)
 }

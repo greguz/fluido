@@ -80,8 +80,8 @@ export declare function collect(
   encoding?: string | false | undefined
 ): Transform
 
-export declare function finished(stream: Stream): Promise<void>
-export declare function finished(stream: Stream, callback: Callback): void
+export declare function finished(...args: Stream[]): Promise<void>
+export declare function finished(...args: Array<Stream | Callback>): void
 
 export declare function subscribe(
   ...args: Array<Readable | Transform>
