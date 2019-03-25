@@ -1,7 +1,7 @@
 import { Duplex } from 'stream'
 
 import { finished } from './finished'
-import { isClosed, isReadableStrictly, isWritableStrictly } from './is'
+import { isReadableStrictly, isWritableStrictly } from './is'
 import { read as vRead, write as vWrite } from './void'
 
 function bothFinished (readable, writable, callback) {
@@ -56,10 +56,10 @@ export function duplexify (readable, writable, options) {
 
   function destroy (err, callback) {
     bothFinished(readable, writable, callback)
-    if (readable && !isClosed(readable)) {
+    if (readable) {
       readable.destroy(err)
     }
-    if (writable && !isClosed(writable)) {
+    if (writable) {
       writable.destroy(err)
     }
   }

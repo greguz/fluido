@@ -31,13 +31,3 @@ export function isWritableStrictly (value) {
 export function isDuplexStrictly (value) {
   return isDuplex(value) && !isTransform(value)
 }
-
-export function isClosed (stream) {
-  if (!isStream(stream)) {
-    throw new TypeError('Argument must be a stream instance')
-  }
-  return (
-    (isReadable(stream) ? stream._readableState.ended === true : true) &&
-    (isWritable(stream) ? stream._writableState.ended === true : true)
-  )
-}

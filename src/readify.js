@@ -1,6 +1,6 @@
 import { pipeline } from 'stream'
 
-import { isClosed, isReadable, isTransform } from './is'
+import { isReadable, isTransform } from './is'
 import { readable } from './readable'
 import { last } from './utils'
 
@@ -55,7 +55,7 @@ export function readify (streams, options) {
       }
     },
     destroy (err, callback) {
-      if (!cbDestroy && !isClosed(source)) {
+      if (!cbDestroy) {
         cbDestroy = callback
         source.destroy(err)
       } else {

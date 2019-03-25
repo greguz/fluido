@@ -68,10 +68,6 @@ Returns true when value is **strictly** a writable stream instance.
 
 Returns true when value is **strictly** a duplex stream instance.
 
-#### isClosed(stream)
-
-Returns true when the stream is closed.
-
 #### finished(stream, callback)
 
 Fire callback when the stream closes.
