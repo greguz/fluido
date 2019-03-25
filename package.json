@@ -1,6 +1,6 @@
 {
   "name": "fluido",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Yet another streaming lib",
   "main": "index.js",
   "types": "index.d.ts",
