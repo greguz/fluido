@@ -7,7 +7,7 @@ import { isFunction, last } from './utils'
 export function subscribe (...args) {
   if (!isFunction(last(args))) {
     return new Promise((resolve, reject) =>
-      subscribe(...args, err => (err ? reject(err) : resolve()))
+      subscribe(...args, (err, result) => (err ? reject(err) : resolve(result)))
     )
   }
 
