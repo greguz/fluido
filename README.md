@@ -68,9 +68,15 @@ Returns true when value is **strictly** a writable stream instance.
 
 Returns true when value is **strictly** a duplex stream instance.
 
-#### finished(stream, callback)
+#### finished(...streams, callback)
 
 Fire callback when the stream closes.
+If callback is `undefined` returns a promise.
+
+#### handle(...streams, callback)
+
+Watch all streams, if any stream will emit an error, destroy the others.
+When all streams have finished, callback is fired.
 If callback is `undefined` returns a promise.
 
 #### pump(...streams, callback)

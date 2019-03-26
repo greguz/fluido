@@ -83,6 +83,9 @@ export declare function collect(
 export declare function finished(...args: Stream[]): Promise<void>
 export declare function finished(...args: Array<Stream | Callback>): void
 
+export declare function handle(...args: Stream[]): Promise<void>
+export declare function handle(...args: Array<Stream | Callback>): void
+
 export declare function subscribe(
   ...args: Array<Readable | Transform>
 ): Promise<any>
