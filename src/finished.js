@@ -1,13 +1,7 @@
 import { finished as eos } from 'stream'
 
-import { last, isFunction, noop } from './utils'
-
-function compose (fna, fnb) {
-  return () => {
-    fna()
-    fnb()
-  }
-}
+import { isStream } from './is'
+import { isFunction, last } from './utils'
 
 export function finished (...args) {
   if (!isFunction(last(args))) {
@@ -18,6 +12,12 @@ export function finished (...args) {
 
   const callback = args.pop()
 
+  for (const stream of args) {
+    if (!isStream(stream)) {
+      return callback(new TypeError('Expected a stream'))
+    }
+  }
+
   if (args.length <= 0) {
     return process.nextTick(callback)
   } else if (args.length === 1) {
@@ -27,12 +27,16 @@ export function finished (...args) {
   let ended = 0
   let error = null
 
-  const end = err => {
-    error = error || err
-    if (++ended >= args.length) {
+  const end = serr => {
+    ended++
+    error = error || serr
+
+    if (ended >= args.length) {
       callback(error)
     }
   }
 
-  return args.reduce((acc, stream) => compose(acc, eos(stream, end)), noop)
+  for (const stream of args) {
+    eos(stream, end)
+  }
 }
