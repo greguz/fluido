@@ -110,3 +110,7 @@ type of streams in input.
 #### duplexify(readable, writable, options)
 
 Join a readable and a writable stream into a single duplex stream.
+
+#### mergeReadables(sources, options)
+
+Merge multiple readable streams into a single readable stream.

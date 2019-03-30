@@ -125,3 +125,8 @@ export declare function isDuplexStrictly(value: any): value is Duplex
 
 export declare function pump(...args: Stream[]): Promise<any>
 export declare function pump(...args: Array<Stream | Callback>): void
+
+export declare function mergeReadables(
+  sources: Readable[],
+  options?: ReadableOptions
+): Readable
