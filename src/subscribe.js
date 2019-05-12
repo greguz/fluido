@@ -2,7 +2,8 @@ import { pipeline } from 'stream'
 
 import { finished } from './finished'
 import { isReadable, isTransform } from './is'
-import { isFunction, last } from './utils'
+
+import { isFunction, last } from './internal/utils'
 
 export function subscribe (...args) {
   if (!isFunction(last(args))) {

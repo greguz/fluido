@@ -1,7 +1,8 @@
 import { pipeline } from 'stream'
 
 import { isReadable, isTransform, isWritable } from './is'
-import { isFunction, last } from './utils'
+
+import { isFunction, last } from './internal/utils'
 
 export function pump (...args) {
   if (!isFunction(last(args))) {

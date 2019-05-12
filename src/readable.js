@@ -1,6 +1,6 @@
 import { Readable } from 'stream'
 
-import { read } from './void'
+import { read } from './internal/void'
 
 /**
  * Creates a readable stream

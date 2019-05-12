@@ -1,5 +1,6 @@
 import { finished } from './finished'
-import { compose, isFunction, last } from './utils'
+
+import { compose, isFunction, last } from './internal/utils'
 
 function toDestroyer (stream) {
   let closed = false

@@ -2,7 +2,8 @@ import { readify } from './readify'
 import { writify } from './writify'
 
 import { isReadableStrictly, isWritableStrictly } from './is'
-import { first, last } from './utils'
+
+import { first, last } from './internal/utils'
 
 export function pumpify (streams, options) {
   if (streams.length <= 0) {

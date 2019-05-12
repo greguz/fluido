@@ -1,7 +1,8 @@
 import { finished as eos } from 'stream'
 
 import { isStream } from './is'
-import { isFunction, last } from './utils'
+
+import { isFunction, last } from './internal/utils'
 
 export function finished (...args) {
   if (!isFunction(last(args))) {

@@ -2,7 +2,8 @@ import { pipeline } from 'stream'
 
 import { isReadable, isTransform } from './is'
 import { readable } from './readable'
-import { last } from './utils'
+
+import { last } from './internal/utils'
 
 export function readify (streams, options) {
   for (let i = 0; i < streams.length; i++) {

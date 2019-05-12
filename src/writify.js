@@ -1,8 +1,9 @@
 import { pipeline } from 'stream'
 
 import { isTransform, isWritable } from './is'
-import { first } from './utils'
 import { writable } from './writable'
+
+import { first } from './internal/utils'
 
 export function writify (streams, options) {
   for (let i = 0; i < streams.length; i++) {

@@ -2,7 +2,8 @@ import { Duplex } from 'stream'
 
 import { finished } from './finished'
 import { isReadableStrictly, isWritableStrictly } from './is'
-import { read as vRead, write as vWrite } from './void'
+
+import { read as vRead, write as vWrite } from './internal/void'
 
 function bothFinished (readable, writable, callback) {
   if (!readable && !writable) {
