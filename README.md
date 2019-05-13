@@ -23,7 +23,7 @@ Create a new readable stream.
 
 #### writable(options)
 
-Create a new writable stream.
+Create a new writable stream. To enable concurrent mode, use `concurrency` option.
 
 #### duplex(options)
 
@@ -31,7 +31,7 @@ Create a new duplex stream.
 
 #### transform(options)
 
-Create a new transform stream.
+Create a new transform stream. To enable concurrent mode, use `concurrency` option.
 
 #### isStream(value)
 
@@ -87,12 +87,13 @@ returns a promise.
 
 #### collect(encoding)
 
-Returns a transform stream that collect all streamed data. Useful with **subscribe** API.
+Returns a transform stream that collect all streamed data.
+Encoding may by `'buffer'` for single buffer concat, or `false` for array of chunks.
 
-#### subscribe(...streams)
+#### subscribe(...streams, callback)
 
-Pump a stream pipeline and returns a promise that will resolve with
-the last value emitted by the pipeline.
+Pump a pipeline and fire the callback with the last value emitted by the pipeline.
+If callback is `undefined` returns a promise.
 
 #### readify(streams, options)
 
@@ -104,12 +105,12 @@ Concat multiple streams into a single writable stream.
 
 #### pumpify(streams, options)
 
-Internally use **readify** and **writify**, guess the output by looking at the
-type of streams in input.
+Internally use **readify** and **writify**, guess the output by looking at the type of streams in input.
 
 #### duplexify(readable, writable, options)
 
 Join a readable and a writable stream into a single duplex stream.
+Both are optional.
 
 #### mergeReadables(sources, options)
 
