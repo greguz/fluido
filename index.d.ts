@@ -24,6 +24,7 @@ export declare function readable<T = any>(
 ): Readable
 
 export interface WritableOptions {
+  concurrency?: number
   autoDestroy?: boolean
   decodeStrings?: boolean
   defaultEncoding?: string
@@ -59,9 +60,7 @@ export declare function duplex<R = any, W = any>(
 ): Duplex
 
 export declare type TransformCallback<T = any> = (err?: any, data?: T) => any
-export interface TransformOptions extends ReadableOptions, WritableOptions {
-  concurrency?: number
-}
+export type TransformOptions = ReadableOptions & WritableOptions
 export interface TransformMethods<R = any, W = any> {
   transform?(
     this: Transform,
