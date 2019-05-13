@@ -45,10 +45,8 @@ export function concurrent (options) {
     _transform.call(this, chunk, encoding, (err, data) => {
       jobs--
 
-      // Save transform error (preserve first one)
       erTransform = erTransform || err
 
-      // Handle second argument
       if (data && !erTransform && !cbDestroy) {
         this.push(data)
       }
@@ -80,7 +78,7 @@ export function concurrent (options) {
       }
     }
 
-    if (jobs <= 0 && cbFlush) {
+    if (jobs <= 0) {
       cbFlush()
     }
   }
@@ -88,7 +86,7 @@ export function concurrent (options) {
   function destroy (err, callback) {
     cbDestroy = _destroy ? _destroy.bind(this, err, callback) : callback
 
-    if (jobs <= 0 && cbDestroy) {
+    if (jobs <= 0) {
       cbDestroy()
     }
   }

@@ -1,6 +1,6 @@
 import { Transform } from 'stream'
 
-import { concurrent } from './internal/concurrent'
+import { concurrent } from './internal/concurrentTransform'
 import { transform as vTransform } from './internal/void'
 
 export function transform (options) {
