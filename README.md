@@ -88,20 +88,73 @@ returns a promise.
 #### collect(encoding)
 
 Returns a transform stream that collect all streamed data.
-Encoding may by `'buffer'` for single buffer concat, or `false` for array of chunks.
+Encoding may by `'buffer'` for single buffer concat, `false` for raw array output, an **encoding** for string output, or `undefined` for auto.
 
 #### subscribe(...streams, callback)
 
 Pump a pipeline and fire the callback with the last value emitted by the pipeline.
 If callback is `undefined` returns a promise.
 
+```javascript
+const { collect, subscribe } = require('fluido')
+const { createReadStream } = require('fs')
+const sharp = require('sharp')
+
+subscribe(
+  // Read the source image
+  createReadStream('cat.jpg'),
+  // Resize the image and output a png file
+  sharp().resize(200, 200).png(),
+  // Collect all chunks into a single buffer
+  collect('buffer'),
+  // Final callback (optional, if not provided a promise is returned)
+  (err, buffer) => {
+    if (err) {
+      // handle error
+    } else {
+      // do something with the resulting image buffer
+    }
+  }
+)
+```
+
 #### readify(streams, options)
 
 Concat multiple streams into a single readable stream.
 
+```javascript
+const { readify } = require('fluido')
+const { createReadStream, createWriteStream } = require('fs')
+const sharp = require('sharp')
+
+const singleReadableStream = readify([
+  // Read the source image
+  createReadStream('cat.jpg'),
+  // Resize the image and output a png file
+  sharp().resize(200, 200).png()
+])
+
+singleReadableStream.pipe(createWriteStream('cat.png'))
+```
+
 #### writify(streams, options)
 
 Concat multiple streams into a single writable stream.
+
+```javascript
+const { readify } = require('fluido')
+const { createReadStream, createWriteStream } = require('fs')
+const sharp = require('sharp')
+
+const singleWritableStream = writify([
+  // Resize the image and output a png file
+  sharp().resize(200, 200).png(),
+  // Write to target file
+  createWriteStream('cat.png')
+])
+
+createReadStream('cat.jpg').pipe(singleWritableStream)
+```
 
 #### pumpify(streams, options)
 
