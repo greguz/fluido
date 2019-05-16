@@ -188,3 +188,7 @@ animals
   .pipe(JSONStream.stringify())
   .pipe(createWriteStream('animals.json'))
 ```
+
+#### mergeWritables(targets, options)
+
+WIP
