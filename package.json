@@ -11,7 +11,12 @@
     "prepublishOnly": "npm run test && npm run build"
   },
   "keywords": [
-    "stream"
+    "stream",
+    "toolkit",
+    "readable",
+    "writable",
+    "duplex",
+    "transform"
   ],
   "author": "Giacomo Gregoletto",
   "license": "MIT",
