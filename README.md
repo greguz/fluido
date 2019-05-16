@@ -15,6 +15,14 @@ This package aims to be a streaming toolkit that makes advantage of
 the last improvements of Node.js, and remove all the unecessary
 _hacky_ code and dependencies.
 
+## Features
+
+- The **backpressure** mechanism is respected by all functions
+- Full TypeScript support
+- Prevent `new` keyword usage
+- No stream class method override
+- Node.js >= 10
+
 ## API
 
 #### readable(options)
