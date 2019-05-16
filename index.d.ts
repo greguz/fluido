@@ -102,11 +102,6 @@ export declare function writify(
   options?: WritableOptions
 ): Writable
 
-export declare function pumpify(
-  streams: Stream[],
-  options?: ReadableOptions | WritableOptions
-): Stream
-
 export declare function duplexify(
   readable: Readable,
   writable: Writable,

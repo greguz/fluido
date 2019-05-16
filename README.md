@@ -164,10 +164,6 @@ const singleWritableStream = writify([
 createReadStream('cat.jpg').pipe(singleWritableStream)
 ```
 
-#### pumpify(streams, options)
-
-Internally use **readify** and **writify**, guess the output by looking at the type of streams in input.
-
 #### duplexify(readable, writable, options)
 
 Join a readable and a writable stream into a single duplex stream.
