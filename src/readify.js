@@ -1,6 +1,6 @@
-import { pipeline } from 'stream'
+import { pipeline, PassThrough } from 'stream'
 
-import { isReadable, isTransform } from './is'
+import { isReadable, isDuplex } from './is'
 import { readable } from './readable'
 
 import { last } from './internal/utils'
@@ -9,11 +9,11 @@ export function readify (streams, options) {
   for (let i = 0; i < streams.length; i++) {
     if (i === 0) {
       if (!isReadable(streams[i])) {
-        throw new TypeError('First stream must be a readable stream')
+        throw new TypeError('Expected readable stream')
       }
     } else {
-      if (!isTransform(streams[i])) {
-        throw new TypeError('Other streams must be transform streams')
+      if (!isDuplex(streams[i])) {
+        throw new TypeError('Expected duplex stream')
       }
     }
   }
@@ -23,6 +23,8 @@ export function readify (streams, options) {
   } else if (streams.length === 1) {
     return last(streams)
   }
+
+  streams.push(new PassThrough({ objectMode: true }))
 
   const source = last(streams)
 

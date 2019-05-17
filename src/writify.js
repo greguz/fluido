@@ -1,6 +1,6 @@
 import { pipeline } from 'stream'
 
-import { isTransform, isWritable } from './is'
+import { isWritable, isDuplex } from './is'
 import { writable } from './writable'
 
 import { first } from './internal/utils'
@@ -9,11 +9,11 @@ export function writify (streams, options) {
   for (let i = 0; i < streams.length; i++) {
     if (i === streams.length - 1) {
       if (!isWritable(streams[i])) {
-        throw new TypeError('The last stream must be a writable stream')
+        throw new TypeError('Expected writable stream')
       }
     } else {
-      if (!isTransform(streams[i])) {
-        throw new TypeError('Other streams must be transform streams')
+      if (!isDuplex(streams[i])) {
+        throw new TypeError('Expected duplex streams')
       }
     }
   }

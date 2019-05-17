@@ -1,6 +1,6 @@
 import { pipeline } from 'stream'
 
-import { isReadable, isTransform, isWritable } from './is'
+import { isReadable, isWritable, isDuplex } from './is'
 
 import { isFunction, last } from './internal/utils'
 
@@ -22,18 +22,18 @@ export function pump (...args) {
   const tail = args[args.length - 2]
 
   if (!isReadable(head)) {
-    return callback(new Error('Expected readable as first stream'))
+    return callback(new TypeError('Expected readable stream'))
   }
   for (const ts of body) {
-    if (!isTransform(ts)) {
-      return callback(new Error('Expected transforms as body streams'))
+    if (!isDuplex(ts)) {
+      return callback(new TypeError('Expected duplex stream'))
     }
   }
   if (!isWritable(tail)) {
-    return callback(new Error('Expected writable as last stream'))
+    return callback(new TypeError('Expected writable stream'))
   }
 
-  if (isTransform(tail) && tail.readableFlowing === null) {
+  if (isDuplex(tail) && tail.readableFlowing === null) {
     tail.resume()
   }
 
