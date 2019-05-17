@@ -1,4 +1,4 @@
-import { pipeline } from 'stream'
+import { pipeline, PassThrough } from 'stream'
 
 import { isReadable, isDuplex } from './is'
 import { readable } from './readable'
@@ -23,6 +23,8 @@ export function readify (streams, options) {
   } else if (streams.length === 1) {
     return last(streams)
   }
+
+  streams.push(new PassThrough({ objectMode: true }))
 
   const source = last(streams)
 
