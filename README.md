@@ -150,7 +150,7 @@ singleReadableStream.pipe(createWriteStream('cat.png'))
 Concat multiple streams into a single writable stream.
 
 ```javascript
-const { readify } = require('fluido')
+const { writify } = require('fluido')
 const { createReadStream, createWriteStream } = require('fs')
 const sharp = require('sharp')
 
