@@ -1,7 +1,7 @@
 import { pipeline } from 'stream'
 
 import { finished } from './finished'
-import { isReadable, isTransform } from './is'
+import { isReadable, isDuplex } from './is'
 
 import { isFunction, last } from './internal/utils'
 
@@ -15,16 +15,16 @@ export function subscribe (...args) {
   const callback = args.pop()
 
   if (args.length <= 0) {
-    return callback(new TypeError('Expected at least one stream'))
+    return callback(new Error('Expected at least one stream'))
   }
   for (let i = 0; i < args.length; i++) {
     if (i === 0) {
       if (!isReadable(args[i])) {
-        return callback(new TypeError('The first stream must be a readable'))
+        return callback(new TypeError('Expected readable stream'))
       }
     } else {
-      if (!isTransform(args[i])) {
-        return callback(new TypeError('Expected transform stream'))
+      if (!isDuplex(args[i])) {
+        return callback(new TypeError('Expected duplex stream'))
       }
     }
   }
