@@ -43,38 +43,38 @@ Create a new transform stream. To enable concurrent mode, use `concurrency` opti
 
 #### isStream(value)
 
-Returns `true` when value is a stream instance.
+Returns `true` when `value` is a stream instance.
 
 #### isReadable(value)
 
-Returns `true` when value is a writable stream instance.
+Returns `true` when `value` is a writable stream instance.
 Keep in mind that transform and duplex streams are readable instances.
 
 #### isWritable(value)
 
-Returns `true` when value is a writable stream instance.
+Returns `true` when `value` is a writable stream instance.
 Keep in mind that transform and duplex streams are writable instances.
 
 #### isDuplex(value)
 
-Returns `true` when value is a duplex stream instance.
+Returns `true` when `value` is a duplex stream instance.
 Keep in mind that a transform stream is a duplex instance.
 
 #### isTransform(value)
 
-Returns `true` when value is a transform stream instance.
+Returns `true` when `value` is a transform stream instance.
 
 #### isReadableStrictly(value)
 
-Returns `true` when value is **strictly** a readable stream instance.
+Returns `true` when `value` is **strictly** a readable stream instance.
 
 #### isWritableStrictly(value)
 
-Returns `true` when value is **strictly** a writable stream instance.
+Returns `true` when `value` is **strictly** a writable stream instance.
 
 #### isDuplexStrictly(value)
 
-Returns `true` when value is **strictly** a duplex stream instance.
+Returns `true` when `value` is **strictly** a duplex stream instance.
 
 #### finished(...streams, callback)
 
