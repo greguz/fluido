@@ -1,8 +1,5 @@
 import { Duplex } from 'stream'
-
 import { finished } from './finished'
-import { isReadableStrictly, isWritableStrictly } from './is'
-
 import { read as vRead, write as vWrite } from './internal/void'
 
 function bothFinished (readable, writable, callback) {
@@ -20,13 +17,6 @@ function bothFinished (readable, writable, callback) {
 }
 
 export function duplexify (readable, writable, options) {
-  if (readable && !isReadableStrictly(readable)) {
-    throw new TypeError('First argument must be a readable stream')
-  }
-  if (writable && !isWritableStrictly(writable)) {
-    throw new TypeError('Second argument must be a writable stream')
-  }
-
   function read () {
     if (readable.readableFlowing === null) {
       readable.on('data', data => {

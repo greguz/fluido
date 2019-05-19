@@ -1,5 +1,4 @@
 import { finished } from './finished'
-
 import { compose, isFunction, last } from './internal/utils'
 
 function toDestroyer (stream) {

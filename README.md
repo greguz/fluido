@@ -1,6 +1,6 @@
 # fluido
 
-[![npm version](https://badge.fury.io/js/fluido.svg)](https://badge.fury.io/js/fluido) [![Dependencies Status](https://david-dm.org/greguz/fluido.svg)](https://david-dm.org/greguz/fluido.svg) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Build Status](https://travis-ci.com/greguz/fluido.svg?branch=master)](https://travis-ci.com/greguz/fluido) [![npm version](https://badge.fury.io/js/fluido.svg)](https://badge.fury.io/js/fluido) [![Dependencies Status](https://david-dm.org/greguz/fluido.svg)](https://david-dm.org/greguz/fluido.svg) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 It means _fluid_ in Italian, and yes, this is **yet another streaming lib**.
 
@@ -17,29 +17,29 @@ _hacky_ code and dependencies.
 
 ## Features
 
-- The **backpressure** mechanism is respected by all functions
+- The [backpressure mechanism](https://nodejs.org/en/docs/guides/backpressuring-in-streams/) is respected by all functions
 - Full TypeScript support
 - Prevent `new` keyword usage
-- No stream class method override
+- No stream class method override (reads *no hacks*)
 - Node.js >= 10
 
 ## API
 
 #### readable(options)
 
-Create a new readable stream.
+Creates a new readable stream.
 
 #### writable(options)
 
-Create a new writable stream. To enable concurrent mode, use `concurrency` option.
+Creates a new writable stream. To enable concurrent mode, use `concurrency` option.
 
 #### duplex(options)
 
-Create a new duplex stream.
+Creates a new duplex stream.
 
 #### transform(options)
 
-Create a new transform stream. To enable concurrent mode, use `concurrency` option.
+Creates a new transform stream. To enable concurrent mode, use `concurrency` option.
 
 #### isStream(value)
 
@@ -48,17 +48,17 @@ Returns `true` when `value` is a stream instance.
 #### isReadable(value)
 
 Returns `true` when `value` is a writable stream instance.
-Keep in mind that transform and duplex streams are readable instances.
+Keep in mind that transform and duplex streams are also readable instances.
 
 #### isWritable(value)
 
 Returns `true` when `value` is a writable stream instance.
-Keep in mind that transform and duplex streams are writable instances.
+Keep in mind that transform and duplex streams are also writable instances.
 
 #### isDuplex(value)
 
 Returns `true` when `value` is a duplex stream instance.
-Keep in mind that a transform stream is a duplex instance.
+Keep in mind that a transform stream is also a duplex instance.
 
 #### isTransform(value)
 
@@ -79,19 +79,42 @@ Returns `true` when `value` is **strictly** a duplex stream instance.
 #### finished(...streams, callback)
 
 Fire callback when the stream closes.
-If callback is `undefined` returns a promise.
+If callback is `undefined`, returns a promise.
 
 #### handle(...streams, callback)
 
 Watch all streams, if any stream will emit an error, destroy the others.
 When all streams have finished, callback is fired.
-If callback is `undefined` returns a promise.
+If callback is `undefined`, returns a promise.
 
 #### pump(...streams, callback)
 
 Pump a streams pipeline and handle all possible errors.
-Returs the last piped stream or if callback is `undefined`
+Returs the last piped stream or, if callback is `undefined`,
 returns a promise.
+
+```javascript
+const { pump } = require('fluido')
+const { createReadStream, createWriteStream } = require('fs')
+const sharp = require('sharp')
+
+pump(
+  // Read source image
+  createReadStream('cat.jpg'),
+  // Process image data
+  sharp().resize(200, 200).png(),
+  // Write target image
+  createWriteStream('cat.png'),
+  // Final callback
+  err => {
+    if (err) {
+      // error occurred
+    } else {
+      // all done
+    }
+  }
+)
+```
 
 #### collect(encoding)
 
@@ -101,7 +124,7 @@ Encoding may by `'buffer'` for single buffer concat, `false` for raw array outpu
 #### subscribe(...streams, callback)
 
 Pump a pipeline and fire the callback with the last value emitted by the pipeline.
-If callback is `undefined` returns a promise.
+If callback is `undefined`, returns a promise.
 
 ```javascript
 const { collect, subscribe } = require('fluido')
@@ -111,11 +134,11 @@ const sharp = require('sharp')
 subscribe(
   // Read the source image
   createReadStream('cat.jpg'),
-  // Resize the image and output a png file
+  // Process image data
   sharp().resize(200, 200).png(),
   // Collect all chunks into a single buffer
   collect('buffer'),
-  // Final callback (optional, if not provided a promise is returned)
+  // Final callback
   (err, buffer) => {
     if (err) {
       // handle error
@@ -136,9 +159,9 @@ const { createReadStream, createWriteStream } = require('fs')
 const sharp = require('sharp')
 
 const singleReadableStream = readify([
-  // Read the source image
+  // Read source image
   createReadStream('cat.jpg'),
-  // Resize the image and output a png file
+  // Process image data
   sharp().resize(200, 200).png()
 ])
 
@@ -155,9 +178,9 @@ const { createReadStream, createWriteStream } = require('fs')
 const sharp = require('sharp')
 
 const singleWritableStream = writify([
-  // Resize the image and output a png file
+  // Process image data
   sharp().resize(200, 200).png(),
-  // Write to target file
+  // Write target image
   createWriteStream('cat.png')
 ])
 
@@ -167,7 +190,7 @@ createReadStream('cat.jpg').pipe(singleWritableStream)
 #### duplexify(readable, writable, options)
 
 Join a readable and a writable stream into a single duplex stream.
-Both are optional.
+All arguments are optional.
 
 #### mergeReadables(sources, options)
 
@@ -191,4 +214,16 @@ animals
 
 #### mergeWritables(targets, options)
 
-WIP
+Merge multiple writable streams into a single writable stream.
+
+```javascript
+const { mergeWritables } = require('fluido')
+const { createReadStream, createWriteStream } = require('fs')
+
+const singleWritableStream = mergeWritables([
+  createWriteStream('/home/mom/images/cat.jpg'),
+  createWriteStream('/home/grandma/images/cat.jpg')
+])
+
+createReadStream('cat.jpg').pipe(singleWritableStream)
+```

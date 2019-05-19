@@ -1,5 +1,4 @@
 import { Writable } from 'stream'
-
 import { concurrent } from './internal/concurrentWritable'
 import { write } from './internal/void'
 
