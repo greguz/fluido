@@ -52,7 +52,7 @@ export function mergeWritables (targets, options) {
     cbFinal = callback
 
     for (const target of targets) {
-      target.write(null)
+      target.end()
     }
   }
 
