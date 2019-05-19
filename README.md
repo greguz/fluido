@@ -221,7 +221,7 @@ const { mergeWritables } = require('fluido')
 const { createReadStream, createWriteStream } = require('fs')
 
 const singleWritableStream = mergeWritables([
-  createWriteStream('/home/mom/images/cat.jpg')
+  createWriteStream('/home/mom/images/cat.jpg'),
   createWriteStream('/home/grandma/images/cat.jpg')
 ])
 
