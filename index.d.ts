@@ -124,3 +124,8 @@ export declare function mergeReadables(
   sources: Readable[],
   options?: ReadableOptions
 ): Readable
+
+export declare function mergeWritables(
+  targets: Writable[],
+  options?: WritableMethods
+): Writable
