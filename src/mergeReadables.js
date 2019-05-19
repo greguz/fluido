@@ -1,5 +1,4 @@
 import { Readable } from 'stream'
-
 import { handle } from './handle'
 
 export function mergeReadables (sources, options) {

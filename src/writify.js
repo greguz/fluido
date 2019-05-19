@@ -1,23 +1,8 @@
 import { pipeline } from 'stream'
-
-import { isWritable, isDuplex } from './is'
 import { writable } from './writable'
-
 import { first } from './internal/utils'
 
 export function writify (streams, options) {
-  for (let i = 0; i < streams.length; i++) {
-    if (i === streams.length - 1) {
-      if (!isWritable(streams[i])) {
-        throw new TypeError('Expected writable stream')
-      }
-    } else {
-      if (!isDuplex(streams[i])) {
-        throw new TypeError('Expected duplex streams')
-      }
-    }
-  }
-
   if (streams.length <= 0) {
     return writable(options)
   } else if (streams.length === 1) {

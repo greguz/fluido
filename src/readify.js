@@ -1,23 +1,8 @@
 import { pipeline, PassThrough } from 'stream'
-
-import { isReadable, isDuplex } from './is'
 import { readable } from './readable'
-
 import { last } from './internal/utils'
 
 export function readify (streams, options) {
-  for (let i = 0; i < streams.length; i++) {
-    if (i === 0) {
-      if (!isReadable(streams[i])) {
-        throw new TypeError('Expected readable stream')
-      }
-    } else {
-      if (!isDuplex(streams[i])) {
-        throw new TypeError('Expected duplex stream')
-      }
-    }
-  }
-
   if (streams.length <= 0) {
     return readable(options)
   } else if (streams.length === 1) {

@@ -1,5 +1,4 @@
 import { Transform } from 'stream'
-
 import { concurrent } from './internal/concurrentTransform'
 import { transform as vTransform } from './internal/void'
 

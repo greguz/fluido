@@ -1,5 +1,4 @@
 import { Writable } from 'stream'
-
 import { handle } from './handle'
 
 export function mergeWritables (targets, options) {

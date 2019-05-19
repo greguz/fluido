@@ -1,7 +1,4 @@
 import { finished as eos } from 'stream'
-
-import { isStream } from './is'
-
 import { isFunction, last } from './internal/utils'
 
 export function finished (...args) {
@@ -12,12 +9,6 @@ export function finished (...args) {
   }
 
   const callback = args.pop()
-
-  for (const stream of args) {
-    if (!isStream(stream)) {
-      return callback(new TypeError('Expected a stream'))
-    }
-  }
 
   if (args.length <= 0) {
     return process.nextTick(callback)

@@ -1,8 +1,5 @@
 import { pipeline } from 'stream'
-
 import { finished } from './finished'
-import { isReadable, isDuplex } from './is'
-
 import { isFunction, last } from './internal/utils'
 
 export function subscribe (...args) {
@@ -16,17 +13,6 @@ export function subscribe (...args) {
 
   if (args.length <= 0) {
     return callback(new Error('Expected at least one stream'))
-  }
-  for (let i = 0; i < args.length; i++) {
-    if (i === 0) {
-      if (!isReadable(args[i])) {
-        return callback(new TypeError('Expected readable stream'))
-      }
-    } else {
-      if (!isDuplex(args[i])) {
-        return callback(new TypeError('Expected duplex stream'))
-      }
-    }
   }
 
   let value
