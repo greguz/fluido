@@ -4,5 +4,5 @@ export default {
     file: 'index.js',
     format: 'cjs'
   },
-  external: ['stream']
+  external: ['events', 'stream']
 }
