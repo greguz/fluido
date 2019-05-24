@@ -192,3 +192,44 @@ const singleWritableStream = mergeWritables([
 
 createReadStream('cat.jpg').pipe(singleWritableStream)
 ```
+
+#### isStream(value)
+
+Returns `true` when `value` is a stream instance.
+
+#### isReadable(value)
+
+Returns `true` when `value` is a writable stream instance.
+Keep in mind that transform and duplex streams are also readable instances.
+
+#### isWritable(value)
+
+Returns `true` when `value` is a writable stream instance.
+Keep in mind that transform and duplex streams are also writable instances.
+
+#### isDuplex(value)
+
+Returns `true` when `value` is a duplex stream instance.
+Keep in mind that a transform stream is also a duplex instance.
+
+#### isTransform(value)
+
+Returns `true` when `value` is a transform stream instance.
+
+#### isReadableStrictly(value)
+
+Returns `true` when `value` is **strictly** a readable stream instance.
+
+#### isWritableStrictly(value)
+
+Returns `true` when `value` is **strictly** a writable stream instance.
+
+#### isDuplexStrictly(value)
+
+Returns `true` when `value` is **strictly** a duplex stream instance.
+
+## Caveats
+
+Because of the incredible amount of ways you can use to create a stream,
+functions like `isStream` and similar may not work correctly with some *npm* libs. An example of that is `JSONStream`. If you fire `isDuplex`
+with an instance of `JSONStream`, you get a `false` as result.
