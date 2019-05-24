@@ -108,8 +108,8 @@ export declare function duplexify(
   options?: DuplexOptions
 ): Duplex
 
-export declare function pump(...args: Stream[]): Promise<any>
-export declare function pump(...args: Array<Stream | Callback>): void
+export declare function pump(...args: Stream[]): Promise<void>
+export declare function pump(...args: Array<Stream | Callback>): Stream
 
 export declare function mergeReadables(
   sources: Readable[],
