@@ -1,30 +1,36 @@
 import { Transform } from 'stream'
 
-function toString (chunks, encoding) {
+function toString (chunks, encoding, callback) {
   const decoder = new TextDecoder(encoding)
   let result = ''
+
   for (const chunk of chunks) {
     if (Buffer.isBuffer(chunk)) {
       result += chunk.toString(encoding)
     } else if (chunk instanceof Uint8Array) {
       result += decoder.decode(chunk)
     } else {
-      throw new Error('Chunk must be buffer, string or Uint8Array')
+      callback(new Error('Chunk must be buffer, string or Uint8Array'))
+      return
     }
   }
-  return result
+
+  callback(null, result)
 }
 
-function toBuffer (chunks) {
+function toBuffer (chunks, callback) {
   let result = Buffer.from([])
+
   for (const chunk of chunks) {
     if (Buffer.isBuffer(chunk) || chunk instanceof Uint8Array) {
       result = Buffer.concat([result, chunk])
     } else {
-      throw new Error('Chunk must be buffer, string or Uint8Array')
+      callback(new Error('Chunk must be buffer, string or Uint8Array'))
+      return
     }
   }
-  return result
+
+  callback(null, result)
 }
 
 export function collect (encoding) {
@@ -45,22 +51,15 @@ export function collect (encoding) {
         }
       }
 
-      let err
-      let data
-      try {
-        if (encoding === 'buffer') {
-          data = toBuffer(chunks)
-        } else if (typeof encoding === 'string') {
-          data = toString(chunks, encoding)
-        } else {
-          data = chunks
-        }
-      } catch (e) {
-        err = e
+      if (encoding === 'buffer') {
+        toBuffer(chunks, callback)
+      } else if (typeof encoding === 'string') {
+        toString(chunks, encoding, callback)
+      } else {
+        callback(null, chunks)
       }
 
       chunks = []
-      callback(err, data)
     },
     destroy (err, callback) {
       chunks = []
