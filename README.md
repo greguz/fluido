@@ -227,3 +227,10 @@ Returns `true` when `value` is **strictly** a writable stream instance.
 #### isDuplexStrictly(value)
 
 Returns `true` when `value` is **strictly** a duplex stream instance.
+
+## Caveats
+
+Because of the incredible amount of ways you can use to create a stream,
+functions like `isStream` and similar may not work correctly with some libs.
+An example of that is `JSONStream`. If you fire `isDuplex`
+with an instance of `JSONStream`, you get a `false` as result.

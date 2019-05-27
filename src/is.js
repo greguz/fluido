@@ -1,19 +1,19 @@
-import { EventEmitter } from 'events'
+import { Readable, Writable, Duplex, Transform } from 'stream'
 
 export function isReadable (value) {
-  return value instanceof EventEmitter && typeof value.pause === 'function'
+  return value instanceof Readable
 }
 
 export function isWritable (value) {
-  return value instanceof EventEmitter && typeof value.write === 'function'
+  return value instanceof Writable
 }
 
 export function isDuplex (value) {
-  return isReadable(value) && isWritable(value)
+  return value instanceof Duplex
 }
 
 export function isTransform (value) {
-  return isDuplex(value) && !!value._transformState
+  return value instanceof Transform
 }
 
 export function isStream (value) {
