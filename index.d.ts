@@ -9,6 +9,7 @@ export declare type Transform = Transform
 
 export declare type Callback = (err?: any) => any
 
+export declare type ReadableCallback<T> = (err?: any, data?: T | null) => any
 export interface ReadableOptions {
   autoDestroy?: boolean
   encoding?: string
@@ -16,8 +17,8 @@ export interface ReadableOptions {
   objectMode?: boolean
 }
 export interface ReadableMethods<T = any> {
-  read?(size: number): any
-  destroy?(err: any, callback: Callback): any
+  read?(this: Readable, size: number, callback: ReadableCallback<T>): any
+  destroy?(this: Readable, err: any, callback: Callback): any
 }
 export declare function readable<T = any>(
   options?: ReadableOptions & ReadableMethods<T>
@@ -108,17 +109,8 @@ export declare function duplexify(
   options?: DuplexOptions
 ): Duplex
 
-export declare function isReadable(value: any): value is Readable
-export declare function isWritable(value: any): value is Writable
-export declare function isDuplex(value: any): value is Duplex
-export declare function isTransform(value: any): value is Transform
-export declare function isStream(value: any): value is Stream
-export declare function isReadableStrictly(value: any): value is Readable
-export declare function isWritableStrictly(value: any): value is Writable
-export declare function isDuplexStrictly(value: any): value is Duplex
-
-export declare function pump(...args: Stream[]): Promise<any>
-export declare function pump(...args: Array<Stream | Callback>): void
+export declare function pump(...args: Stream[]): Promise<void>
+export declare function pump(...args: Array<Stream | Callback>): Stream
 
 export declare function mergeReadables(
   sources: Readable[],
@@ -129,3 +121,12 @@ export declare function mergeWritables(
   targets: Writable[],
   options?: WritableMethods
 ): Writable
+
+export declare function isReadable(value: any): value is Readable
+export declare function isWritable(value: any): value is Writable
+export declare function isDuplex(value: any): value is Duplex
+export declare function isTransform(value: any): value is Transform
+export declare function isStream(value: any): value is Stream
+export declare function isReadableStrictly(value: any): value is Readable
+export declare function isWritableStrictly(value: any): value is Writable
+export declare function isDuplexStrictly(value: any): value is Duplex

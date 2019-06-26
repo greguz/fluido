@@ -27,7 +27,32 @@ _hacky_ code and dependencies.
 
 #### readable(options)
 
-Creates a new readable stream.
+Create readable stream.
+All [core options](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) are supported.
+
+It is possible to use an **optional** callback inside the *read* method.
+First argument is the error, the second argument is the stream chunk.
+Both are optional.
+
+```javascript
+const { readable } = require('fluido')
+
+const stream = readable({
+  objectMode: true,
+  read(size, callback) {
+    let index = 0
+    const timer = setInterval(() => {
+      this.push(index++)
+    }, 1000)
+
+    setTimeout(() => {
+      clearInterval(timer)
+      // null to end the stream
+      callback(null, null)
+    }, 5000)
+  }
+})
+```
 
 #### writable(options)
 
@@ -40,41 +65,6 @@ Creates a new duplex stream.
 #### transform(options)
 
 Creates a new transform stream. To enable concurrent mode, use `concurrency` option.
-
-#### isStream(value)
-
-Returns `true` when `value` is a stream instance.
-
-#### isReadable(value)
-
-Returns `true` when `value` is a writable stream instance.
-Keep in mind that transform and duplex streams are also readable instances.
-
-#### isWritable(value)
-
-Returns `true` when `value` is a writable stream instance.
-Keep in mind that transform and duplex streams are also writable instances.
-
-#### isDuplex(value)
-
-Returns `true` when `value` is a duplex stream instance.
-Keep in mind that a transform stream is also a duplex instance.
-
-#### isTransform(value)
-
-Returns `true` when `value` is a transform stream instance.
-
-#### isReadableStrictly(value)
-
-Returns `true` when `value` is **strictly** a readable stream instance.
-
-#### isWritableStrictly(value)
-
-Returns `true` when `value` is **strictly** a writable stream instance.
-
-#### isDuplexStrictly(value)
-
-Returns `true` when `value` is **strictly** a duplex stream instance.
 
 #### finished(...streams, callback)
 
@@ -227,3 +217,45 @@ const singleWritableStream = mergeWritables([
 
 createReadStream('cat.jpg').pipe(singleWritableStream)
 ```
+
+#### isStream(value)
+
+Returns `true` when `value` is a stream instance.
+
+#### isReadable(value)
+
+Returns `true` when `value` is a writable stream instance.
+Keep in mind that transform and duplex streams are also readable instances.
+
+#### isWritable(value)
+
+Returns `true` when `value` is a writable stream instance.
+Keep in mind that transform and duplex streams are also writable instances.
+
+#### isDuplex(value)
+
+Returns `true` when `value` is a duplex stream instance.
+Keep in mind that a transform stream is also a duplex instance.
+
+#### isTransform(value)
+
+Returns `true` when `value` is a transform stream instance.
+
+#### isReadableStrictly(value)
+
+Returns `true` when `value` is **strictly** a readable stream instance.
+
+#### isWritableStrictly(value)
+
+Returns `true` when `value` is **strictly** a writable stream instance.
+
+#### isDuplexStrictly(value)
+
+Returns `true` when `value` is **strictly** a duplex stream instance.
+
+## Caveats
+
+Because of the incredible amount of ways you can use to create a stream,
+functions like `isStream` and similar may not work correctly with some libs.
+An example of that is `JSONStream`. If you fire `isDuplex`
+with an instance of `JSONStream`, you get a `false` as result.

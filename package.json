@@ -41,11 +41,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/greguz/fluido.git"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm run test"
-    }
   }
 }
