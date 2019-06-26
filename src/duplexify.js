@@ -1,6 +1,6 @@
 import { Duplex } from 'stream'
 import { finished } from './finished'
-import { read as vRead, write as vWrite } from './internal/void'
+import { voidRead, voidWrite } from './internal/void'
 
 function bothFinished (readable, writable, callback) {
   if (!readable && !writable) {
@@ -57,8 +57,8 @@ export function duplexify (readable, writable, options) {
 
   return new Duplex({
     ...options,
-    read: readable ? read : vRead,
-    write: writable ? write : vWrite,
+    read: readable ? read : voidRead,
+    write: writable ? write : voidWrite,
     writev: undefined,
     final: writable ? final : undefined,
     destroy

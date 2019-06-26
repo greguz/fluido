@@ -1,6 +1,9 @@
 import { Readable } from 'stream'
-import { read } from './internal/void'
+import { voidRead } from './internal/void'
 
 export function readable (options) {
-  return new Readable({ read, ...options })
+  return new Readable({
+    read: voidRead,
+    ...options
+  })
 }
