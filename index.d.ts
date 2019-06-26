@@ -16,8 +16,8 @@ export interface ReadableOptions {
   objectMode?: boolean
 }
 export interface ReadableMethods<T = any> {
-  read?(size: number): any
-  destroy?(err: any, callback: Callback): any
+  read?(this: Readable, size: number): any
+  destroy?(this: Readable, err: any, callback: Callback): any
 }
 export declare function readable<T = any>(
   options?: ReadableOptions & ReadableMethods<T>
