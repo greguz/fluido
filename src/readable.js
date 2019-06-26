@@ -36,6 +36,6 @@ export function readable (options = {}) {
 
   return new Readable({
     ...options,
-    read: read.length ? wrap(read) : read
+    read: read.length >= 2 ? wrap(read) : read
   })
 }
