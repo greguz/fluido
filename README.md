@@ -27,7 +27,32 @@ _hacky_ code and dependencies.
 
 #### readable(options)
 
-Creates a new readable stream.
+Create readable stream.
+All [core options](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) are supported.
+
+It is possible to use an **optional** callback inside the *read* method.
+First argument is the error, the second argument is the stream chunk.
+Both are optional.
+
+```javascript
+const { readable } = require('fluido')
+
+const stream = readable({
+  objectMode: true,
+  read(size, callback) {
+    let index = 0
+    const timer = setInterval(() => {
+      this.push(index++)
+    }, 1000)
+
+    setTimeout(() => {
+      clearInterval(timer)
+      // null to end the stream
+      callback(null, null)
+    }, 5000)
+  }
+})
+```
 
 #### writable(options)
 

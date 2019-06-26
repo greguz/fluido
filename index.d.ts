@@ -9,6 +9,7 @@ export declare type Transform = Transform
 
 export declare type Callback = (err?: any) => any
 
+export declare type ReadableCallback<T> = (err?: any, data?: T | null) => any
 export interface ReadableOptions {
   autoDestroy?: boolean
   encoding?: string
@@ -16,7 +17,7 @@ export interface ReadableOptions {
   objectMode?: boolean
 }
 export interface ReadableMethods<T = any> {
-  read?(this: Readable, size: number): any
+  read?(this: Readable, size: number, callback: ReadableCallback<T>): any
   destroy?(this: Readable, err: any, callback: Callback): any
 }
 export declare function readable<T = any>(
