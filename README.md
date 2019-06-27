@@ -30,7 +30,9 @@ _hacky_ code and dependencies.
 Create *readable* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) are supported.
 
-It is possible to use an **optional** callback inside the *read* method.
+##### callback mode
+
+It is possible to use an _optional callback_ inside the `read` method.
 First argument is the error, the second argument is the stream chunk.
 Both are optional.
 
@@ -57,22 +59,39 @@ const stream = readable({
 Create *writable* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_constructor_new_stream_writable_options) are supported.
 
-To enable concurrent mode, use `concurrency` option.
+##### concurrent mode
+
+To make the *write* method concurrent, you can specify the `concurrency` option.
+By default, all chunks are processed sequantially and synchronously.
+You can make this process **async** with this option.
+
+```javascript
+const { transform } = require('fluido')
+
+const stream = transform({
+  objectMode: true,
+  concurrency: 10, // Fire transform function max 10 times at the same time
+  transform (chunk, encoding, callback) {
+    db.collection("cats").findOne({ name: chunk }, callback)
+  }
+})
+```
+
+**WARNING**: chunks order is not preserved
 
 #### duplex(options)
 
 Create *duplex* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_new_stream_duplex_options) are supported.
 
-The callback inside the *read* method is still available here.
-To enable concurrent mode, use `concurrency` option.
+Both [callback mode](#callback-mode) and [concurrent mode](#concurrent-mode) are supported.
 
 #### transform(options)
 
 Create *transform* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_new_stream_transform_options) are supported.
 
-To enable concurrent mode, use `concurrency` option.
+The [concurrent mode](#concurrent-mode) is supported.
 
 #### finished(...streams, callback)
 
