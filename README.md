@@ -66,13 +66,14 @@ By default, all chunks are processed sequantially and synchronously.
 You can make this process **async** with this option.
 
 ```javascript
-const { transform } = require('fluido')
+const { writable } = require('fluido')
 
-const stream = transform({
+const stream = writable({
   objectMode: true,
-  concurrency: 10, // Fire transform function max 10 times at the same time
-  transform (chunk, encoding, callback) {
-    db.collection("cats").findOne({ name: chunk }, callback)
+  concurrency: 10, // Fire write function max 10 times at the same time
+  write (chunk, encoding, callback) {
+    // Do something async with chunk
+    something(chunk, callback)
   }
 })
 ```
@@ -91,7 +92,7 @@ Both [callback mode](#callback-mode) and [concurrent mode](#concurrent-mode) are
 Create *transform* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_new_stream_transform_options) are supported.
 
-The [concurrent mode](#concurrent-mode) is supported.
+The `transform` function supports [concurrent mode](#concurrent-mode).
 
 #### finished(...streams, callback)
 
