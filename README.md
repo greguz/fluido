@@ -124,8 +124,7 @@ Same as [finished](#finished(...streams,-callback)), plus the streams are automa
 #### pump(...streams, callback)
 
 Pump a streams pipeline and handle all possible errors.
-Returs the last piped stream or, if callback is `undefined`,
-returns a promise.
+If callback is `undefined`, returns a promise.
 
 ```javascript
 const { pump } = require('fluido')
