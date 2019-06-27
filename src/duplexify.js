@@ -2,20 +2,6 @@ import { Duplex } from 'stream'
 import { finished } from './finished'
 import { voidRead, voidWrite } from './internal/void'
 
-function bothFinished (readable, writable, callback) {
-  if (!readable && !writable) {
-    process.nextTick(callback)
-  } else if (!readable || !writable) {
-    finished(readable || writable, callback)
-  } else {
-    finished(readable, rerr => {
-      finished(writable, werr => {
-        callback(rerr || werr)
-      })
-    })
-  }
-}
-
 export function duplexify (readable, writable, options) {
   function read () {
     if (readable.readableFlowing === null) {
@@ -46,7 +32,6 @@ export function duplexify (readable, writable, options) {
   }
 
   function destroy (err, callback) {
-    bothFinished(readable, writable, callback)
     if (readable) {
       readable.destroy(err)
     }
