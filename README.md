@@ -65,6 +65,7 @@ Create *duplex* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_new_stream_duplex_options) are supported.
 
 The callback inside the *read* method is still available here.
+To enable concurrent mode, use `concurrency` option.
 
 #### transform(options)
 
