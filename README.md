@@ -78,8 +78,6 @@ const stream = writable({
 })
 ```
 
-**WARNING**: chunks order is not preserved
-
 #### duplex(options)
 
 Create *duplex* stream.
