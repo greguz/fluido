@@ -25,5 +25,5 @@ export function pump (...args) {
   }
 
   // Pump data
-  return pipeline(...args)
+  pipeline(...args)
 }

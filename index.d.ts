@@ -110,7 +110,7 @@ export declare function duplexify(
 ): Duplex
 
 export declare function pump(...args: Stream[]): Promise<void>
-export declare function pump(...args: Array<Stream | Callback>): Stream
+export declare function pump(...args: Array<Stream | Callback>): void
 
 export declare function mergeReadables(
   sources: Readable[],
