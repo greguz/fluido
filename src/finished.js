@@ -1,6 +1,13 @@
 import { finished as eos } from 'stream'
 import { isFunction, last } from './internal/utils'
 
+function register (stream, callback) {
+  const ticket = eos(stream, err => {
+    ticket()
+    callback(err)
+  })
+}
+
 export function finished (...args) {
   if (!isFunction(last(args))) {
     return new Promise((resolve, reject) =>
@@ -11,17 +18,15 @@ export function finished (...args) {
   const callback = args.pop()
 
   if (args.length <= 0) {
-    return process.nextTick(callback)
-  } else if (args.length === 1) {
-    return eos(args[0], callback)
+    process.nextTick(callback, null)
+    return
   }
 
   let ended = 0
   let error = null
-
-  const end = serr => {
+  const end = err => {
     ended++
-    error = error || serr
+    error = error || err
 
     if (ended >= args.length) {
       callback(error)
@@ -29,6 +34,6 @@ export function finished (...args) {
   }
 
   for (const stream of args) {
-    eos(stream, end)
+    register(stream, end)
   }
 }
