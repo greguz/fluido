@@ -5,13 +5,16 @@ import { voidRead, voidWrite } from './internal/void'
 export function duplexify (readable, writable, options) {
   function read () {
     if (readable.readableFlowing === null) {
-      readable.on('data', data => {
+      const listener = data => {
         if (!this.push(data)) {
           readable.pause()
         }
-      })
+      }
+      readable.on('data', listener)
 
       finished(readable, err => {
+        readable.off('data', listener)
+
         if (err) {
           this.emit('error', err)
         } else {
@@ -38,6 +41,7 @@ export function duplexify (readable, writable, options) {
     if (writable) {
       writable.destroy(err)
     }
+    callback(err)
   }
 
   return new Duplex({
