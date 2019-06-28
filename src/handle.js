@@ -2,15 +2,13 @@ import { finished } from './finished'
 import { compose, isFunction, last } from './internal/utils'
 
 function toDestroyer (stream) {
-  let closed = false
   let destroyed = false
 
-  finished(stream, () => (closed = true))
-
   return function destroyer (err) {
-    if (closed || destroyed) return
-    destroyed = true
-    stream.destroy(err)
+    if (!stream.__closed__ && !destroyed) {
+      destroyed = true
+      stream.destroy(err)
+    }
   }
 }
 
@@ -27,17 +25,17 @@ export function handle (...args) {
     return process.nextTick(callback)
   }
 
-  const destroyer = args.map(toDestroyer).reduce(compose)
+  const destroy = args.map(toDestroyer).reduce(compose)
 
   let ended = 0
   let error = null
 
-  const end = serr => {
+  const end = err => {
     ended++
-    error = error || serr
+    error = error || err
 
     if (error) {
-      destroyer(error)
+      destroy(error)
     }
 
     if (ended >= args.length) {
@@ -46,6 +44,9 @@ export function handle (...args) {
   }
 
   for (const stream of args) {
-    finished(stream, end)
+    finished(stream, err => {
+      stream.__closed__ = true
+      end(err)
+    })
   }
 }
