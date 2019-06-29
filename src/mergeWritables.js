@@ -4,14 +4,13 @@ import { handle } from './handle'
 export function mergeWritables (targets, options) {
   let cbWrite
   let cbFinal
-  let cbDestroy
 
   let waiting
 
   function write (chunk, encoding, callback) {
     if (waiting === undefined) {
       handle(...targets, err => {
-        const callback = cbDestroy || cbFinal || cbWrite
+        const callback = cbFinal || cbWrite
 
         if (callback) {
           callback(err)
@@ -57,11 +56,10 @@ export function mergeWritables (targets, options) {
   }
 
   function destroy (err, callback) {
-    cbDestroy = callback
-
     for (const target of targets) {
-      target.write(err)
+      target.destroy(err)
     }
+    callback(err)
   }
 
   return new Writable({

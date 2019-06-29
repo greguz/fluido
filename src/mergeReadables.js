@@ -2,7 +2,6 @@ import { Readable } from 'stream'
 import { handle } from './handle'
 
 export function mergeReadables (sources, options) {
-  let cbDestroy
   let listener
 
   return new Readable({
@@ -22,9 +21,7 @@ export function mergeReadables (sources, options) {
             source.off('data', listener)
           }
 
-          if (cbDestroy) {
-            cbDestroy(err)
-          } else if (err) {
+          if (err) {
             this.emit('error', err)
           } else {
             this.push(null)
@@ -41,10 +38,10 @@ export function mergeReadables (sources, options) {
       }
     },
     destroy (err, callback) {
-      cbDestroy = callback
       for (const source of sources) {
         source.destroy(err)
       }
+      callback(err)
     }
   })
 }
