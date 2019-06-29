@@ -105,10 +105,11 @@ const source = createReadStream('/home/mom/images/cat.jpg')
 const target = createWriteStream('/home/grandma/images/cat.jpg')
 
 finished(source, target, err => {
+  // All streams are closed now
   if (err) {
     // Handle error
   } else {
-    // All streams are closed
+    // All done
   }
 })
 
@@ -260,44 +261,26 @@ const singleWritableStream = mergeWritables([
 createReadStream('cat.jpg').pipe(singleWritableStream)
 ```
 
-#### isStream(value)
-
-Returns `true` when `value` is a stream instance.
-
 #### isReadable(value)
 
-Returns `true` when `value` is a writable stream instance.
-Keep in mind that transform and duplex streams are also readable instances.
+Returns `true` when `value` is a readable stream instance.
 
 #### isWritable(value)
 
 Returns `true` when `value` is a writable stream instance.
-Keep in mind that transform and duplex streams are also writable instances.
+
+#### isStream(value)
+
+Returns `true` when `value` is readable **or** writable.
 
 #### isDuplex(value)
 
-Returns `true` when `value` is a duplex stream instance.
-Keep in mind that a transform stream is also a duplex instance.
-
-#### isTransform(value)
-
-Returns `true` when `value` is a transform stream instance.
+Returns `true` when `value` is both readable **and** writable.
 
 #### isReadableStrictly(value)
 
-Returns `true` when `value` is **strictly** a readable stream instance.
+Returns `true` when `value` is readable **and not** writable.
 
 #### isWritableStrictly(value)
 
-Returns `true` when `value` is **strictly** a writable stream instance.
-
-#### isDuplexStrictly(value)
-
-Returns `true` when `value` is **strictly** a duplex stream instance.
-
-## Caveats
-
-Because of the incredible amount of ways you can use to create a stream,
-functions like `isStream` and similar may not work correctly with some libs.
-An example of that is `JSONStream`. If you fire `isDuplex`
-with an instance of `JSONStream`, you get a `false` as result.
+Returns `true` when `value` is writable **and not** readable.

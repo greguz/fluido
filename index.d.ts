@@ -124,9 +124,7 @@ export declare function mergeWritables(
 
 export declare function isReadable(value: any): value is Readable
 export declare function isWritable(value: any): value is Writable
-export declare function isDuplex(value: any): value is Duplex
-export declare function isTransform(value: any): value is Transform
 export declare function isStream(value: any): value is Stream
+export declare function isDuplex(value: any): value is Duplex
 export declare function isReadableStrictly(value: any): value is Readable
 export declare function isWritableStrictly(value: any): value is Writable
-export declare function isDuplexStrictly(value: any): value is Duplex
