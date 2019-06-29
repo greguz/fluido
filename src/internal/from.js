@@ -15,10 +15,11 @@ export default function from (read) {
 
       reading = false
 
-      const flowing = this.push(data)
       const ended = data === null || this._readableState.ended === true
-      if (!ended && flowing) {
-        this._read(size)
+      if (!ended) {
+        if (this.push(data)) {
+          this._read(size)
+        }
       }
     })
   }
