@@ -1,9 +1,13 @@
 import { finished as eos } from 'stream'
-import { isFunction, last } from './internal/utils'
+import { isFunction, last, noop } from './internal/utils'
 
 function register (stream, callback) {
-  const ticket = eos(stream, err => {
-    ticket()
+  const clean = eos(stream, err => {
+    // Prevent future error throwing
+    stream.on('error', noop)
+    // Clean used listeners
+    clean()
+    // All done
     callback(err)
   })
 }
