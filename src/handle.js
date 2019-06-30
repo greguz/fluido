@@ -1,5 +1,12 @@
 import { finished } from './finished'
-import { compose, isFunction, last } from './internal/utils'
+import { isFunction, last } from './internal/utils'
+
+export function compose (a, b) {
+  return function (arg) {
+    a(arg)
+    b(arg)
+  }
+}
 
 function toDestroyer (stream) {
   let destroyed = false
