@@ -1,5 +1,6 @@
 import { Writable } from 'stream'
 import { handle } from './handle'
+import { destroyStream } from './internal/utils'
 
 export function mergeWritables (targets, options) {
   let cbWrite
@@ -57,7 +58,7 @@ export function mergeWritables (targets, options) {
 
   function destroy (err, callback) {
     for (const target of targets) {
-      target.destroy(err)
+      err = destroyStream(target, err)
     }
     callback(err)
   }

@@ -1,5 +1,5 @@
 import { finished } from './finished'
-import { isFunction, last } from './internal/utils'
+import { isFunction, last, destroyStream } from './internal/utils'
 
 export function compose (a, b) {
   return function (arg) {
@@ -14,7 +14,7 @@ function toDestroyer (stream) {
   return function destroyer (err) {
     if (!stream.__closed__ && !destroyed) {
       destroyed = true
-      stream.destroy(err)
+      destroyStream(stream, err)
     }
   }
 }

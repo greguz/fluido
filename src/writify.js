@@ -1,6 +1,6 @@
 import { pipeline } from 'stream'
 import { writable } from './writable'
-import { first } from './internal/utils'
+import { first, destroyStream } from './internal/utils'
 
 export function writify (streams, options) {
   if (streams.length <= 0) {
@@ -55,12 +55,7 @@ export function writify (streams, options) {
       }
     },
     destroy (err, callback) {
-      if (endReached) {
-        callback(err)
-      } else {
-        cbClose = callback
-        target.destroy(err)
-      }
+      callback(destroyStream(target, err))
     }
   })
 }

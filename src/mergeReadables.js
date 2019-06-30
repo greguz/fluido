@@ -1,5 +1,6 @@
 import { Readable } from 'stream'
 import { handle } from './handle'
+import { destroyStream } from './internal/utils'
 
 export function mergeReadables (sources, options) {
   let listener
@@ -39,7 +40,7 @@ export function mergeReadables (sources, options) {
     },
     destroy (err, callback) {
       for (const source of sources) {
-        source.destroy(err)
+        err = destroyStream(source, err)
       }
       callback(err)
     }

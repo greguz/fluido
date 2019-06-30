@@ -1,6 +1,6 @@
 import { pipeline, PassThrough } from 'stream'
 import { readable } from './readable'
-import { last } from './internal/utils'
+import { last, destroyStream } from './internal/utils'
 
 export function readify (streams, options) {
   if (streams.length <= 0) {
@@ -13,8 +13,6 @@ export function readify (streams, options) {
 
   const source = last(streams)
 
-  let cbDestroy
-
   return readable({
     ...options,
     read () {
@@ -26,29 +24,22 @@ export function readify (streams, options) {
         }
 
         pipeline(...streams, err => {
-          source.removeListener('data', listener)
+          source.off('data', listener)
 
-          if (cbDestroy) {
-            cbDestroy(err)
-          } else if (err) {
+          if (err) {
             this.emit('error', err)
           } else {
             this.push(null)
           }
         })
 
-        source.addListener('data', listener)
+        source.on('data', listener)
       } else {
         source.resume()
       }
     },
     destroy (err, callback) {
-      if (!cbDestroy) {
-        cbDestroy = callback
-        source.destroy(err)
-      } else {
-        callback(err)
-      }
+      callback(destroyStream(source, err))
     }
   })
 }
