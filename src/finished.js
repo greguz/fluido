@@ -1,15 +1,24 @@
-import { finished as eos } from 'stream'
-import { isFunction, last, noop } from './internal/utils'
+import { eos } from './eos'
+import { isFunction, last } from './internal/utils'
 
-function register (stream, callback) {
-  const clean = eos(stream, err => {
-    // Prevent future error throwing
-    stream.on('error', noop)
-    // Clean used listeners
-    clean()
-    // All done
-    callback(err)
-  })
+function readOptions (options, index) {
+  return Array.isArray(options) ? options[index] : options
+}
+
+export function _finished (streams, options, callback) {
+  let count = streams.length
+  let error
+
+  const end = err => {
+    error = error || err || null
+    if (--count < 1) {
+      callback(error)
+    }
+  }
+
+  for (let i = 0; i < streams.length; i++) {
+    eos(streams[i], readOptions(options, i), end)
+  }
 }
 
 export function finished (...args) {
@@ -18,30 +27,10 @@ export function finished (...args) {
       finished(...args, err => (err ? reject(err) : resolve()))
     )
   }
-
   const callback = args.pop()
-
   if (args.length <= 0) {
     process.nextTick(callback, null)
-    return
-  } else if (args.length === 1) {
-    register(args[0], callback)
-    return
-  }
-
-  let ended = 0
-  let error = null
-
-  const end = err => {
-    ended++
-    error = error || err
-
-    if (ended >= args.length) {
-      callback(error)
-    }
-  }
-
-  for (const stream of args) {
-    register(stream, end)
+  } else {
+    _finished(args, {}, callback)
   }
 }
