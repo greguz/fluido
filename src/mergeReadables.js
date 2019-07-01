@@ -1,6 +1,8 @@
 import { Readable } from 'stream'
+
 import { _handle } from './handle'
-import { destroyStream } from './internal/utils'
+
+import destroyStream from './internal/destroy'
 
 export function mergeReadables (sources, options) {
   let listener

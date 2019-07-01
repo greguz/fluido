@@ -1,6 +1,8 @@
 import { pipeline } from 'stream'
+
 import { writable } from './writable'
-import { destroyStream } from './internal/utils'
+
+import destroyStream from './internal/destroy'
 
 export function writify (streams, options) {
   if (streams.length <= 0) {

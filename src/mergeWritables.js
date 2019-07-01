@@ -1,6 +1,8 @@
 import { Writable } from 'stream'
+
 import { _handle } from './handle'
-import { destroyStream } from './internal/utils'
+
+import destroyStream from './internal/destroy'
 
 export function mergeWritables (targets, options) {
   // Current write/final callback

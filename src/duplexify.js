@@ -1,7 +1,7 @@
 import { Duplex } from 'stream'
 import { finished } from './finished'
 import { voidRead, voidWrite } from './internal/void'
-import { destroyStream } from './internal/utils'
+import destroyStream from './internal/destroy'
 
 export function duplexify (readable, writable, options) {
   function read () {

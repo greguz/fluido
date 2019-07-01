@@ -1,5 +1,7 @@
 import { eos } from './eos'
-import { isFunction, last, destroyStream } from './internal/utils'
+
+import destroyStream from './internal/destroy'
+import { isFunction, last } from './internal/utils'
 
 function compose (a, b) {
   return function composed (arg) {

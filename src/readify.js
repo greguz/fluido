@@ -1,6 +1,8 @@
 import { pipeline, PassThrough } from 'stream'
+
 import { readable } from './readable'
-import { destroyStream } from './internal/utils'
+
+import destroyStream from './internal/destroy'
 
 export function readify (streams, options) {
   if (streams.length <= 0) {
