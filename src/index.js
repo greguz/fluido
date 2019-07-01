@@ -1,6 +1,7 @@
 export * from './collect'
 export * from './duplex'
 export * from './duplexify'
+export * from './eos'
 export * from './finished'
 export * from './handle'
 export * from './is'

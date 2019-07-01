@@ -80,6 +80,16 @@ export declare function collect(
   encoding?: string | false | undefined
 ): Transform
 
+export interface EOSOptions {
+  error?: boolean
+  readable?: boolean
+  writable?: boolean
+}
+export declare function eos(stream: Stream): Promise<void>
+export declare function eos(stream: Stream, callback: Callback): void
+export declare function eos(stream: Stream, options: EOSOptions): Promise<void>
+export declare function eos(stream: Stream, options: EOSOptions, callback: Callback): void
+
 export declare function finished(...args: Stream[]): Promise<void>
 export declare function finished(...args: Array<Stream | Callback>): void
 
