@@ -1,17 +1,17 @@
 import { pipeline, PassThrough } from 'stream'
 import { readable } from './readable'
-import { last, destroyStream } from './internal/utils'
+import { destroyStream } from './internal/utils'
 
 export function readify (streams, options) {
   if (streams.length <= 0) {
     return readable(options)
   } else if (streams.length === 1) {
-    return last(streams)
+    return streams[0]
   }
 
-  streams.push(new PassThrough({ objectMode: true }))
+  const source = new PassThrough({ objectMode: true })
 
-  const source = last(streams)
+  streams.push(source)
 
   return readable({
     ...options,
