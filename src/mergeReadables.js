@@ -1,5 +1,5 @@
 import { Readable } from 'stream'
-import { handle } from './handle'
+import { _handle } from './handle'
 import { destroyStream } from './internal/utils'
 
 export function mergeReadables (sources, options) {
@@ -17,7 +17,7 @@ export function mergeReadables (sources, options) {
           }
         }
 
-        handle(...sources, err => {
+        _handle(sources, { writable: false }, err => {
           for (const source of sources) {
             source.off('data', listener)
           }

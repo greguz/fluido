@@ -1,56 +1,63 @@
 import { Writable } from 'stream'
-import { handle } from './handle'
+import { _handle } from './handle'
 import { destroyStream } from './internal/utils'
 
 export function mergeWritables (targets, options) {
-  let cbWrite
-  let cbFinal
+  // Current write/final callback
+  let next
 
+  // Current error
+  let error
+
+  // Targets count with backpressure on
   let waiting
 
+  // Update current error and fire next callback if necessary
+  function call (err) {
+    error = err || error
+    if (next) {
+      const callback = next
+      next = undefined
+      callback(error)
+    }
+  }
+
   function write (chunk, encoding, callback) {
+    next = callback
+
+    // Handle targets error
     if (waiting === undefined) {
-      handle(...targets, err => {
-        const callback = cbFinal || cbWrite
-
-        if (callback) {
-          callback(err)
-        } else {
-          this.emit('error', err)
-        }
-      })
-
+      _handle(targets, { readable: false }, call)
       waiting = 0
     }
 
-    cbWrite = undefined
+    // Handle error
+    if (error) {
+      call(error)
+      return
+    }
 
-    waiting = targets.reduce((acc, target) => {
+    // Handle targets backpressure
+    for (const target of targets) {
       const plugged = !target.write(chunk, encoding)
 
       if (plugged) {
+        waiting++
         target.once('drain', () => {
           waiting--
-
           if (waiting <= 0) {
-            callback()
+            call()
           }
         })
       }
-
-      return acc + (plugged ? 1 : 0)
-    }, 0)
-
+    }
     if (waiting <= 0) {
-      callback()
-    } else {
-      cbWrite = callback
+      call()
     }
   }
 
   function final (callback) {
-    cbFinal = callback
-
+    next = callback
     for (const target of targets) {
       target.end()
     }
