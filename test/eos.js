@@ -23,6 +23,7 @@ test.cb('eos writable', t => {
 
   eos(stream, t.end)
 
+  stream.write('test')
   stream.end()
 })
 
@@ -39,6 +40,8 @@ test.cb('eos duplex', t => {
   eos(stream, t.end)
 
   stream.resume()
+
+  stream.write('test')
   stream.end()
 })
 
@@ -55,6 +58,8 @@ test.cb('eos readable option', t => {
   eos(stream, { readable: false }, t.end)
 
   stream.resume()
+
+  stream.write('test')
   stream.end()
 })
 
@@ -71,5 +76,7 @@ test.cb('eos writable option', t => {
   eos(stream, { writable: false }, t.end)
 
   stream.resume()
+
+  stream.write('test')
   stream.end()
 })
