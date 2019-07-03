@@ -20,14 +20,31 @@ function toDestroyer (stream) {
   }
 }
 
-function readOptions (options, index) {
-  return Array.isArray(options) ? options[index] : options
+function readStream (data) {
+  return Array.isArray(data) ? data[0] : data
 }
 
-export function _handle (streams, options, callback) {
-  const destroy = streams.map(toDestroyer).reduce(compose)
+function readOptions (data) {
+  return Array.isArray(data) ? data[1] : {}
+}
 
-  let count = streams.length
+export function handle (...args) {
+  if (!isFunction(last(args))) {
+    return new Promise((resolve, reject) =>
+      handle(...args, err => (err ? reject(err) : resolve()))
+    )
+  }
+
+  const callback = args.pop()
+
+  if (args.length <= 0) {
+    process.nextTick(callback, null)
+    return
+  }
+
+  const destroy = args.map(readStream).map(toDestroyer).reduce(compose)
+
+  let count = args.length
   let error
 
   const end = err => {
@@ -40,25 +57,13 @@ export function _handle (streams, options, callback) {
     }
   }
 
-  for (let i = 0; i < streams.length; i++) {
-    const stream = streams[i]
-    eos(stream, readOptions(options, i), err => {
+  for (const data of args) {
+    const stream = readStream(data)
+    const options = readOptions(data)
+
+    eos(stream, options, err => {
       stream.__closed__ = true
       end(err)
     })
-  }
-}
-
-export function handle (...args) {
-  if (!isFunction(last(args))) {
-    return new Promise((resolve, reject) =>
-      handle(...args, err => (err ? reject(err) : resolve()))
-    )
-  }
-  const callback = args.pop()
-  if (args.length <= 0) {
-    process.nextTick(callback, null)
-  } else {
-    _handle(args, {}, callback)
   }
 }

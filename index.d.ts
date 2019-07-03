@@ -61,7 +61,7 @@ export declare function duplex<R = any, W = any>(
 ): Duplex
 
 export declare type TransformCallback<T = any> = (err?: any, data?: T) => any
-export type TransformOptions = ReadableOptions & WritableOptions
+export declare type TransformOptions = ReadableOptions & WritableOptions
 export interface TransformMethods<R = any, W = any> {
   transform?(
     this: Transform,
@@ -90,11 +90,14 @@ export declare function eos(stream: Stream, callback: Callback): void
 export declare function eos(stream: Stream, options: EOSOptions): Promise<void>
 export declare function eos(stream: Stream, options: EOSOptions, callback: Callback): void
 
-export declare function finished(...args: Stream[]): Promise<void>
-export declare function finished(...args: Array<Stream | Callback>): void
+export declare type ExtendedStream = [Stream, EOSOptions]
+export declare type Subject = Stream | ExtendedStream
 
-export declare function handle(...args: Stream[]): Promise<void>
-export declare function handle(...args: Array<Stream | Callback>): void
+export declare function finished(...args: Subject[]): Promise<void>
+export declare function finished(...args: Array<Subject | Callback>): void
+
+export declare function handle(...args: Subject[]): Promise<void>
+export declare function handle(...args: Array<Subject | Callback>): void
 
 export declare function subscribe(
   ...args: Array<Readable | Transform>

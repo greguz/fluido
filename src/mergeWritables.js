@@ -1,8 +1,12 @@
 import { Writable } from 'stream'
 
-import { _handle } from './handle'
+import { handle } from './handle'
 
 import destroyStream from './internal/destroy'
+
+function setStreamOptions (streams) {
+  return streams.map(stream => [stream, { readable: false, writable: true }])
+}
 
 export function mergeWritables (targets, options) {
   // Current write/final callback
@@ -29,7 +33,7 @@ export function mergeWritables (targets, options) {
 
     // Handle targets error
     if (waiting === undefined) {
-      _handle(targets, { readable: false }, call)
+      handle(...setStreamOptions(targets), call)
       waiting = 0
     }
 
