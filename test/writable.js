@@ -2,34 +2,6 @@ import test from 'ava'
 import { finished } from 'stream'
 import { writable } from '../index.js'
 
-test.cb('writable', t => {
-  let steps = 0
-
-  const stream = writable({
-    write (chunk, encoding, callback) {
-      steps++
-      callback()
-    },
-    final (callback) {
-      steps++
-      callback()
-    }
-  })
-
-  finished(stream, err => {
-    if (!err) {
-      t.is(steps, 5)
-    }
-    t.end(err)
-  })
-
-  stream.write('a')
-  stream.write('b')
-  stream.write('c')
-  stream.write('d')
-  stream.end()
-})
-
 test.cb('writable concurrent mode', t => {
   const concurrency = 10
 
