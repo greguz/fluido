@@ -9,7 +9,7 @@ export function pump (...args) {
   }
 
   const callback = last(args)
-  if (args.length < 2) {
+  if (args.length < 3) {
     callback(new Error('Expected at least two streams to pipe'))
     return
   }
