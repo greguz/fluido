@@ -1,6 +1,7 @@
 import { Duplex } from 'stream'
 import { finished } from './finished'
 import { voidRead, voidWrite } from './internal/void'
+import destroyStream from './internal/destroy'
 
 export function duplexify (readable, writable, options) {
   function read () {
@@ -36,10 +37,10 @@ export function duplexify (readable, writable, options) {
 
   function destroy (err, callback) {
     if (readable) {
-      readable.destroy(err)
+      err = destroyStream(readable, err)
     }
     if (writable) {
-      writable.destroy(err)
+      err = destroyStream(writable, err)
     }
     callback(err)
   }

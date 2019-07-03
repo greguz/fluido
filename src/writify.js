@@ -1,66 +1,64 @@
 import { pipeline } from 'stream'
+
 import { writable } from './writable'
-import { first } from './internal/utils'
+
+import destroyStream from './internal/destroy'
 
 export function writify (streams, options) {
   if (streams.length <= 0) {
     return writable(options)
   } else if (streams.length === 1) {
-    return first(streams)
+    return streams[0]
   }
 
+  // First writable stream in pipeline
   let target
 
-  let cbClose
+  // Current write/final callback
+  let next
 
-  let endReached
-  let endError
+  // Current pipeline error
+  let error
+
+  // Update error and fire next if necessary
+  function call (err) {
+    error = err || error
+    if (next) {
+      const callback = next
+      next = undefined
+      callback(error)
+    }
+  }
 
   return writable({
     ...options,
     write (chunk, encoding, callback) {
+      // Initialize the pipeline
       if (!target) {
-        target = first(streams)
-
-        pipeline(...streams, err => {
-          endReached = true
-          endError = err
-
-          if (cbClose) {
-            cbClose(err)
-          }
-        })
+        target = streams[0]
+        pipeline(...streams, call)
       }
 
-      if (endReached) {
-        return callback(endError || new Error('Premature close'))
+      // Handle possible pipeline error
+      if (error) {
+        callback(error)
+        return
       }
 
+      // Perform write and handle backpressure
       if (!target.write(chunk, encoding)) {
-        cbClose = callback
-        target.once('drain', () => {
-          cbClose = undefined
-          callback()
-        })
+        next = callback
+        target.once('drain', call)
       } else {
         callback()
       }
     },
     final (callback) {
-      if (endReached) {
-        callback(endError)
-      } else {
-        cbClose = callback
-        target.end()
-      }
+      next = callback
+      target.end()
     },
     destroy (err, callback) {
-      if (endReached) {
-        callback(err)
-      } else {
-        cbClose = callback
-        target.destroy(err)
-      }
+      callback(destroyStream(target, err))
     }
   })
 }

@@ -1,11 +1,12 @@
-import { finished as eos } from 'stream'
+import { eos } from './eos'
 import { isFunction, last } from './internal/utils'
 
-function register (stream, callback) {
-  const ticket = eos(stream, err => {
-    ticket()
-    callback(err)
-  })
+function readStream (data) {
+  return Array.isArray(data) ? data[0] : data
+}
+
+function readOptions (data) {
+  return Array.isArray(data) ? data[1] : {}
 }
 
 export function finished (...args) {
@@ -20,24 +21,19 @@ export function finished (...args) {
   if (args.length <= 0) {
     process.nextTick(callback, null)
     return
-  } else if (args.length === 1) {
-    register(args[0], callback)
-    return
   }
 
-  let ended = 0
-  let error = null
+  let count = args.length
+  let error
 
   const end = err => {
-    ended++
-    error = error || err
-
-    if (ended >= args.length) {
+    error = error || err || null
+    if (--count < 1) {
       callback(error)
     }
   }
 
-  for (const stream of args) {
-    register(stream, end)
+  for (const data of args) {
+    eos(readStream(data), readOptions(data), end)
   }
 }

@@ -92,6 +92,10 @@ All [core options](https://nodejs.org/api/stream.html#stream_new_stream_transfor
 
 The `transform` function supports [concurrent mode](#concurrent-mode).
 
+#### eos(stream, options, callback)
+
+Register a End-Of-Stream callback.
+
 #### finished(...streams, callback)
 
 Fire callback when all streams have finished.

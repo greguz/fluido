@@ -1,15 +1,31 @@
-import { finished } from './finished'
-import { compose, isFunction, last } from './internal/utils'
+import { eos } from './eos'
+
+import destroyStream from './internal/destroy'
+import { isFunction, last } from './internal/utils'
+
+function compose (a, b) {
+  return function composed (arg) {
+    a(arg)
+    b(arg)
+  }
+}
 
 function toDestroyer (stream) {
   let destroyed = false
-
   return function destroyer (err) {
     if (!stream.__closed__ && !destroyed) {
       destroyed = true
-      stream.destroy(err)
+      destroyStream(stream, err)
     }
   }
+}
+
+function readStream (data) {
+  return Array.isArray(data) ? data[0] : data
+}
+
+function readOptions (data) {
+  return Array.isArray(data) ? data[1] : {}
 }
 
 export function handle (...args) {
@@ -22,29 +38,30 @@ export function handle (...args) {
   const callback = args.pop()
 
   if (args.length <= 0) {
-    return process.nextTick(callback)
+    process.nextTick(callback, null)
+    return
   }
 
-  const destroy = args.map(toDestroyer).reduce(compose)
+  const destroy = args.map(readStream).map(toDestroyer).reduce(compose)
 
-  let ended = 0
-  let error = null
+  let count = args.length
+  let error
 
   const end = err => {
-    ended++
-    error = error || err
-
+    error = error || err || null
     if (error) {
       destroy(error)
     }
-
-    if (ended >= args.length) {
+    if (--count < 1) {
       callback(error)
     }
   }
 
-  for (const stream of args) {
-    finished(stream, err => {
+  for (const data of args) {
+    const stream = readStream(data)
+    const options = readOptions(data)
+
+    eos(stream, options, err => {
       stream.__closed__ = true
       end(err)
     })

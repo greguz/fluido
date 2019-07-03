@@ -15,6 +15,9 @@ const duplex = new Duplex()
 const transform = new Transform()
 
 test('isReadable', t => {
+  t.false(isReadable())
+  t.false(isReadable(undefined))
+  t.false(isReadable(null))
   t.true(isReadable(readable))
   t.false(isReadable(writable))
   t.true(isReadable(duplex))
@@ -23,6 +26,9 @@ test('isReadable', t => {
 })
 
 test('isWritable', t => {
+  t.false(isWritable())
+  t.false(isWritable(undefined))
+  t.false(isWritable(null))
   t.false(isWritable(readable))
   t.true(isWritable(writable))
   t.true(isWritable(duplex))

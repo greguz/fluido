@@ -1,8 +1,14 @@
 import { Readable } from 'stream'
+
 import { handle } from './handle'
 
+import destroyStream from './internal/destroy'
+
+function setStreamOptions (streams) {
+  return streams.map(stream => [stream, { readable: true, writable: false }])
+}
+
 export function mergeReadables (sources, options) {
-  let cbDestroy
   let listener
 
   return new Readable({
@@ -17,14 +23,12 @@ export function mergeReadables (sources, options) {
           }
         }
 
-        handle(...sources, err => {
+        handle(...setStreamOptions(sources), err => {
           for (const source of sources) {
             source.off('data', listener)
           }
 
-          if (cbDestroy) {
-            cbDestroy(err)
-          } else if (err) {
+          if (err) {
             this.emit('error', err)
           } else {
             this.push(null)
@@ -41,10 +45,10 @@ export function mergeReadables (sources, options) {
       }
     },
     destroy (err, callback) {
-      cbDestroy = callback
       for (const source of sources) {
-        source.destroy(err)
+        err = destroyStream(source, err)
       }
+      callback(err)
     }
   })
 }
