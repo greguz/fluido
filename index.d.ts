@@ -117,8 +117,8 @@ export declare function writify(
 ): Writable
 
 export declare function duplexify(
-  readable: Readable,
-  writable: Writable,
+  readable?: Readable | null | undefined,
+  writable?: Writable | null | undefined,
   options?: DuplexOptions
 ): Duplex
 
