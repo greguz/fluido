@@ -94,7 +94,39 @@ The `transform` function supports [concurrent mode](#concurrent-mode).
 
 #### eos(stream, options, callback)
 
-Register a End-Of-Stream callback.
+Register a **e**nd-**o**f-**s**tream callback.
+If callback is `undefined`, returns a promise.
+
+```javascript
+const { eos } = require('fluido')
+
+// Fire callback when readable has finished
+eos(readable, callback)
+
+// Fire callback when writable has finished
+eos(writable, callback)
+
+// Fire callback when duplex has finished (both reading and writing)
+eos(duplex, callback)
+
+// Fire callback when duplex has finished to read
+eos(duplex, { writable: false }, callback)
+
+// Fire callback when duplex has finished to write
+eos(duplex, { readable: false }, callback)
+```
+
+##### options.readable : boolean
+
+When set to false, the callback will be called when the stream ends even though the stream might still be readable. Default: `true`.
+
+##### options.writable : boolean
+
+When set to false, the callback will be called when the stream ends even though the stream might still be writable. Default: `true`.
+
+##### options.error : boolean
+
+If set to false, then a call to emit('error', err) is not treated as finished. Default: `true`.
 
 #### finished(...streams, callback)
 
@@ -117,8 +149,17 @@ finished(source, target, err => {
   }
 })
 
-// Start data flow
 source.pipe(target)
+```
+
+You can pass [eos options](#eos(stream,-options,-callback)) using an array to store both the stream (index `0`) and the options (index `1`).
+
+```javascript
+finished(
+  [duplex, { writable: false }],
+  writable,
+  callback
+)
 ```
 
 #### handle(...streams, callback)
