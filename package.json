@@ -8,6 +8,7 @@
     "lint": "eslint src test",
     "build": "rollup --config",
     "test": "npm run lint && npm run build && ava",
+    "coverage": "npm run build && nyc --reporter=html ava",
     "prepublishOnly": "npm run test"
   },
   "keywords": [
@@ -29,6 +30,7 @@
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^2.2.0",
+    "nyc": "^14.1.1",
     "rollup": "^1.11.3"
   },
   "engines": {

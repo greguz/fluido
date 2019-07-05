@@ -1,4 +1,6 @@
 /node_modules
-npm-debug.log
+/npm-debug.log
 /index.js
-.vscode
+/.vscode
+/.nyc_output
+/coverage
