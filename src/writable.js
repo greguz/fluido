@@ -8,7 +8,8 @@ export function writable (options = {}) {
       options.concurrency,
       options.write,
       options.final,
-      options.destroy
+      options.destroy,
+      true
     )
 
     return new Writable({

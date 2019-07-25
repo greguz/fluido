@@ -1,9 +1,19 @@
-export default function concurrent (concurrency, _transform, _flush, _destroy) {
+export default function concurrent (
+  concurrency,
+  _transform,
+  _flush,
+  _destroy,
+  isWritable = false
+) {
   if (!Number.isInteger(concurrency) || concurrency <= 0) {
-    throw new TypeError('Concurrency must be a positive number')
+    throw new TypeError('Concurrency must be a positive integer')
   }
-  if (!_transform) {
-    throw new TypeError('Transform function is required')
+  if (typeof _transform !== 'function') {
+    throw new TypeError(
+      isWritable
+        ? 'Write function is required'
+        : 'Transform function is required'
+    )
   }
 
   // Active jobs counter
@@ -40,7 +50,7 @@ export default function concurrent (concurrency, _transform, _flush, _destroy) {
 
       error = error || err
 
-      if (!error && data !== undefined) {
+      if (!error && data !== undefined && data !== null && !isWritable) {
         this.push(data)
       }
 

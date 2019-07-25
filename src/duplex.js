@@ -9,7 +9,8 @@ function handleConcurrency (options) {
       options.concurrency,
       options.write,
       options.final,
-      options.destroy
+      options.destroy,
+      true
     )
   } else {
     return [
