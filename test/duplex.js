@@ -1,6 +1,6 @@
 import test from 'ava'
 import { finished, pipeline, Writable } from 'stream'
-import { duplex } from '../index.js'
+import { duplex } from '../src/index.js'
 
 test.cb('duplex callback mode', t => {
   let counter = 0

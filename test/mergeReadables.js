@@ -1,6 +1,6 @@
 import test from 'ava'
 import { Duplex, finished } from 'stream'
-import { mergeReadables } from '../index.js'
+import { mergeReadables } from '../src/index.js'
 
 function build (value) {
   return new Duplex({

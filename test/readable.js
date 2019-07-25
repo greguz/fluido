@@ -1,6 +1,6 @@
 import test from 'ava'
 import { Writable, pipeline } from 'stream'
-import { readable } from '../index.js'
+import { readable } from '../src/index.js'
 
 test.cb('readable callback mode', t => {
   let counter = 0

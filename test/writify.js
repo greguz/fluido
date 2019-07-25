@@ -1,6 +1,6 @@
 import test from 'ava'
 import { Readable, Transform, Writable, pipeline } from 'stream'
-import { writify } from '../index.js'
+import { writify } from '../src/index.js'
 
 test.cb('writify', t => {
   let rc = 0

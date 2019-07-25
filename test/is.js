@@ -7,7 +7,7 @@ import {
   isDuplex,
   isReadableStrictly,
   isWritableStrictly
-} from '../index.js'
+} from '../src/index.js'
 
 const readable = new Readable()
 const writable = new Writable()
