@@ -1,6 +1,6 @@
 import test from 'ava'
 import { Readable } from 'stream'
-import { finished } from '../src/index.js'
+import { finished } from '../index.js'
 
 function build (time, start, end) {
   let active = false

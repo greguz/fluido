@@ -1,7 +1,7 @@
 import test from 'ava'
 import finished from 'end-of-stream'
 
-import { transform } from '../src/index.js'
+import { transform } from '../index.js'
 
 test.cb('transform concurrent mode', t => {
   const concurrency = 10

@@ -2,7 +2,7 @@ import test from 'ava'
 import { Readable, Transform, Writable } from 'stream'
 import pipeline from 'pump'
 
-import { writify } from '../src/index.js'
+import { writify } from '../index.js'
 
 test.cb('writify', t => {
   let rc = 0

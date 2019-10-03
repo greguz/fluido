@@ -1,6 +1,6 @@
 import test from 'ava'
 import { Readable, Writable, Duplex } from 'stream'
-import { eos } from '../src/index.js'
+import { eos } from '../index.js'
 
 test.cb('eos readable', t => {
   const stream = new Readable({

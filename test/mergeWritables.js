@@ -2,7 +2,7 @@ import test from 'ava'
 import { Duplex } from 'stream'
 import finished from 'end-of-stream'
 
-import { mergeWritables } from '../src/index.js'
+import { mergeWritables } from '../index.js'
 
 function build (onWrite) {
   return new Duplex({

@@ -1,7 +1,7 @@
 import test from 'ava'
 import finished from 'end-of-stream'
 
-import { writable } from '../src/index.js'
+import { writable } from '../index.js'
 
 test.cb('writable concurrent mode', t => {
   const concurrency = 10

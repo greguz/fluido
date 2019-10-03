@@ -1,6 +1,6 @@
 import test from 'ava'
 import { Readable, Writable } from 'stream'
-import { pump } from '../src/index.js'
+import { pump } from '../index.js'
 
 test.cb('pump', t => {
   let counter = 0
