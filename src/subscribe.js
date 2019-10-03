@@ -12,7 +12,8 @@ export function subscribe (...args) {
   const callback = args.pop()
 
   if (args.length <= 0) {
-    return callback(new Error('Expected at least one stream'))
+    callback(new Error('Expected at least one stream'))
+    return
   }
 
   let value
