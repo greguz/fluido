@@ -1,7 +1,7 @@
 import { PassThrough } from 'stream'
-import pipeline from 'pump'
 
 import { readable } from './readable'
+import { pump } from './pump'
 
 import destroyStream from './internal/destroy'
 
@@ -34,7 +34,7 @@ export function readify (streams, options) {
       }
 
       // Setup pipeline
-      pipeline(...streams, source, err => {
+      pump(...streams, source, err => {
         source.removeListener('data', listener)
 
         if (err) {

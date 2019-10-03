@@ -1,5 +1,4 @@
-import pipeline from 'pump'
-
+import { pump } from './pump'
 import { finished } from './finished'
 
 import { isFunction, last } from './internal/utils'
@@ -30,7 +29,7 @@ export function subscribe (...args) {
   }
 
   if (args.length > 1) {
-    pipeline(...args, done)
+    pump(...args, done)
   } else {
     finished(target, done)
   }

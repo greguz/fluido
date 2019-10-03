@@ -1,5 +1,4 @@
-import pipeline from 'pump'
-
+import { pump } from './pump'
 import { writable } from './writable'
 
 import destroyStream from './internal/destroy'
@@ -36,7 +35,7 @@ export function writify (streams, options) {
       // Initialize the pipeline
       if (!target) {
         target = streams[0]
-        pipeline(...streams, call)
+        pump(...streams, call)
       }
 
       // Handle possible pipeline error
