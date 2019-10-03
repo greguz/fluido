@@ -1,5 +1,6 @@
 import test from 'ava'
-import { finished } from 'stream'
+import finished from 'end-of-stream'
+
 import { transform } from '../src/index.js'
 
 test.cb('transform concurrent mode', t => {

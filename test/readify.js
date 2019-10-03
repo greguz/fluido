@@ -1,5 +1,7 @@
 import test from 'ava'
-import { Readable, Transform, Writable, pipeline } from 'stream'
+import { Readable, Transform, Writable } from 'stream'
+import pipeline from 'pump'
+
 import { readify } from '../src/index.js'
 
 test.cb('readify', t => {

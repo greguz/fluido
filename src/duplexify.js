@@ -23,7 +23,7 @@ export function duplexify (readable, writable, options) {
     }
 
     finished(readable, err => {
-      readable.off('data', listener)
+      readable.removeListener('data', listener)
 
       if (err) {
         this.emit('error', err)
@@ -32,7 +32,7 @@ export function duplexify (readable, writable, options) {
       }
     })
 
-    readable.on('data', listener)
+    readable.addListener('data', listener)
   }
 
   function write (chunk, encoding, callback) {

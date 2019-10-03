@@ -1,5 +1,7 @@
 import test from 'ava'
-import { Duplex, finished } from 'stream'
+import { Duplex } from 'stream'
+import finished from 'end-of-stream'
+
 import { mergeReadables } from '../src/index.js'
 
 function build (value) {
@@ -28,7 +30,7 @@ test.cb('mergeReadables', t => {
   const stream = mergeReadables(sources)
 
   let counter = 0
-  stream.on('data', () => (counter++))
+  stream.addListener('data', () => (counter++))
 
   finished(stream, err => {
     if (!err) {

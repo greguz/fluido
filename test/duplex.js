@@ -1,5 +1,8 @@
 import test from 'ava'
-import { finished, pipeline, Writable } from 'stream'
+import { Writable } from 'stream'
+import pipeline from 'pump'
+import finished from 'end-of-stream'
+
 import { duplex } from '../src/index.js'
 
 test.cb('duplex callback mode', t => {

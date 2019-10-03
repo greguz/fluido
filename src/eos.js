@@ -1,4 +1,4 @@
-import { finished } from 'stream'
+import finished from 'end-of-stream'
 
 import { isFunction, noop } from './internal/utils'
 
@@ -17,7 +17,7 @@ export function eos (stream, options, callback) {
 
   const clean = finished(stream, options, err => {
     // Prevent future error throwing
-    stream.on('error', noop)
+    stream.addListener('error', noop)
     // Clean used listeners
     clean()
     // Fire the callback

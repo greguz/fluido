@@ -1,5 +1,6 @@
 import test from 'ava'
-import { finished } from 'stream'
+import finished from 'end-of-stream'
+
 import { writable } from '../src/index.js'
 
 test.cb('writable concurrent mode', t => {

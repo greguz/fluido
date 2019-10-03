@@ -1,4 +1,5 @@
-import { pipeline } from 'stream'
+import pipeline from 'pump'
+
 import { isFunction, last } from './internal/utils'
 
 export function pump (...args) {

@@ -1,4 +1,5 @@
-import { pipeline, PassThrough } from 'stream'
+import { PassThrough } from 'stream'
+import pipeline from 'pump'
 
 import { readable } from './readable'
 
@@ -34,7 +35,7 @@ export function readify (streams, options) {
 
       // Setup pipeline
       pipeline(...streams, source, err => {
-        source.off('data', listener)
+        source.removeListener('data', listener)
 
         if (err) {
           this.emit('error', err)
@@ -44,7 +45,7 @@ export function readify (streams, options) {
       })
 
       // Start data flow
-      source.on('data', listener)
+      source.addListener('data', listener)
     },
     destroy (err, callback) {
       callback(destroyStream(source, err))

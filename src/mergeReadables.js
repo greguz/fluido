@@ -25,7 +25,7 @@ export function mergeReadables (sources, options) {
 
         handle(...setStreamOptions(sources), err => {
           for (const source of sources) {
-            source.off('data', listener)
+            source.removeListener('data', listener)
           }
 
           if (err) {
@@ -36,7 +36,7 @@ export function mergeReadables (sources, options) {
         })
 
         for (const source of sources) {
-          source.on('data', listener)
+          source.addListener('data', listener)
         }
       } else {
         for (const source of sources) {

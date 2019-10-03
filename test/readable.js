@@ -1,5 +1,7 @@
 import test from 'ava'
-import { Writable, pipeline } from 'stream'
+import { Writable } from 'stream'
+import pipeline from 'pump'
+
 import { readable } from '../src/index.js'
 
 test.cb('readable callback mode', t => {

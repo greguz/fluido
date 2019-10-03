@@ -1,4 +1,4 @@
-import { pipeline } from 'stream'
+import pipeline from 'pump'
 
 import { writable } from './writable'
 
