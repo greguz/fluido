@@ -11,34 +11,40 @@ export function readify (streams, options) {
     return streams[0]
   }
 
-  const source = new PassThrough({ objectMode: true })
-
-  streams.push(source)
+  let source
 
   return readable({
     ...options,
     read () {
-      if (source.readableFlowing === null) {
-        const listener = chunk => {
-          if (!this.push(chunk)) {
-            source.pause()
-          }
-        }
-
-        pipeline(...streams, err => {
-          source.off('data', listener)
-
-          if (err) {
-            this.emit('error', err)
-          } else {
-            this.push(null)
-          }
-        })
-
-        source.on('data', listener)
-      } else {
+      // Restart data flow
+      if (source) {
         source.resume()
+        return
       }
+
+      // Init our data source
+      source = new PassThrough({ objectMode: true })
+
+      // Data collect listener
+      const listener = chunk => {
+        if (!this.push(chunk)) {
+          source.pause()
+        }
+      }
+
+      // Setup pipeline
+      pipeline(...streams, source, err => {
+        source.off('data', listener)
+
+        if (err) {
+          this.emit('error', err)
+        } else {
+          this.push(null)
+        }
+      })
+
+      // Start data flow
+      source.on('data', listener)
     },
     destroy (err, callback) {
       callback(destroyStream(source, err))

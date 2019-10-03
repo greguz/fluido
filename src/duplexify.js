@@ -1,30 +1,38 @@
 import { Duplex } from 'stream'
+
 import { finished } from './finished'
+
 import { voidRead, voidWrite } from './internal/void'
 import destroyStream from './internal/destroy'
 
 export function duplexify (readable, writable, options) {
+  let reading = false
+
   function read () {
-    if (readable.readableFlowing === null) {
-      const listener = data => {
-        if (!this.push(data)) {
-          readable.pause()
-        }
-      }
-      readable.on('data', listener)
-
-      finished(readable, err => {
-        readable.off('data', listener)
-
-        if (err) {
-          this.emit('error', err)
-        } else {
-          this.push(null)
-        }
-      })
-    } else {
+    if (reading) {
       readable.resume()
+      return
     }
+
+    reading = true
+
+    const listener = data => {
+      if (!this.push(data)) {
+        readable.pause()
+      }
+    }
+
+    finished(readable, err => {
+      readable.off('data', listener)
+
+      if (err) {
+        this.emit('error', err)
+      } else {
+        this.push(null)
+      }
+    })
+
+    readable.on('data', listener)
   }
 
   function write (chunk, encoding, callback) {
