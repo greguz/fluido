@@ -8,6 +8,10 @@ function setStreamOptions (streams) {
 }
 
 export function mergeWritables (targets, options) {
+  if (!Array.isArray(targets)) {
+    throw new TypeError('Expected array of streams')
+  }
+
   // Current write/final callback
   let next
 

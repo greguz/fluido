@@ -8,6 +8,10 @@ function setStreamOptions (streams) {
 }
 
 export function mergeReadables (sources, options) {
+  if (!Array.isArray(sources)) {
+    throw new TypeError('Expected array of streams')
+  }
+
   let listener
 
   return readable({
