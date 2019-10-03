@@ -1,5 +1,6 @@
 import test from 'ava'
 import { Readable, Writable, Duplex, Transform } from 'stream'
+
 import {
   isReadable,
   isWritable,

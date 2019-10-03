@@ -1,4 +1,5 @@
 import { Duplex } from 'stream'
+
 import { voidRead, voidWrite } from './internal/void'
 import wrap from './internal/from'
 import concurrent from './internal/concurrent'

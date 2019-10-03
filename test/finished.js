@@ -1,5 +1,6 @@
 import test from 'ava'
 import { Readable } from 'stream'
+
 import { finished } from '../index.js'
 
 function build (time, start, end) {

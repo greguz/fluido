@@ -1,4 +1,5 @@
 import { Transform } from 'stream'
+
 import concurrent from './internal/concurrent'
 import { voidTransform } from './internal/void'
 

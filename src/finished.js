@@ -1,4 +1,5 @@
 import { eos } from './eos'
+
 import { isFunction, last } from './internal/utils'
 
 function readStream (data) {

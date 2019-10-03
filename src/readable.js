@@ -1,4 +1,5 @@
 import { Readable } from 'stream'
+
 import { voidRead } from './internal/void'
 import wrap from './internal/from'
 
