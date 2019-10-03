@@ -22,8 +22,7 @@
   "author": "Giacomo Gregoletto",
   "license": "MIT",
   "dependencies": {
-    "end-of-stream": "^1.4.4",
-    "pump": "^3.0.0"
+    "end-of-stream": "^1.4.4"
   },
   "devDependencies": {
     "ava": "^2.4.0",
@@ -35,6 +34,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "esm": "^3.2.25",
     "husky": "^3.0.8",
+    "pump": "^3.0.0",
     "rollup": "^1.22.0"
   },
   "engines": {
