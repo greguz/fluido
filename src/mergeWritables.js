@@ -1,5 +1,4 @@
-import { Writable } from 'stream'
-
+import { writable } from './writable'
 import { handle } from './handle'
 
 import destroyStream from './internal/destroy'
@@ -76,7 +75,7 @@ export function mergeWritables (targets, options) {
     callback(err)
   }
 
-  return new Writable({
+  return writable({
     ...options,
     write,
     writev: undefined,

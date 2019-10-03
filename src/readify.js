@@ -1,5 +1,4 @@
-import { PassThrough } from 'stream'
-
+import { transform } from './transform'
 import { readable } from './readable'
 import { pump } from './pump'
 
@@ -23,8 +22,8 @@ export function readify (streams, options) {
         return
       }
 
-      // Init our data source
-      source = new PassThrough({ objectMode: true })
+      // Init our data source (simple passthrough stream)
+      source = transform({ objectMode: true })
 
       // Data collect listener
       const listener = chunk => {

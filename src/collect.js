@@ -1,11 +1,11 @@
-import { Transform } from 'stream'
+import { transform } from './transform'
 
 function asString (chunks, encoding, callback) {
   let result = ''
 
   for (const chunk of chunks) {
     if (!Buffer.isBuffer(chunk)) {
-      process.nextTick(callback, new Error('Chunk must be buffer or string'))
+      process.nextTick(callback, new TypeError('Chunk must be buffer or string'))
       return
     }
     result += chunk.toString(encoding)
@@ -19,7 +19,7 @@ function asBuffer (chunks, callback) {
 
   for (const chunk of chunks) {
     if (!Buffer.isBuffer(chunk)) {
-      process.nextTick(callback, new Error('Chunk must be buffer or string'))
+      process.nextTick(callback, new TypeError('Chunk must be buffer or string'))
       return
     }
     result = Buffer.concat([result, chunk])
@@ -35,7 +35,7 @@ function asIs (chunks, callback) {
 export function collect (encoding) {
   let chunks = []
 
-  return new Transform({
+  return transform({
     objectMode: true,
     transform (chunk, ce, callback) {
       chunks.push(typeof chunk === 'string' ? Buffer.from(chunk, ce) : chunk)

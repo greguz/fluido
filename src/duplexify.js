@@ -1,8 +1,6 @@
-import { Duplex } from 'stream'
-
+import { duplex } from './duplex'
 import { finished } from './finished'
 
-import { voidRead, voidWrite } from './internal/void'
 import destroyStream from './internal/destroy'
 
 export function duplexify (readable, writable, options) {
@@ -53,10 +51,10 @@ export function duplexify (readable, writable, options) {
     callback(err)
   }
 
-  return new Duplex({
+  return duplex({
     ...options,
-    read: readable ? read : voidRead,
-    write: writable ? write : voidWrite,
+    read: readable ? read : undefined,
+    write: writable ? write : undefined,
     writev: undefined,
     final: writable ? final : undefined,
     destroy
