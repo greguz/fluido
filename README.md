@@ -25,6 +25,30 @@ _hacky_ code and dependencies.
 
 ## API
 
+#### isReadable(value)
+
+Returns `true` when `value` is a readable stream instance.
+
+#### isWritable(value)
+
+Returns `true` when `value` is a writable stream instance.
+
+#### isStream(value)
+
+Returns `true` when `value` is readable **or** writable.
+
+#### isDuplex(value)
+
+Returns `true` when `value` is both readable **and** writable.
+
+#### isReadableStrictly(value)
+
+Returns `true` when `value` is readable **and not** writable.
+
+#### isWritableStrictly(value)
+
+Returns `true` when `value` is writable **and not** readable.
+
 #### readable(options)
 
 Create *readable* stream.
@@ -305,27 +329,3 @@ const singleWritableStream = mergeWritables([
 
 createReadStream('cat.jpg').pipe(singleWritableStream)
 ```
-
-#### isReadable(value)
-
-Returns `true` when `value` is a readable stream instance.
-
-#### isWritable(value)
-
-Returns `true` when `value` is a writable stream instance.
-
-#### isStream(value)
-
-Returns `true` when `value` is readable **or** writable.
-
-#### isDuplex(value)
-
-Returns `true` when `value` is both readable **and** writable.
-
-#### isReadableStrictly(value)
-
-Returns `true` when `value` is readable **and not** writable.
-
-#### isWritableStrictly(value)
-
-Returns `true` when `value` is writable **and not** readable.
