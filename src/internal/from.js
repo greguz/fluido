@@ -12,14 +12,14 @@ export default function from (read) {
         process.nextTick(() => this.emit('error', err))
         return
       }
+      if (this._readableState && this._readableState.ended) {
+        // Closed by someone
+        return
+      }
 
-      reading = false
-
-      const ended = data === null || this._readableState.ended === true
-      if (!ended) {
-        if (this.push(data)) {
-          this._read(size)
-        }
+      reading = data === null
+      if (this.push(data) && !reading) {
+        this._read(size)
       }
     })
   }
