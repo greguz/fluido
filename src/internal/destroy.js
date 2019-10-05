@@ -8,7 +8,7 @@ export default function destroyStream (stream, err) {
   } else if (isFunction(stream.destroy)) {
     stream.destroy(err)
   } else {
-    stream.emit('error', err)
+    process.nextTick(() => stream.emit('error', err))
   }
 
   return err
