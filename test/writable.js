@@ -1,36 +1,41 @@
 import test from 'ava'
-import finished from 'end-of-stream'
+import eos from 'end-of-stream'
 
 import { writable } from '../index.js'
 
-test.cb('writable concurrent mode', t => {
-  const concurrency = 10
+test.cb('writable concurrent', t => {
+  const concurrency = 3
 
   let writes = 0
   let active = 0
 
   const stream = writable({
+    objectMode: true,
     concurrency,
     write (chunk, encoding, callback) {
       writes++
-      t.true(active >= 0 && active < concurrency)
       active++
-      setTimeout(() => {
-        active--
-        callback()
-      }, 10)
+      t.is(active >= 0 && active <= concurrency, true)
+      setTimeout(
+        () => {
+          active--
+          callback()
+        },
+        10
+      )
     },
     final (callback) {
-      t.is(writes, 26)
+      t.is(writes, concurrency * 2)
       t.is(active, 0)
       callback()
     }
   })
 
-  finished(stream, err => t.end(err))
+  eos(stream, t.end)
 
-  for (let i = 97; i <= 122; i++) {
-    stream.write(String.fromCharCode(i))
+  for (let i = 0; i < (concurrency * 2); i++) {
+    stream.write({ i })
   }
-  stream.end()
+  t.is(active, concurrency)
+  t.end()
 })
