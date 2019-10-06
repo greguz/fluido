@@ -1,5 +1,5 @@
 import { pump } from './pump'
-import { finished } from './finished'
+import { eos } from './eos'
 
 import { isFunction, last } from './internal/utils'
 
@@ -13,7 +13,7 @@ export function subscribe (...args) {
   const callback = args.pop()
 
   if (args.length <= 0) {
-    callback(new Error('Expected at least one stream'))
+    callback(new Error('Expected at least one readable stream'))
     return
   }
 
@@ -31,7 +31,7 @@ export function subscribe (...args) {
   if (args.length > 1) {
     pump(...args, done)
   } else {
-    finished(target, done)
+    eos(target, { writable: false }, done)
   }
 
   target.addListener('data', listener)

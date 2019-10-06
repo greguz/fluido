@@ -2,11 +2,10 @@ export function voidRead () {
   this.push(null)
 }
 
-export function voidWrite (_chunk, _encoding, callback) {
-  callback()
+export function voidWrite (chunk, encoding, callback) {
+  callback(null)
 }
 
-export function voidTransform (chunk, _encoding, callback) {
-  this.push(chunk)
-  callback()
+export function voidTransform (chunk, encoding, callback) {
+  callback(null, chunk)
 }

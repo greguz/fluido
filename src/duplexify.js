@@ -1,5 +1,5 @@
 import { duplex } from './duplex'
-import { finished } from './finished'
+import { eos } from './eos'
 
 import destroyStream from './internal/destroy'
 
@@ -20,7 +20,7 @@ export function duplexify (readable, writable, options) {
       }
     }
 
-    finished(readable, err => {
+    eos(readable, { writable: false }, err => {
       readable.removeListener('data', listener)
 
       if (err) {
