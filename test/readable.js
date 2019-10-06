@@ -1,36 +1,108 @@
 import test from 'ava'
-import { Writable } from 'stream'
-import pipeline from 'pump'
 
 import { readable } from '../index.js'
 
-test.cb('readable callback mode', t => {
-  let counter = 0
+test.cb('read sync', t => {
+  const highWaterMark = 3
 
-  const source = readable({
+  let calls = 0
+
+  const stream = readable({
     objectMode: true,
-    read (size, callback) {
-      for (let i = 97; i <= 122; i++) {
-        this.push(String.fromCharCode(i))
-      }
-      if (++counter >= 4) {
-        this.push(null)
-      }
-      setTimeout(callback, 20)
+    highWaterMark,
+    read () {
+      calls++
+      this.push({})
     }
   })
 
-  const target = new Writable({
+  stream.read()
+
+  setImmediate(() => {
+    t.is(calls >= highWaterMark, true)
+    t.is(stream._readableState.length, calls - 1)
+    t.end()
+  })
+})
+
+test.cb('read callback', t => {
+  const highWaterMark = 3
+  const timeStep = 20
+
+  let reading = false
+  let calls = 0
+
+  const stream = readable({
     objectMode: true,
-    write (chunk, encoding, callback) {
-      setTimeout(callback, 50)
+    highWaterMark,
+    read (_size, callback) {
+      calls++
+
+      if (reading) {
+        callback(new Error('Unexpected concurrent read'))
+        return
+      }
+
+      reading = true
+      setTimeout(
+        () => {
+          reading = false
+          callback(null, {})
+        },
+        timeStep
+      )
     }
   })
 
-  pipeline(source, target, err => {
-    if (!err) {
-      t.is(counter, 4)
+  stream.read()
+
+  setTimeout(
+    () => {
+      t.is(calls >= highWaterMark, true)
+      t.is(stream._readableState.length, calls)
+      t.end()
+    },
+    timeStep * highWaterMark + timeStep
+  )
+})
+
+test.cb('read promise', t => {
+  const highWaterMark = 3
+  const timeStep = 20
+
+  let reading = false
+  let calls = 0
+
+  const stream = readable({
+    objectMode: true,
+    highWaterMark,
+    read () {
+      calls++
+      return new Promise((resolve, reject) => {
+        if (reading) {
+          reject(new Error('Unexpected concurrent read'))
+          return
+        }
+        reading = true
+        setTimeout(
+          () => {
+            reading = false
+            resolve({})
+          },
+          timeStep
+        )
+      })
     }
-    t.end(err)
   })
+
+  stream.read()
+
+  setTimeout(
+    () => {
+      t.is(calls >= highWaterMark, true)
+      t.is(stream._readableState.length, calls)
+      t.end()
+    },
+    timeStep * highWaterMark + timeStep
+  )
 })
