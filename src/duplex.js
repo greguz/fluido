@@ -1,35 +1,28 @@
 import { Duplex } from 'stream'
 
+import supportConcurrency from './internal/concurrency'
+import supportPromises from './internal/promises'
 import { voidRead, voidWrite } from './internal/void'
-import wrap from './internal/from'
-import concurrent from './internal/concurrent'
 
 function handleConcurrency (options) {
-  if (options.concurrency) {
-    return concurrent(
-      options.concurrency,
-      options.write,
-      options.final,
-      options.destroy,
-      true
-    )
-  } else {
-    return [
-      options.write || voidWrite,
-      options.final,
-      options.destroy
-    ]
-  }
+  const { concurrency, write, final, destroy } = options
+
+  return concurrency
+    ? supportConcurrency(concurrency, write, final, destroy, true)
+    : [write, final, destroy]
 }
 
 export function duplex (options = {}) {
-  const read = options.read || voidRead
+  options = supportPromises(options)
+
   const [write, final, destroy] = handleConcurrency(options)
+  const { read, writev } = options
 
   return new Duplex({
     ...options,
-    read: read.length >= 2 ? wrap(read) : read,
-    write,
+    read: read || voidRead,
+    write: !write && !writev ? voidWrite : write,
+    writev,
     final,
     destroy
   })

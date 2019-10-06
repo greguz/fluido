@@ -1,13 +1,13 @@
 import { Readable } from 'stream'
 
+import supportPromises from './internal/promises'
 import { voidRead } from './internal/void'
-import wrap from './internal/from'
 
 export function readable (options = {}) {
-  const read = options.read || voidRead
+  options = supportPromises(options)
 
   return new Readable({
     ...options,
-    read: read.length >= 2 ? wrap(read) : read
+    read: options.read || voidRead
   })
 }

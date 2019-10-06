@@ -1,4 +1,4 @@
-export default function concurrent (
+export default function supportConcurrency (
   concurrency,
   _transform,
   _flush,

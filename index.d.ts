@@ -17,7 +17,9 @@ export interface ReadableOptions {
   objectMode?: boolean
 }
 export interface ReadableMethods<T = any> {
+  read?(this: Readable, size: number): Promise<T | null | undefined | void>
   read?(this: Readable, size: number, callback: ReadableCallback<T>): any
+  destroy?(this: Readable, err: any): Promise<any>
   destroy?(this: Readable, err: any, callback: Callback): any
 }
 export declare function readable<T = any>(
@@ -38,13 +40,17 @@ export interface WritableEntry<T = any> {
   encoding: string
 }
 export interface WritableMethods<T = any> {
+  write?(this: Writable, chunk: T, encoding: string): Promise<any>
   write?(this: Writable, chunk: T, encoding: string, callback: Callback): any
+  writev?(this: Writable, entries: Array<WritableEntry<T>>): Promise<any>
   writev?(
     this: Writable,
     entries: Array<WritableEntry<T>>,
     callback: Callback
   ): any
+  final?(this: Writable): Promise<any>
   final?(this: Writable, callback: Callback): any
+  destroy?(this: Writable, err: any): Promise<any>
   destroy?(this: Writable, err: any, callback: Callback): any
 }
 export declare function writable<T = any>(
@@ -66,11 +72,18 @@ export interface TransformMethods<R = any, W = any> {
   transform?(
     this: Transform,
     chunk: R,
+    encoding: string
+  ): Promise<W | void | undefined>
+  transform?(
+    this: Transform,
+    chunk: R,
     encoding: string,
     callback: TransformCallback<W>
   ): any
+  flush?(this: Transform): Promise<W | undefined | void>
   flush?(this: Transform, callback: TransformCallback<W>): any
-  destroy?(this: Transform, err: any, callback: (err?: any) => any): any
+  destroy?(this: Transform, err: any): Promise<any>
+  destroy?(this: Transform, err: any, callback: Callback): any
 }
 export declare function transform<R = any, W = any>(
   options?: TransformOptions & TransformMethods<R, W>

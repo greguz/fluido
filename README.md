@@ -10,10 +10,9 @@ This package aims to be a streaming toolkit by providing all the necessary utili
 
 ## Features
 
-- The [backpressure mechanism](https://nodejs.org/en/docs/guides/backpressuring-in-streams/) is respected by all functions
+- Full Promise support
 - Full TypeScript support
-- Prevent `new` keyword usage
-- No stream class method override (reads *no hacks*)
+- The [backpressure mechanism](https://nodejs.org/en/docs/guides/backpressuring-in-streams/) is respected always
 - Node.js >= 8
 
 ## API

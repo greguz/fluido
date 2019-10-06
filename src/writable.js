@@ -1,25 +1,28 @@
 import { Writable } from 'stream'
 
-import concurrent from './internal/concurrent'
+import supportConcurrency from './internal/concurrency'
+import supportPromises from './internal/promises'
 import { voidWrite } from './internal/void'
 
-export function writable (options = {}) {
-  if (options.concurrency) {
-    const [write, final, destroy] = concurrent(
-      options.concurrency,
-      options.write,
-      options.final,
-      options.destroy,
-      true
-    )
+function handleConcurrency (options) {
+  const { concurrency, write, final, destroy } = options
 
-    return new Writable({
-      ...options,
-      write,
-      final,
-      destroy
-    })
-  } else {
-    return new Writable({ write: voidWrite, ...options })
-  }
+  return concurrency
+    ? supportConcurrency(concurrency, write, final, destroy, true)
+    : [write, final, destroy]
+}
+
+export function writable (options = {}) {
+  options = supportPromises(options)
+
+  const [write, final, destroy] = handleConcurrency(options)
+  const { writev } = options
+
+  return new Writable({
+    ...options,
+    write: !write && !writev ? voidWrite : write,
+    writev,
+    final,
+    destroy
+  })
 }

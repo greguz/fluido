@@ -1,24 +1,26 @@
 import { Transform } from 'stream'
 
-import concurrent from './internal/concurrent'
+import supportConcurrency from './internal/concurrency'
+import supportPromises from './internal/promises'
 import { voidTransform } from './internal/void'
 
-export function transform (options = {}) {
-  if (options.concurrency) {
-    const [transform, flush, destroy] = concurrent(
-      options.concurrency,
-      options.transform,
-      options.flush,
-      options.destroy
-    )
+function handleConcurrency (options) {
+  const { concurrency, transform, flush, destroy } = options
 
-    return new Transform({
-      ...options,
-      transform,
-      flush,
-      destroy
-    })
-  } else {
-    return new Transform({ transform: voidTransform, ...options })
-  }
+  return concurrency
+    ? supportConcurrency(concurrency, transform, flush, destroy, true)
+    : [transform, flush, destroy]
+}
+
+export function transform (options = {}) {
+  options = supportPromises(options)
+
+  const [transform, flush, destroy] = handleConcurrency(options)
+
+  return new Transform({
+    ...options,
+    transform: transform || voidTransform,
+    flush,
+    destroy
+  })
 }
