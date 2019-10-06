@@ -30,14 +30,18 @@ export default function wrapReadMethod (read) {
         process.nextTick(() => this.emit('error', err))
         return
       }
-      if (this._readableState && this._readableState.ended) {
-        // Closed by someone
+
+      if (data !== undefined) {
+        this.push(data)
+      }
+
+      if (this._readableState.ended) {
         return
       }
 
-      reading = data === null
-      if (this.push(data) && !reading) {
-        this._read(size)
+      reading = false
+      if (this._readableState.length < this._readableState.highWaterMark) {
+        process.nextTick(() => this._read(size))
       }
     }
 
