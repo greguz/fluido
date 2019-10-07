@@ -3,61 +3,53 @@ import { Readable, Writable } from 'readable-stream'
 
 import { pump } from '../index.js'
 
-test.cb('pump', t => {
+test.cb('pump callback', t => {
+  const steps = 8
   let counter = 0
-
-  const source = new Readable({
-    read () {
-      this.push('a')
-      this.push('b')
-      this.push('c')
-      this.push('d')
-      this.push('e')
-      this.push('f')
-      this.push('g')
-      this.push(null)
+  pump(
+    new Readable({
+      objectMode: true,
+      read () {
+        for (let i = 0; i < steps; i++) {
+          this.push({ i })
+        }
+        this.push(null)
+      }
+    }),
+    new Writable({
+      objectMode: true,
+      write (chunk, encoding, callback) {
+        counter++
+        callback()
+      }
+    }),
+    err => {
+      t.is(counter, steps)
+      t.end(err)
     }
-  })
-
-  const target = new Writable({
-    write (chunk, encoding, callback) {
-      counter++
-      callback()
-    }
-  })
-
-  pump(source, target, err => {
-    if (!err) {
-      t.is(counter, 7)
-    }
-    t.end(err)
-  })
+  )
 })
 
 test('pump promise', async t => {
+  const steps = 8
   let counter = 0
-
-  const source = new Readable({
-    read () {
-      this.push('a')
-      this.push('b')
-      this.push('c')
-      this.push('d')
-      this.push('e')
-      this.push('f')
-      this.push('g')
-      this.push(null)
-    }
-  })
-
-  const target = new Writable({
-    write (chunk, encoding, callback) {
-      counter++
-      callback()
-    }
-  })
-
-  await pump(source, target)
-
-  t.is(counter, 7)
+  await pump(
+    new Readable({
+      objectMode: true,
+      read () {
+        for (let i = 0; i < steps; i++) {
+          this.push({ i })
+        }
+        this.push(null)
+      }
+    }),
+    new Writable({
+      objectMode: true,
+      write (chunk, encoding, callback) {
+        counter++
+        callback()
+      }
+    })
+  )
+  t.is(counter, steps)
 })
