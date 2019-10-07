@@ -4,13 +4,13 @@ import { Readable, Writable } from 'readable-stream'
 import { pump } from '../index.js'
 
 test.cb('pump callback', t => {
-  const steps = 8
-  let counter = 0
+  t.plan(9)
   pump(
     new Readable({
       objectMode: true,
       read () {
-        for (let i = 0; i < steps; i++) {
+        t.pass()
+        for (let i = 0; i < 8; i++) {
           this.push({ i })
         }
         this.push(null)
@@ -19,25 +19,22 @@ test.cb('pump callback', t => {
     new Writable({
       objectMode: true,
       write (chunk, encoding, callback) {
-        counter++
+        t.true(typeof chunk.i === 'number')
         callback()
       }
     }),
-    err => {
-      t.is(counter, steps)
-      t.end(err)
-    }
+    t.end
   )
 })
 
 test('pump promise', async t => {
-  const steps = 8
-  let counter = 0
+  t.plan(9)
   await pump(
     new Readable({
       objectMode: true,
       read () {
-        for (let i = 0; i < steps; i++) {
+        t.pass()
+        for (let i = 0; i < 8; i++) {
           this.push({ i })
         }
         this.push(null)
@@ -46,10 +43,9 @@ test('pump promise', async t => {
     new Writable({
       objectMode: true,
       write (chunk, encoding, callback) {
-        counter++
+        t.true(typeof chunk.i === 'number')
         callback()
       }
     })
   )
-  t.is(counter, steps)
 })
