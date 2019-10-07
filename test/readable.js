@@ -136,3 +136,19 @@ test.cb('destroy callback', t => {
   stream.destroy()
   t.true(destroying)
 })
+
+test.cb('read overspecialized', t => {
+  const stream = readable({
+    objectMode: true,
+    read (size, callback) {
+      return Promise.resolve()
+    }
+  })
+
+  finished(stream, err => {
+    t.is(err.message, 'Overspecialized function')
+    t.end()
+  })
+
+  stream.read()
+})

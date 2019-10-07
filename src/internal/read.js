@@ -12,6 +12,15 @@ function supportPromise (read) {
   }
 }
 
+function once (fn) {
+  let called = false
+  return function (err, data) {
+    if (called) return
+    called = true
+    fn(err, data)
+  }
+}
+
 export default function wrapReadMethod (read) {
   let sync = false
   let reading = false
@@ -25,7 +34,7 @@ export default function wrapReadMethod (read) {
     }
     reading = true
 
-    const callback = (err, data) => {
+    const callback = once((err, data) => {
       if (err) {
         process.nextTick(() => this.emit('error', err))
         return
@@ -43,10 +52,12 @@ export default function wrapReadMethod (read) {
       if (this._readableState.length < this._readableState.highWaterMark) {
         process.nextTick(() => this._read(size))
       }
-    }
+    })
 
     if (read.length >= 2) {
-      read.call(this, size, callback)
+      if (isPromise(read.call(this, size, callback))) {
+        callback(new Error('Overspecialized function'))
+      }
       return
     }
 
