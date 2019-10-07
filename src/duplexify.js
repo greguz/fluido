@@ -4,15 +4,11 @@ import { eos } from './eos'
 import destroyStream from './internal/destroy'
 
 export function duplexify (readable, writable, options) {
-  let reading = false
-
   function read () {
-    if (reading) {
+    if (readable.readableFlowing !== null) {
       readable.resume()
       return
     }
-
-    reading = true
 
     const listener = data => {
       if (!this.push(data)) {
