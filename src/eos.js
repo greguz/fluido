@@ -1,4 +1,4 @@
-import finished from 'end-of-stream'
+import { finished } from 'readable-stream'
 
 import { isFunction, noop } from './internal/utils'
 

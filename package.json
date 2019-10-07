@@ -22,7 +22,7 @@
   "author": "Giacomo Gregoletto",
   "license": "MIT",
   "dependencies": {
-    "end-of-stream": "^1.4.4"
+    "readable-stream": "^3.4.0"
   },
   "devDependencies": {
     "ava": "^2.4.0",

@@ -1,6 +1,5 @@
 import test from 'ava'
-import { Duplex } from 'stream'
-import finished from 'end-of-stream'
+import { Duplex, finished } from 'readable-stream'
 
 import { mergeWritables } from '../index.js'
 

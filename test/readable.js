@@ -1,4 +1,5 @@
 import test from 'ava'
+import { finished } from 'readable-stream'
 
 import { readable } from '../index.js'
 
@@ -105,4 +106,33 @@ test.cb('read promise', t => {
     },
     timeStep * highWaterMark + timeStep
   )
+})
+
+test.cb('destroy callback', t => {
+  let destroying = false
+
+  const stream = readable({
+    objectMode: true,
+    destroy () {
+      destroying = true
+      return new Promise(resolve => {
+        setTimeout(
+          () => {
+            destroying = false
+            resolve()
+          },
+          100
+        )
+      })
+    }
+  })
+
+  finished(stream, err => {
+    t.is(err.message, 'Premature close')
+    t.false(destroying)
+    t.end()
+  })
+  t.false(destroying)
+  stream.destroy()
+  t.true(destroying)
 })

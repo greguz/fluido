@@ -1,5 +1,5 @@
 import test from 'ava'
-import eos from 'end-of-stream'
+import { finished } from 'readable-stream'
 
 import { writable } from '../index.js'
 
@@ -31,7 +31,7 @@ test.cb('writable concurrent', t => {
     }
   })
 
-  eos(stream, t.end)
+  finished(stream, t.end)
 
   for (let i = 0; i < (concurrency * 2); i++) {
     stream.write({ i })

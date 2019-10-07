@@ -1,7 +1,5 @@
 import test from 'ava'
-import { Writable } from 'stream'
-import pipeline from 'pump'
-import finished from 'end-of-stream'
+import { Writable, finished, pipeline } from 'readable-stream'
 
 import { duplex } from '../index.js'
 

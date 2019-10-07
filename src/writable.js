@@ -1,4 +1,4 @@
-import { Writable } from 'stream'
+import { Writable } from 'readable-stream'
 
 import supportConcurrency from './internal/concurrency'
 import supportPromises from './internal/promises'

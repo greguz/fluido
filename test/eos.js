@@ -1,5 +1,5 @@
 import test from 'ava'
-import { Readable, Writable, Duplex } from 'stream'
+import { Readable, Writable, Duplex } from 'readable-stream'
 
 import { eos } from '../index.js'
 

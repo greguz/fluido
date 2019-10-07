@@ -1,5 +1,5 @@
 import test from 'ava'
-import finished from 'end-of-stream'
+import { finished } from 'readable-stream'
 
 import { transform } from '../index.js'
 

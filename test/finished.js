@@ -1,5 +1,5 @@
 import test from 'ava'
-import { Readable } from 'stream'
+import { Readable } from 'readable-stream'
 
 import { finished } from '../index.js'
 

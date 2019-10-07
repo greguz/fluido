@@ -1,4 +1,4 @@
-import { Readable } from 'stream'
+import { Readable } from 'readable-stream'
 
 import supportPromises from './internal/promises'
 import { voidRead } from './internal/void'

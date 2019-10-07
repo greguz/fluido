@@ -1,5 +1,5 @@
 import test from 'ava'
-import { Readable, Writable } from 'stream'
+import { Readable, Writable } from 'readable-stream'
 
 import { pump } from '../index.js'
 

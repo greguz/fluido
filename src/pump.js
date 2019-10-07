@@ -1,4 +1,4 @@
-import { handle } from './handle'
+import { pipeline } from 'readable-stream'
 
 import { isFunction, last } from './internal/utils'
 
@@ -8,22 +8,5 @@ export function pump (...args) {
       pump(...args, err => (err ? reject(err) : resolve()))
     )
   }
-
-  const callback = args.pop()
-  if (args.length < 2) {
-    callback(new Error('Expected at least two streams to pipe'))
-    return
-  }
-
-  const streams = args.map((stream, i) => [
-    stream,
-    {
-      readable: i < args.length - 1,
-      writable: i > 0
-    }
-  ])
-
-  handle(...streams, callback)
-
-  args.reduce((a, b) => a.pipe(b))
+  pipeline(...args)
 }

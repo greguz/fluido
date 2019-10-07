@@ -1,5 +1,5 @@
 import test from 'ava'
-import { Readable, Writable, Duplex, Transform } from 'stream'
+import { Readable, Writable, Duplex, Transform } from 'readable-stream'
 
 import {
   isReadable,

@@ -1,4 +1,4 @@
-import { Transform } from 'stream'
+import { Transform } from 'readable-stream'
 
 import supportConcurrency from './internal/concurrency'
 import supportPromises from './internal/promises'
