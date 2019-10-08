@@ -50,7 +50,7 @@ export default function wrapReadMethod (read) {
 
       reading = false
       if (this._readableState.length < this._readableState.highWaterMark) {
-        process.nextTick(() => this._read(size))
+        setImmediate(() => this._read(size))
       }
     })
 
