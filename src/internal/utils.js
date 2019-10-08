@@ -11,3 +11,12 @@ export function last (arr) {
 export function isPromise (value) {
   return value instanceof Promise
 }
+
+export function once (fn) {
+  let called = false
+  return function (err, data) {
+    if (called) return
+    called = true
+    fn(err, data)
+  }
+}

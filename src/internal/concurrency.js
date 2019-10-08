@@ -1,18 +1,20 @@
+import { once } from './utils'
+
 export default function supportConcurrency (
   concurrency,
   _transform,
   _flush,
   _destroy,
-  isWritable = false
+  isTransform = false
 ) {
   if (!Number.isInteger(concurrency) || concurrency <= 0) {
     throw new TypeError('Concurrency must be a positive integer')
   }
   if (typeof _transform !== 'function') {
     throw new TypeError(
-      isWritable
-        ? 'Write function is required'
-        : 'Transform function is required'
+      isTransform
+        ? 'Expected transform method to be a function'
+        : 'Expected write method to be a function'
     )
   }
 
@@ -45,12 +47,12 @@ export default function supportConcurrency (
   function job (chunk, encoding) {
     jobs++
 
-    _transform.call(this, chunk, encoding, (err, data) => {
+    _transform.call(this, chunk, encoding, once((err, data) => {
       jobs--
 
       error = error || err
 
-      if (!error && data !== undefined && data !== null && !isWritable) {
+      if (!error && data !== undefined && isTransform) {
         this.push(data)
       }
 
@@ -66,7 +68,7 @@ export default function supportConcurrency (
         next = undefined
         callback()
       }
-    })
+    }))
   }
 
   function flush (callback) {

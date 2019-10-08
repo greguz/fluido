@@ -8,7 +8,7 @@ function handleConcurrency (options) {
   const { concurrency, write, final, destroy } = options
 
   return concurrency
-    ? supportConcurrency(concurrency, write, final, destroy, true)
+    ? supportConcurrency(concurrency, write, final, destroy)
     : [write, final, destroy]
 }
 

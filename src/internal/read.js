@@ -1,4 +1,4 @@
-import { isPromise } from './utils'
+import { isPromise, once } from './utils'
 
 function handlePromise (promise, callback) {
   promise
@@ -9,15 +9,6 @@ function handlePromise (promise, callback) {
 function supportPromise (read) {
   return function (size, callback) {
     handlePromise(read.call(this, size), callback)
-  }
-}
-
-function once (fn) {
-  let called = false
-  return function (err, data) {
-    if (called) return
-    called = true
-    fn(err, data)
   }
 }
 
