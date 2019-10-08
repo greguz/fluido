@@ -1,45 +1,37 @@
 import test from 'ava'
-import { pipeline, Readable, Transform, Writable } from 'readable-stream'
+import { Transform, Writable, finished } from 'readable-stream'
 
 import { writify } from '../index.js'
 
 test.cb('writify', t => {
-  let rc = 0
-  const head = new Readable({
-    highWaterMark: 10,
-    read () {
-      let flowing = true
-      while (flowing && rc < 100) {
-        flowing = this.push(rc.toString())
-        rc++
-      }
-      if (rc >= 100) {
-        this.push(null)
-      }
-    }
-  })
+  t.plan(22)
 
-  const body = new Transform({
-    highWaterMark: 10,
-    transform (chunk, encoding, callback) {
-      callback(null, chunk)
-    }
-  })
+  let x = 1
+  const stream = writify(
+    [
+      new Transform({
+        objectMode: true,
+        transform (chunk, encoding, callback) {
+          t.pass()
+          callback(null, Math.pow(2, chunk))
+        }
+      }),
+      new Writable({
+        objectMode: true,
+        write (chunk, encoding, callback) {
+          t.is(chunk, x)
+          x = x * 2
+          callback()
+        }
+      })
+    ],
+    { objectMode: true }
+  )
 
-  let wc = 0
-  const tail = new Writable({
-    highWaterMark: 10,
-    write (chunk, encoding, callback) {
-      wc++
-      setTimeout(callback, 10)
-    }
-  })
+  finished(stream, t.end)
 
-  pipeline(head, writify([body, tail]), err => {
-    if (!err) {
-      t.is(rc, 100)
-      t.is(wc, 100)
-    }
-    t.end(err)
-  })
+  for (let i = 0; i <= 10; i++) {
+    stream.write(i)
+  }
+  stream.end()
 })

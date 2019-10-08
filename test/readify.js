@@ -1,45 +1,39 @@
 import test from 'ava'
-import { pipeline, Readable, Transform, Writable } from 'readable-stream'
+import { Readable, Transform, finished } from 'readable-stream'
 
 import { readify } from '../index.js'
 
 test.cb('readify', t => {
-  let rc = 0
-  const head = new Readable({
-    highWaterMark: 10,
-    read () {
-      let flowing = true
-      while (flowing && rc < 100) {
-        flowing = this.push(rc.toString())
-        rc++
-      }
-      if (rc >= 100) {
-        this.push(null)
-      }
-    }
-  })
+  t.plan(23)
 
-  const body = new Transform({
-    highWaterMark: 10,
-    transform (chunk, encoding, callback) {
-      callback(null, chunk)
-    }
-  })
+  const stream = readify(
+    [
+      new Readable({
+        objectMode: true,
+        read () {
+          t.pass()
+          for (let i = 0; i <= 10; i++) {
+            this.push(i)
+          }
+          this.push(null)
+        }
+      }),
+      new Transform({
+        objectMode: true,
+        transform (chunk, encoding, callback) {
+          t.pass()
+          callback(null, Math.pow(2, chunk))
+        }
+      })
+    ],
+    { objectMode: true }
+  )
 
-  let wc = 0
-  const tail = new Writable({
-    highWaterMark: 10,
-    write (chunk, encoding, callback) {
-      wc++
-      setTimeout(callback, 10)
-    }
-  })
+  finished(stream, t.end)
 
-  pipeline(readify([head, body]), tail, err => {
-    if (!err) {
-      t.is(rc, 100)
-      t.is(wc, 100)
-    }
-    t.end(err)
+  let x = 1
+  stream.on('data', n => {
+    t.is(n, x)
+    x = x * 2
   })
 })

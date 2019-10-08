@@ -16,23 +16,21 @@ export function readify (streams, options) {
   return readable({
     ...options,
     read () {
-      // Restart data flow
       if (source) {
         source.resume()
         return
       }
 
-      // Init our data source (simple passthrough stream)
       source = transform({ objectMode: true })
 
-      // Data collect listener
       const listener = chunk => {
         if (!this.push(chunk)) {
           source.pause()
         }
       }
 
-      // Setup pipeline
+      source.addListener('data', listener)
+
       pump(...streams, source, err => {
         source.removeListener('data', listener)
 
@@ -42,9 +40,6 @@ export function readify (streams, options) {
           this.push(null)
         }
       })
-
-      // Start data flow
-      source.addListener('data', listener)
     },
     destroy (err, callback) {
       callback(destroyStream(source, err))

@@ -3,46 +3,32 @@ import { Duplex, finished } from 'readable-stream'
 
 import { mergeWritables } from '../index.js'
 
-function build (onWrite) {
-  return new Duplex({
-    read () {
-      this.push(null)
-    },
-    write (chunk, encoding, callback) {
-      onWrite()
-      callback()
-    }
-  })
-}
-
 test.cb('mergeWritables', t => {
-  let counter = 0
-  const callback = () => (counter++)
-  const targets = [
-    build(callback),
-    build(callback),
-    build(callback),
-    build(callback),
-    build(callback),
-    build(callback),
-    build(callback)
-  ]
+  t.plan(25)
 
-  const stream = mergeWritables(targets)
+  const targets = []
+  for (let i = 0; i < 5; i++) {
+    targets.push(
+      new Duplex({
+        objectMode: true,
+        read () {
+          t.fail()
+          this.push(null)
+        },
+        write (chunk, encoding, callback) {
+          t.pass()
+          callback()
+        }
+      })
+    )
+  }
 
-  finished(stream, err => {
-    if (!err) {
-      t.is(counter, 7 * 7)
-    }
-    t.end(err)
-  })
+  const stream = mergeWritables(targets, { objectMode: true })
 
-  stream.write('a')
-  stream.write('b')
-  stream.write('c')
-  stream.write('d')
-  stream.write('e')
-  stream.write('f')
-  stream.write('g')
+  finished(stream, t.end)
+
+  for (let i = 0; i < 5; i++) {
+    stream.write({ i })
+  }
   stream.end()
 })

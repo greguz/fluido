@@ -3,38 +3,30 @@ import { Duplex, finished } from 'readable-stream'
 
 import { mergeReadables } from '../index.js'
 
-function build (value) {
-  return new Duplex({
-    read () {
-      this.push(value)
-      this.push(null)
-    },
-    write (chunk, encoding, callback) {
-      callback()
-    }
-  })
-}
-
 test.cb('mergeReadables', t => {
-  const sources = [
-    build('a'),
-    build('b'),
-    build('c'),
-    build('d'),
-    build('e'),
-    build('f'),
-    build('g')
-  ]
+  t.plan(16)
 
-  const stream = mergeReadables(sources)
+  const sources = []
+  for (let i = 0; i < 8; i++) {
+    sources.push(
+      new Duplex({
+        objectMode: true,
+        read () {
+          t.pass()
+          this.push({ i })
+          this.push(null)
+        },
+        write (chunk, encoding, callback) {
+          t.fail()
+          callback()
+        }
+      })
+    )
+  }
 
-  let counter = 0
-  stream.addListener('data', () => (counter++))
+  const stream = mergeReadables(sources, { objectMode: true })
 
-  finished(stream, err => {
-    if (!err) {
-      t.is(counter, 7)
-    }
-    t.end(err)
-  })
+  stream.addListener('data', () => t.pass())
+
+  finished(stream, t.end)
 })
