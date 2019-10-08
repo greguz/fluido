@@ -10,105 +10,162 @@ This package aims to be a streaming toolkit by providing all the necessary utili
 
 ## Features
 
-- Full Promise support
+- **Add callback/Promise/async-await support to all internal methods** (read, write, writev, final, transform, flush, destroy)
 - Full TypeScript support
-- The [backpressure mechanism](https://nodejs.org/en/docs/guides/backpressuring-in-streams/) is respected always
-- Node.js >= 8
+- The [backpressure mechanism](https://nodejs.org/en/docs/guides/backpressuring-in-streams/) is always respected
+- Requires Node.js >= 8
 
 ## API
 
-#### isReadable(value)
+### isReadable(value)
 
 Returns `true` when `value` is a readable stream instance.
 
-#### isWritable(value)
+### isWritable(value)
 
 Returns `true` when `value` is a writable stream instance.
 
-#### isStream(value)
+### isStream(value)
 
 Returns `true` when `value` is readable **or** writable.
 
-#### isDuplex(value)
+### isDuplex(value)
 
 Returns `true` when `value` is both readable **and** writable.
 
-#### isReadableStrictly(value)
+### isReadableStrictly(value)
 
 Returns `true` when `value` is readable **and not** writable.
 
-#### isWritableStrictly(value)
+### isWritableStrictly(value)
 
 Returns `true` when `value` is writable **and not** readable.
 
-#### readable(options)
+### readable(options)
 
-Create *readable* stream.
+Creates a *readable* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) are supported.
 
-##### callback mode
+#### options.read
 
-It is possible to use an _optional callback_ inside the `read` method.
-First argument is the error, the second argument is the stream chunk.
-Both are optional.
+This is the **only** method that supports both *sync* and *async* modes.
+
+##### Sync mode:
 
 ```javascript
 const { readable } = require('fluido')
 
 const stream = readable({
-  objectMode: true,
-  read (size, callback) {
-    let index = 0
-    const timer = setInterval(() => this.push(index++), 1000)
-
-    setTimeout(() => {
-      clearInterval(timer)
-      // Pass null to end the stream
-      callback(null, null)
-    }, 5000)
+  read (size) {
+    this.push('sync stuff')
   }
 })
 ```
 
-#### writable(options)
+##### Async mode with callback:
 
-Create *writable* stream.
+```javascript
+const { readable } = require('fluido')
+
+const stream = readable({
+  read (size, callback) {
+    readSomethig((err, asyncStuff) => {
+      // You can still use push method...
+      this.push(asyncStuff)
+      // ...or use the second argument of the callback
+      callback(err, asyncStuff)
+    })
+  }
+})
+```
+
+##### Async mode with Promise:
+
+```javascript
+const { readable } = require('fluido')
+
+const stream = readable({
+  read (size) {
+    return new Promise((resolve, reject) => {
+      readSomethig((err, asyncStuff) => {
+        if (err) {
+          reject(err)
+        } else {
+          // You can still use push method...
+          this.push(asyncStuff)
+          // ...or resolve the promise with the chunk to push
+          resolve(asyncStuff)
+        }
+      })
+    })
+  }
+})
+```
+
+##### Async mode with async-await:
+
+```javascript
+const { readable } = require('fluido')
+
+const stream = readable({
+  async read (size) {
+    const asyncStuff = await readSomethig()
+    // You can still use push method...
+    this.push(asyncStuff)
+    // ...or resolve the async function with the chunk to push
+    return asyncStuff
+  }
+})
+```
+
+### writable(options)
+
+Creates a *writable* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_constructor_new_stream_writable_options) are supported.
 
-##### concurrent mode
+#### options.concurrency
 
-To make the *write* method concurrent, you can specify the `concurrency` option.
-By default, all chunks are processed sequantially and synchronously.
-You can make this process **async** with this option.
+Makes the *write* method concurrent.
 
 ```javascript
 const { writable } = require('fluido')
 
 const stream = writable({
   objectMode: true,
-  concurrency: 10, // Fire write function max 10 times at the same time
-  write (chunk, encoding, callback) {
-    // Do something async with chunk
-    something(chunk, callback)
+  concurrency: 10, // Let max 10 write method calls running at the same time
+  write (obj, encoding, callback) {
+    doSomethingUseful(obj, callback)
   }
 })
 ```
 
-#### duplex(options)
+### duplex(options)
 
-Create *duplex* stream.
-All [core options](https://nodejs.org/api/stream.html#stream_new_stream_duplex_options) are supported.
+Creates a *duplex* stream.
+Both [readable](#readable(options)) and [writable](#writable(options)) options are supported.
 
-Both [callback mode](#callback-mode) and [concurrent mode](#concurrent-mode) are supported.
+### transform(options)
 
-#### transform(options)
-
-Create *transform* stream.
+Creates a *transform* stream.
 All [core options](https://nodejs.org/api/stream.html#stream_new_stream_transform_options) are supported.
 
-The `transform` function supports [concurrent mode](#concurrent-mode).
+#### options.concurrency
 
-#### eos(stream, options, callback)
+Makes the *transform* method concurrent.
+
+```javascript
+const { transform } = require('fluido')
+
+const stream = transform({
+  objectMode: true,
+  concurrency: 10, // Let max 10 transform method calls running at the same time
+  transform (obj, encoding, callback) {
+    doSomethingUseful(obj, callback)
+  }
+})
+```
+
+### eos(stream, options, callback)
 
 Register a **e**nd-**o**f-**s**tream callback.
 If callback is `undefined`, returns a promise.
@@ -132,19 +189,19 @@ eos(duplex, { writable: false }, callback)
 eos(duplex, { readable: false }, callback)
 ```
 
-##### options.readable : boolean
+#### options.readable : boolean
 
 When set to false, the callback will be called when the stream ends even though the stream might still be readable. Default: `true`.
 
-##### options.writable : boolean
+#### options.writable : boolean
 
 When set to false, the callback will be called when the stream ends even though the stream might still be writable. Default: `true`.
 
-##### options.error : boolean
+#### options.error : boolean
 
 If set to false, then a call to emit('error', err) is not treated as finished. Default: `true`.
 
-#### finished(...streams, callback)
+### finished(...streams, callback)
 
 Fire callback when all streams have finished.
 If callback is `undefined`, returns a promise.
@@ -178,11 +235,11 @@ finished(
 )
 ```
 
-#### handle(...streams, callback)
+### handle(...streams, callback)
 
 Same as [finished](#finished(...streams,-callback)), plus the streams are automatically destroyed at the first encountered error.
 
-#### pump(...streams, callback)
+### pump(...streams, callback)
 
 Pump a streams pipeline and handle all possible errors.
 If callback is `undefined`, returns a promise.
@@ -210,12 +267,12 @@ pump(
 )
 ```
 
-#### collect(encoding)
+### collect(encoding)
 
 Returns a transform stream that collect all streamed data.
 Encoding may by `'buffer'` for single buffer concat, `false` for raw array output, an **encoding** for string output, or `undefined` for auto.
 
-#### subscribe(...streams, callback)
+### subscribe(...streams, callback)
 
 Pump a pipeline and fire the callback with the last value emitted by the pipeline.
 If callback is `undefined`, returns a promise.
@@ -243,7 +300,7 @@ subscribe(
 )
 ```
 
-#### readify(streams[], options)
+### readify(streams[], options)
 
 Concat multiple streams into a single readable stream.
 
@@ -262,7 +319,7 @@ const singleReadableStream = readify([
 singleReadableStream.pipe(createWriteStream('cat.png'))
 ```
 
-#### writify(streams[], options)
+### writify(streams[], options)
 
 Concat multiple streams into a single writable stream.
 
@@ -281,12 +338,12 @@ const singleWritableStream = writify([
 createReadStream('cat.jpg').pipe(singleWritableStream)
 ```
 
-#### duplexify(readable, writable, options)
+### duplexify(readable, writable, options)
 
 Join a readable and a writable stream into a single duplex stream.
 All arguments are optional.
 
-#### mergeReadables(sources[], options)
+### mergeReadables(sources[], options)
 
 Merge multiple readable streams into a single readable stream.
 
@@ -306,7 +363,7 @@ animals
   .pipe(createWriteStream('animals.json'))
 ```
 
-#### mergeWritables(targets[], options)
+### mergeWritables(targets[], options)
 
 Merge multiple writable streams into a single writable stream.
 
