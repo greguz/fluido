@@ -108,35 +108,6 @@ test.cb('read promise', t => {
   )
 })
 
-test.cb('destroy callback', t => {
-  let destroying = false
-
-  const stream = readable({
-    objectMode: true,
-    destroy () {
-      destroying = true
-      return new Promise(resolve => {
-        setTimeout(
-          () => {
-            destroying = false
-            resolve()
-          },
-          100
-        )
-      })
-    }
-  })
-
-  finished(stream, err => {
-    t.is(err.message, 'Premature close')
-    t.false(destroying)
-    t.end()
-  })
-  t.false(destroying)
-  stream.destroy()
-  t.true(destroying)
-})
-
 test.cb('read overspecialized', t => {
   const stream = readable({
     objectMode: true,
@@ -151,4 +122,39 @@ test.cb('read overspecialized', t => {
   })
 
   stream.read()
+})
+
+test.cb('destroy promise', t => {
+  t.plan(4)
+  let destroying = false
+  const stream = readable({
+    objectMode: true,
+    destroy () {
+      destroying = true
+      return new Promise(resolve => {
+        setTimeout(
+          () => {
+            destroying = false
+            resolve()
+          },
+          10
+        )
+      })
+    }
+  })
+  finished(stream, err => {
+    t.is(err.message, 'Premature close')
+    t.false(destroying)
+    t.end()
+  })
+  t.false(destroying)
+  stream.destroy()
+  t.true(destroying)
+})
+
+test('readable void', t => {
+  const stream = readable()
+  t.false(stream._readableState.ended)
+  stream.read()
+  t.true(stream._readableState.ended)
 })

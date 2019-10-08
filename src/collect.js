@@ -32,33 +32,33 @@ function asIs (chunks, callback) {
   callback(null, chunks)
 }
 
-export function collect (encoding) {
+export function collect (target) {
   let chunks = []
 
   return transform({
     objectMode: true,
-    transform (chunk, ce, callback) {
-      if (encoding === undefined) {
+    transform (chunk, encoding, callback) {
+      if (target === undefined) {
         if (Buffer.isBuffer(chunk)) {
-          encoding = 'buffer'
+          target = 'buffer'
         } else if (typeof chunk === 'string') {
-          encoding = 'utf8'
+          target = 'utf8'
         } else {
-          encoding = false
+          target = false
         }
       }
       chunks.push(
-        typeof chunk === 'string' && encoding === 'buffer'
-          ? Buffer.from(chunk, ce)
+        typeof chunk === 'string' && target === 'buffer'
+          ? Buffer.from(chunk, encoding)
           : chunk
       )
       callback()
     },
     flush (callback) {
-      if (encoding === 'buffer') {
+      if (target === 'buffer') {
         asBuffer(chunks, callback)
-      } else if (typeof encoding === 'string') {
-        asString(chunks, encoding, callback)
+      } else if (typeof target === 'string') {
+        asString(chunks, target, callback)
       } else {
         asIs(chunks, callback)
       }
