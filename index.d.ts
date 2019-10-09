@@ -104,19 +104,11 @@ export interface EOSOptions {
   readable?: boolean
   writable?: boolean
 }
-export declare function eos(stream: Stream): Promise<void>
-export declare function eos(stream: Stream, callback: Callback): void
-export declare function eos(stream: Stream, options: EOSOptions): Promise<void>
-export declare function eos(stream: Stream, options: EOSOptions, callback: Callback): void
+export declare type VoidFunction = () => void
+export declare function eos(stream: Stream, callback: Callback): VoidFunction
+export declare function eos(stream: Stream, options: EOSOptions, callback: Callback): VoidFunction
 
-export declare type ExtendedStream = [Stream, EOSOptions]
-export declare type Subject = Stream | ExtendedStream
-
-export declare function finished(...args: Subject[]): Promise<void>
-export declare function finished(...args: Array<Subject | Callback>): void
-
-export declare function handle(...args: Subject[]): Promise<void>
-export declare function handle(...args: Array<Subject | Callback>): void
+export declare function finished(...args: Array<Stream | [Stream, EOSOptions] | Callback>): VoidFunction
 
 export declare function subscribe(
   ...args: Array<Readable | Transform>

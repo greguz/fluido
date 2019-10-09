@@ -3,10 +3,10 @@ import { isFunction, last } from './internal/utils'
 
 export function finished (...args) {
   if (!isFunction(last(args))) {
-    return new Promise((resolve, reject) =>
-      finished(...args, err => (err ? reject(err) : resolve()))
-    )
+    throw new TypeError('Expected callback')
   }
-  const callback = args.pop()
-  handleInternal(args, false, callback)
+  if (args.length <= 1) {
+    throw new Error('Expected at least one stream')
+  }
+  return handleInternal(args, false, args.pop())
 }

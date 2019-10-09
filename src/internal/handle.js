@@ -33,18 +33,13 @@ function buildDestroyer (entries) {
 }
 
 export default function handleInternal (entries, destroyOnError, callback) {
-  if (entries.length <= 0) {
-    process.nextTick(callback, null)
-    return
-  }
-
   const destroy = destroyOnError ? buildDestroyer(entries) : noop
 
   let count = entries.length
-  let error
+  let error = null
 
   const end = err => {
-    error = error || err || null
+    error = error || err
     if (error) {
       destroy(error)
     }
@@ -53,13 +48,15 @@ export default function handleInternal (entries, destroyOnError, callback) {
     }
   }
 
-  for (const entry of entries) {
-    const stream = readStream(entry)
-    const options = readOptions(entry)
+  return entries
+    .map(entry => {
+      const stream = readStream(entry)
+      const options = readOptions(entry)
 
-    eos(stream, options, err => {
-      stream.__closed__ = true
-      end(err)
+      return eos(stream, options, err => {
+        stream.__closed__ = true
+        end(err)
+      })
     })
-  }
+    .reduce(compose)
 }

@@ -1,104 +1,86 @@
 import test from 'ava'
-import { Readable } from 'readable-stream'
+import { Writable } from 'readable-stream'
 
 import { finished } from '../index.js'
 
-function build (time, start, end) {
-  let active = false
-  return new Readable({
-    read () {
-      if (active) {
-        return
-      } else {
-        active = true
+function buildWritable (t) {
+  return new Writable({
+    write (chunk, encoding, callback) {
+      if (t) {
+        t.pass()
       }
-      start()
-      setTimeout(() => {
-        end()
-        this.push(null)
-      }, time)
+      callback()
+    },
+    final (callback) {
+      if (t) {
+        t.pass()
+      }
+      callback()
     }
   })
 }
 
-test('finished promise', async t => {
-  let started = 0
-  let ended = 0
-
-  const start = () => started++
-  const end = () => ended++
-
-  const streams = [
-    build(1, start, end),
-    build(10, start, end),
-    build(100, start, end)
-  ]
-
-  for (const stream of streams) {
-    stream.resume()
+function buildWritables (length, t) {
+  const writables = []
+  for (let i = 0; i < length; i++) {
+    writables.push(buildWritable(t))
   }
+  return writables
+}
 
-  await finished(...streams)
-
-  t.is(started, streams.length)
-  t.is(ended, streams.length)
-
-  t.pass()
+test('finished no callback', t => {
+  t.throws(() => finished(), TypeError)
+  t.throws(() => finished(buildWritable()), TypeError)
+  t.throws(() => finished(buildWritable(), buildWritable()), TypeError)
 })
 
-test('finished callback', async t => {
-  let started = 0
-  let ended = 0
+test('finished empty', t => {
+  t.throws(() => finished(() => {}), Error)
+})
 
-  const start = () => started++
-  const end = () => ended++
+test.cb('finished single', t => {
+  t.plan(2)
+  const stream = buildWritable(t)
+  finished(stream, t.end)
+  stream.end('bye')
+})
 
-  const streams = [
-    build(1, start, end),
-    build(10, start, end),
-    build(100, start, end)
-  ]
+test.cb('finished multiple', t => {
+  t.plan(10)
+
+  const streams = buildWritables(5, t)
+
+  finished(...streams, t.end)
 
   for (const stream of streams) {
-    stream.resume()
+    stream.end('bye')
   }
+})
 
-  await new Promise((resolve, reject) => {
-    finished(...streams, err => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve()
-      }
-    })
+test.cb('finished clean single', t => {
+  t.plan(2)
+
+  const stream = buildWritable(t)
+
+  const clean = finished(stream, t.fail)
+  finished(stream, t.end)
+
+  stream.write('something', () => {
+    clean()
+    stream.end()
   })
-
-  t.is(started, streams.length)
-  t.is(ended, streams.length)
-
-  t.pass()
 })
 
-test('finished empty', async t => {
-  await finished()
-  t.pass()
-})
+test.cb('finished clean multiple', t => {
+  t.plan(5)
 
-test('finished single', async t => {
-  let started = 0
-  let ended = 0
+  const streams = buildWritables(5, t)
 
-  const start = () => started++
-  const end = () => ended++
+  const clean = finished(...streams, t.fail)
+  finished(...streams, t.end)
 
-  const stream = build(100, start, end)
-
-  stream.resume()
-
-  await finished(stream)
-
-  t.is(started, 1)
-  t.is(ended, 1)
-
-  t.pass()
+  clean()
+  for (const stream of streams) {
+    stream.end()
+  }
 })
