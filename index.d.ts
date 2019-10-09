@@ -59,7 +59,13 @@ export declare function writable<T = any>(
 
 export declare type Stream = Readable | Writable
 
-export declare type DuplexOptions = ReadableOptions & WritableOptions
+export declare type DuplexOptions = ReadableOptions & WritableOptions & {
+  allowHalfOpen?: boolean
+  readableObjectMode?: boolean
+  writableObjectMode?: boolean
+  readableHighWaterMark?: number
+  writableHighWaterMark?: number
+}
 export declare type DuplexMethods<R = any, W = any> = ReadableMethods<R> &
   WritableMethods<W>
 export declare function duplex<R = any, W = any>(
