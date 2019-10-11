@@ -45,5 +45,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/greguz/fluido.git"
-  }
+  },
+  "homepage": "https://greguz.github.io/fluido/index.html"
 }
