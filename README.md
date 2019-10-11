@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.com/greguz/fluido.svg?branch=master)](https://travis-ci.com/greguz/fluido)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-![GitHub Logo](/.github/elfo.png)
+![GitHub Logo](/docs/images/elfo.png)
 
 Hi, I'm Fluido!
 
