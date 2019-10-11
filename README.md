@@ -38,14 +38,14 @@ npm install --save fluido
 
 ### Stream creation
 
-- [Readable](Readable.md)
-- [Writable](Writable.md)
-- [Duplex](Duplex.md)
-- [Transform](Transform.md)
+- [Readable](docs/Readable.md)
+- [Writable](docs/Writable.md)
+- [Duplex](docs/Duplex.md)
+- [Transform](docs/Transform.md)
 
 ### Stream manipulation
 
-- [Type](Type.md)
-- [Lifecycle](Lifecycle.md)
-- [Merge](Merge.md)
-- [Operators](Operators.md)
+- [Type](docs/Type.md)
+- [Lifecycle](docs/Lifecycle.md)
+- [Merge](docs/Merge.md)
+- [Operators](docs/Operators.md)
