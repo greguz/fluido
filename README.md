@@ -1,380 +1,51 @@
 # fluido
 
-[![npm version](https://badge.fury.io/js/fluido.svg)](https://badge.fury.io/js/fluido) [![Dependencies Status](https://david-dm.org/greguz/fluido.svg)](https://david-dm.org/greguz/fluido.svg) [![Build Status](https://travis-ci.com/greguz/fluido.svg?branch=master)](https://travis-ci.com/greguz/fluido) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![npm version](https://badge.fury.io/js/fluido.svg)](https://badge.fury.io/js/fluido)
+[![Dependencies Status](https://david-dm.org/greguz/fluido.svg)](https://david-dm.org/greguz/fluido.svg)
+[![Build Status](https://travis-ci.com/greguz/fluido.svg?branch=master)](https://travis-ci.com/greguz/fluido)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-It means _fluid_ in Italian, and yes, this is **yet another streaming lib**.
+![GitHub Logo](/.github/elfo.png)
+
+Hi, I'm Fluido!
 
 ## Why
 
-This package aims to be a streaming toolkit by providing all the necessary utilities to work along Node.js streams.
+This package aims to be a collection of utilities
+useful to work along Node.js streams.
+
+If you are new to the concept of *Stream*,
+you may want first to read the
+[official docs](https://nodejs.org/docs/latest/api/stream.html).
 
 ## Features
 
-- **Add callback/Promise/async-await support to all internal methods** (read, write, writev, final, transform, flush, destroy)
-- Full TypeScript support
-- The [backpressure mechanism](https://nodejs.org/en/docs/guides/backpressuring-in-streams/) is always respected
-- Requires Node.js >= 8
+- Uses the last version of [readable-stream](https://www.npmjs.com/package/readable-stream) module internally
+- TypeScript friendly
+- Avoids explicit subclassing noise
+- **Adds Promise support to all internal methods** (read, write, writev, final, transform, flush, destroy)
+- Respects the [backpressure mechanism](https://nodejs.org/en/docs/guides/backpressuring-in-streams/)
+- Supports Node.js >= **8.0**
+- Has a reference to *Disenchantment* <!-- pls Matt don't sue me -->
+
+## Install
+
+```
+npm install --save fluido
+```
 
 ## API
 
-### isReadable(value)
-
-Returns `true` when `value` is a readable stream instance.
-
-### isWritable(value)
-
-Returns `true` when `value` is a writable stream instance.
-
-### isStream(value)
-
-Returns `true` when `value` is readable **or** writable.
-
-### isDuplex(value)
-
-Returns `true` when `value` is both readable **and** writable.
-
-### isReadableStrictly(value)
-
-Returns `true` when `value` is readable **and not** writable.
-
-### isWritableStrictly(value)
-
-Returns `true` when `value` is writable **and not** readable.
-
-### readable(options)
-
-Creates a *readable* stream.
-All [core options](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) are supported.
-
-#### options.read
-
-This is the **only** method that supports both *sync* and *async* modes.
-
-##### Sync mode:
-
-```javascript
-const { readable } = require('fluido')
-
-const stream = readable({
-  read (size) {
-    this.push('sync stuff')
-  }
-})
-```
-
-##### Async mode with callback:
-
-```javascript
-const { readable } = require('fluido')
-
-const stream = readable({
-  read (size, callback) {
-    readSomethig((err, asyncStuff) => {
-      // You can still use push method...
-      this.push(asyncStuff)
-      // ...or use the second argument of the callback
-      callback(err, asyncStuff)
-    })
-  }
-})
-```
-
-##### Async mode with Promise:
-
-```javascript
-const { readable } = require('fluido')
-
-const stream = readable({
-  read (size) {
-    return new Promise((resolve, reject) => {
-      readSomethig((err, asyncStuff) => {
-        if (err) {
-          reject(err)
-        } else {
-          // You can still use push method...
-          this.push(asyncStuff)
-          // ...or resolve the promise with the chunk to push
-          resolve(asyncStuff)
-        }
-      })
-    })
-  }
-})
-```
-
-##### Async mode with async-await:
-
-```javascript
-const { readable } = require('fluido')
-
-const stream = readable({
-  async read (size) {
-    const asyncStuff = await readSomethig()
-    // You can still use push method...
-    this.push(asyncStuff)
-    // ...or resolve the async function with the chunk to push
-    return asyncStuff
-  }
-})
-```
-
-### writable(options)
-
-Creates a *writable* stream.
-All [core options](https://nodejs.org/api/stream.html#stream_constructor_new_stream_writable_options) are supported.
-
-#### options.concurrency
-
-Makes the *write* method concurrent.
-
-```javascript
-const { writable } = require('fluido')
-
-const stream = writable({
-  objectMode: true,
-  concurrency: 10, // Let max 10 write method calls running at the same time
-  write (obj, encoding, callback) {
-    doSomethingUseful(obj, callback)
-  }
-})
-```
-
-### duplex(options)
-
-Creates a *duplex* stream.
-Both [readable](#readable(options)) and [writable](#writable(options)) options are supported.
-
-### transform(options)
-
-Creates a *transform* stream.
-All [core options](https://nodejs.org/api/stream.html#stream_new_stream_transform_options) are supported.
-
-#### options.concurrency
-
-Makes the *transform* method concurrent.
-
-```javascript
-const { transform } = require('fluido')
-
-const stream = transform({
-  objectMode: true,
-  concurrency: 10, // Let max 10 transform method calls running at the same time
-  transform (obj, encoding, callback) {
-    doSomethingUseful(obj, callback)
-  }
-})
-```
-
-### eos(stream, options, callback)
-
-Register a **e**nd-**o**f-**s**tream callback.
-If callback is `undefined`, returns a promise.
-
-```javascript
-const { eos } = require('fluido')
-
-// Fire callback when readable has finished
-eos(readable, callback)
-
-// Fire callback when writable has finished
-eos(writable, callback)
-
-// Fire callback when duplex has finished (both reading and writing)
-eos(duplex, callback)
-
-// Fire callback when duplex has finished to read
-eos(duplex, { writable: false }, callback)
-
-// Fire callback when duplex has finished to write
-eos(duplex, { readable: false }, callback)
-```
-
-#### options.readable : boolean
-
-When set to false, the callback will be called when the stream ends even though the stream might still be readable. Default: `true`.
-
-#### options.writable : boolean
-
-When set to false, the callback will be called when the stream ends even though the stream might still be writable. Default: `true`.
-
-#### options.error : boolean
-
-If set to false, then a call to emit('error', err) is not treated as finished. Default: `true`.
-
-### finished(...streams, callback)
-
-Fire callback when all streams have finished.
-If callback is `undefined`, returns a promise.
-
-```javascript
-const { finished } = require('fluido')
-const { createReadStream, createWriteStream } = require('fs')
-
-const source = createReadStream('/home/mom/images/cat.jpg')
-const target = createWriteStream('/home/grandma/images/cat.jpg')
-
-finished(source, target, err => {
-  // All streams are closed now
-  if (err) {
-    // Handle error
-  } else {
-    // All done
-  }
-})
-
-source.pipe(target)
-```
-
-You can pass [eos options](#eos(stream,-options,-callback)) using an array to store both the stream (index `0`) and the options (index `1`).
-
-```javascript
-finished(
-  [duplex, { writable: false }],
-  writable,
-  callback
-)
-```
-
-### handle(...streams, callback)
-
-Same as [finished](#finished(...streams,-callback)), plus the streams are automatically destroyed at the first encountered error.
-
-### pump(...streams, callback)
-
-Pump a streams pipeline and handle all possible errors.
-If callback is `undefined`, returns a promise.
-
-```javascript
-const { pump } = require('fluido')
-const { createReadStream, createWriteStream } = require('fs')
-const sharp = require('sharp')
-
-pump(
-  // Read source image
-  createReadStream('cat.jpg'),
-  // Process image data
-  sharp().resize(200, 200).png(),
-  // Write target image
-  createWriteStream('cat.png'),
-  // Final callback
-  err => {
-    if (err) {
-      // Handle error
-    } else {
-      // And they live happily ever after
-    }
-  }
-)
-```
-
-### collect(encoding)
-
-Returns a transform stream that collect all streamed data.
-Encoding may by `'buffer'` for single buffer concat, `false` for raw array output, an **encoding** for string output, or `undefined` for auto.
-
-### subscribe(...streams, callback)
-
-Pump a pipeline and fire the callback with the last value emitted by the pipeline.
-If callback is `undefined`, returns a promise.
-
-```javascript
-const { collect, subscribe } = require('fluido')
-const { createReadStream } = require('fs')
-const sharp = require('sharp')
-
-subscribe(
-  // Read the source image
-  createReadStream('cat.jpg'),
-  // Process image data
-  sharp().resize(200, 200).png(),
-  // Collect all chunks into a single buffer
-  collect('buffer'),
-  // Final callback
-  (err, buffer) => {
-    if (err) {
-      // Handle error
-    } else {
-      // Do something with the resulting image buffer
-    }
-  }
-)
-```
-
-### readify(streams[], options)
-
-Concat multiple streams into a single readable stream.
-
-```javascript
-const { readify } = require('fluido')
-const { createReadStream, createWriteStream } = require('fs')
-const sharp = require('sharp')
-
-const singleReadableStream = readify([
-  // Read source image
-  createReadStream('cat.jpg'),
-  // Process image data
-  sharp().resize(200, 200).png()
-])
-
-singleReadableStream.pipe(createWriteStream('cat.png'))
-```
-
-### writify(streams[], options)
-
-Concat multiple streams into a single writable stream.
-
-```javascript
-const { writify } = require('fluido')
-const { createReadStream, createWriteStream } = require('fs')
-const sharp = require('sharp')
-
-const singleWritableStream = writify([
-  // Process image data
-  sharp().resize(200, 200).png(),
-  // Write target image
-  createWriteStream('cat.png')
-])
-
-createReadStream('cat.jpg').pipe(singleWritableStream)
-```
-
-### duplexify(readable, writable, options)
-
-Join a readable and a writable stream into a single duplex stream.
-All arguments are optional.
-
-### mergeReadables(sources[], options)
-
-Merge multiple readable streams into a single readable stream.
-
-```javascript
-const { mergeReadables } = require('fluido')
-const JSONStream = require('JSONStream')
-const { createWriteStream } = require('fs')
-
-const animals = mergeReadables([
-  db.collection('cats').find(),
-  db.collection('dogs').find(),
-  db.collection('pythons').find()
-], { objectMode: true })
-
-animals
-  .pipe(JSONStream.stringify())
-  .pipe(createWriteStream('animals.json'))
-```
-
-### mergeWritables(targets[], options)
-
-Merge multiple writable streams into a single writable stream.
-
-```javascript
-const { mergeWritables } = require('fluido')
-const { createReadStream, createWriteStream } = require('fs')
-
-const singleWritableStream = mergeWritables([
-  createWriteStream('/home/mom/images/cat.jpg'),
-  createWriteStream('/home/grandma/images/cat.jpg')
-])
-
-createReadStream('cat.jpg').pipe(singleWritableStream)
-```
+### Stream creation
+
+- [Readable](Readable.md)
+- [Writable](Writable.md)
+- [Duplex](Duplex.md)
+- [Transform](Transform.md)
+
+### Stream manipulation
+
+- [Type](Type.md)
+- [Lifecycle](Lifecycle.md)
+- [Merge](Merge.md)
+- [Operators](Operators.md)
