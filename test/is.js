@@ -23,7 +23,6 @@ test('isReadable', t => {
   t.false(isReadable(writable))
   t.true(isReadable(duplex))
   t.true(isReadable(transform))
-  t.pass()
 })
 
 test('isWritable', t => {
@@ -34,7 +33,6 @@ test('isWritable', t => {
   t.true(isWritable(writable))
   t.true(isWritable(duplex))
   t.true(isWritable(transform))
-  t.pass()
 })
 
 test('isStream', t => {
@@ -42,7 +40,6 @@ test('isStream', t => {
   t.true(isStream(writable))
   t.true(isStream(duplex))
   t.true(isStream(transform))
-  t.pass()
 })
 
 test('isDuplex', t => {
@@ -50,7 +47,6 @@ test('isDuplex', t => {
   t.false(isDuplex(writable))
   t.true(isDuplex(duplex))
   t.true(isDuplex(transform))
-  t.pass()
 })
 
 test('isReadableStrictly', t => {
@@ -58,7 +54,6 @@ test('isReadableStrictly', t => {
   t.false(isReadableStrictly(writable))
   t.false(isReadableStrictly(duplex))
   t.false(isReadableStrictly(transform))
-  t.pass()
 })
 
 test('isWritableStrictly', t => {
@@ -66,5 +61,4 @@ test('isWritableStrictly', t => {
   t.true(isWritableStrictly(writable))
   t.false(isWritableStrictly(duplex))
   t.false(isWritableStrictly(transform))
-  t.pass()
 })

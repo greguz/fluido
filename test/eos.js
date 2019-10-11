@@ -3,9 +3,18 @@ import { Writable } from 'readable-stream'
 
 import { eos } from '../index.js'
 
-function buildVoidWritable () {
+function buildVoidWritable (t) {
   return new Writable({
     write (chunk, encoding, callback) {
+      if (t) {
+        t.pass()
+      }
+      callback()
+    },
+    final (callback) {
+      if (t) {
+        t.pass()
+      }
       callback()
     }
   })
@@ -18,12 +27,14 @@ test('eos no callback', t => {
 })
 
 test.cb('eos clean', t => {
-  const stream = buildVoidWritable()
+  t.plan(2)
+
+  const stream = buildVoidWritable(t)
 
   const clean = eos(stream, () => t.fail())
   eos(stream, t.end)
 
   clean()
 
-  stream.end()
+  stream.end('something')
 })
