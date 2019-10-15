@@ -7,7 +7,10 @@ export declare type Writable = Writable
 export declare type Duplex = Duplex
 export declare type Transform = Transform
 
-export declare type Callback = (err?: any) => any
+export declare type Stream = Readable | Writable
+export declare type Callback = (err: any) => unknown
+export declare type TypedCallback<T = any> = (err: any, data: T) => unknown
+export declare type VoidFunction = () => unknown
 
 export declare type ReadableCallback<T> = (err?: any, data?: T | null) => any
 export interface ReadableOptions {
@@ -17,10 +20,12 @@ export interface ReadableOptions {
   objectMode?: boolean
 }
 export interface ReadableMethods<T = any> {
-  read?(this: Readable, size: number): Promise<T | null | undefined | void>
-  read?(this: Readable, size: number, callback: ReadableCallback<T>): any
-  destroy?(this: Readable, err: any): Promise<any>
-  destroy?(this: Readable, err: any, callback: Callback): any
+  read?(
+    this: Readable,
+    size: number,
+    callback: ReadableCallback<T>
+  ): Promise<T | null | undefined | void> | unknown
+  destroy?(this: Readable, err: any, callback: Callback): Promise<any> | unknown
 }
 export declare function readable<T = any>(
   options?: ReadableOptions & ReadableMethods<T>
@@ -40,24 +45,23 @@ export interface WritableEntry<T = any> {
   encoding: string
 }
 export interface WritableMethods<T = any> {
-  write?(this: Writable, chunk: T, encoding: string): Promise<any>
-  write?(this: Writable, chunk: T, encoding: string, callback: Callback): any
-  writev?(this: Writable, entries: Array<WritableEntry<T>>): Promise<any>
+  write?(
+    this: Writable,
+    chunk: T,
+    encoding: string,
+    callback: Callback
+  ): Promise<any> | unknown
   writev?(
     this: Writable,
     entries: Array<WritableEntry<T>>,
     callback: Callback
-  ): any
-  final?(this: Writable): Promise<any>
-  final?(this: Writable, callback: Callback): any
-  destroy?(this: Writable, err: any): Promise<any>
-  destroy?(this: Writable, err: any, callback: Callback): any
+  ): Promise<any> | unknown
+  final?(this: Writable, callback: Callback): Promise<any> | unknown
+  destroy?(this: Writable, err: any, callback: Callback): Promise<any> | unknown
 }
 export declare function writable<T = any>(
   options?: WritableOptions & WritableMethods<T>
 ): Writable
-
-export declare type Stream = Readable | Writable
 
 export declare type DuplexOptions = ReadableOptions & WritableOptions & {
   allowHalfOpen?: boolean
@@ -78,18 +82,18 @@ export interface TransformMethods<R = any, W = any> {
   transform?(
     this: Transform,
     chunk: R,
-    encoding: string
-  ): Promise<W | void | undefined>
-  transform?(
-    this: Transform,
-    chunk: R,
     encoding: string,
     callback: TransformCallback<W>
-  ): any
-  flush?(this: Transform): Promise<W | undefined | void>
-  flush?(this: Transform, callback: TransformCallback<W>): any
-  destroy?(this: Transform, err: any): Promise<any>
-  destroy?(this: Transform, err: any, callback: Callback): any
+  ): Promise<W | undefined | void> | unknown
+  flush?(
+    this: Transform,
+    callback: TransformCallback<W>
+  ): Promise<W | undefined | void> | unknown
+  destroy?(
+    this: Transform,
+    err: any,
+    callback: Callback
+  ): Promise<any> | unknown
 }
 export declare function transform<R = any, W = any>(
   options?: TransformOptions & TransformMethods<R, W>
@@ -104,17 +108,29 @@ export interface EOSOptions {
   readable?: boolean
   writable?: boolean
 }
-export declare type VoidFunction = () => void
 export declare function eos(stream: Stream, callback: Callback): VoidFunction
-export declare function eos(stream: Stream, options: EOSOptions, callback: Callback): VoidFunction
+export declare function eos(
+  stream: Stream,
+  options: EOSOptions,
+  callback: Callback
+): VoidFunction
 
-export declare function finished(...args: Array<Stream | [Stream, EOSOptions] | Callback>): VoidFunction
+export declare function finished(
+  ...args: Array<Stream | [Stream, EOSOptions] | Callback>
+): VoidFunction
 
-export declare function subscribe(
+export declare function handle(
+  ...args: Array<Stream | [Stream, EOSOptions] | Callback>
+): VoidFunction
+
+export declare function pump(...args: Stream[]): Promise<void>
+export declare function pump(...args: Array<Stream | Callback>): void
+
+export declare function subscribe<T = any>(
   ...args: Array<Readable | Transform>
-): Promise<any>
-export declare function subscribe(
-  ...args: Array<Readable | Transform | Callback>
+): Promise<T>
+export declare function subscribe<T = any>(
+  ...args: Array<Readable | Transform | TypedCallback<T>>
 ): void
 
 export declare function readify(
@@ -132,9 +148,6 @@ export declare function duplexify(
   writable?: Writable | null | undefined,
   options?: DuplexOptions
 ): Duplex
-
-export declare function pump(...args: Stream[]): Promise<void>
-export declare function pump(...args: Array<Stream | Callback>): void
 
 export declare function mergeReadables(
   sources: Readable[],
