@@ -8,7 +8,7 @@ export declare type Duplex = Duplex
 export declare type Transform = Transform
 
 export declare type Stream = Readable | Writable
-export declare type Callback<T = undefined> = (err?: any, data?: T) => any
+export declare type Callback<T = any> = (err?: any, data?: T) => any
 export declare type VoidFunction = () => void
 
 export declare type ReadableCallback<T> = (err?: any, data?: T | null) => any
