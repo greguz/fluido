@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.com/greguz/fluido.svg?branch=master)](https://travis-ci.com/greguz/fluido)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-![GitHub Logo](.github/elfo.png)
+![Elfo](.github/elfo.png)
 
 Hi, I'm Fluido!
 
@@ -35,7 +35,7 @@ you may want first to read the
 npm install --save fluido
 ```
 
-## API
+## Stream creation
 
 ### readable([options])
 
@@ -67,6 +67,21 @@ Creates a *Duplex* stream.
 - Returns: `<Transform>`
 
 Creates a *Transform* stream.
+
+### Promise support
+
+Using the above method to create a stream, you'll be able to
+use both *Promises* or *callbacks* on any internal method (`read`, `write`, `writev`, `final`, `transform`, `flush`, `destroy`).
+
+The `read` method is the only one that may be used synchronously,
+as the original implementation.
+
+Methods `read`, `transform` and `flush` treats
+the Promise's resolution value
+or the callback's second argument
+as incoming data to automatically `push()` into the stream.
+
+## Type check
 
 ### isReadable(value)
 
@@ -109,6 +124,8 @@ Returns `true` when *value* is **just** Readable.
 - Returns: `<Boolean>`
 
 Returns `true` when *value* is **just** Writable.
+
+## Lifecycle
 
 ### eos(stream, [options], callback)
 
@@ -206,7 +223,7 @@ finished(
 Similar to [finished](#finishedstreams-callback), but destroys the
 streams at the first encountered error.
 
-### pump(...streams, callback)
+### pump(...streams, [callback])
 
 - streams `<...Stream>`
   A pipeable chain of streams.
@@ -241,7 +258,7 @@ pump(
 )
 ```
 
-### subscribe(...streams, callback)
+### subscribe(...streams, [callback])
 
 - streams `<...Stream>`
   A pipeable chain of streams.
@@ -277,6 +294,8 @@ subscribe(
 )
 ```
 
+## Stream manipulation
+
 ### collect([target])
 
 - target `<any>` Represents the expected output type.
@@ -287,7 +306,8 @@ subscribe(
     checking the first collected chunk from the source stream.
 - Returns: `<Transform>`
 
-Returns a *Transform* stream that collects all chunks.
+Returns a *Transform* stream that collects all received chunks and then
+emits them.
 
 ### readify(streams[], [options])
 
