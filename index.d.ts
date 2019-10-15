@@ -8,9 +8,8 @@ export declare type Duplex = Duplex
 export declare type Transform = Transform
 
 export declare type Stream = Readable | Writable
-export declare type Callback = (err: any) => unknown
-export declare type TypedCallback<T = any> = (err: any, data: T) => unknown
-export declare type VoidFunction = () => unknown
+export declare type Callback<T = undefined> = (err?: any, data?: T) => any
+export declare type VoidFunction = () => void
 
 export declare type ReadableCallback<T> = (err?: any, data?: T | null) => any
 export interface ReadableOptions {
@@ -130,7 +129,7 @@ export declare function subscribe<T = any>(
   ...args: Array<Readable | Transform>
 ): Promise<T>
 export declare function subscribe<T = any>(
-  ...args: Array<Readable | Transform | TypedCallback<T>>
+  ...args: Array<Readable | Transform | Callback<T>>
 ): void
 
 export declare function readify(
