@@ -1,7 +1,7 @@
 {
   "name": "fluido",
   "version": "0.14.3",
-  "description": "A modern streaming library",
+  "description": "Hi, I'm Fluido!",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
@@ -32,8 +32,8 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "husky": "^3.0.8",
-    "rollup": "^1.22.0"
+    "husky": "^3.0.9",
+    "rollup": "^1.24.0"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -45,6 +45,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/greguz/fluido.git"
-  },
-  "homepage": "https://greguz.github.io/fluido/index.html"
+  }
 }
