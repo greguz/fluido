@@ -70,7 +70,7 @@ Creates a *Transform* stream.
 
 ### Promise support
 
-Using the above method to create a stream, you'll be able to
+By using the above functions to create a stream, you'll be able to
 use both *Promises* or *callbacks* on any internal method (`read`, `write`, `writev`, `final`, `transform`, `flush`, `destroy`).
 
 The `read` method is the only one that may be used synchronously,
