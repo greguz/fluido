@@ -1,11 +1,11 @@
 /// <reference types="node" />
 
-import { Readable, Writable, Duplex, Transform } from 'stream'
+import * as _stream from 'stream'
 
-export declare type Readable = Readable
-export declare type Writable = Writable
-export declare type Duplex = Duplex
-export declare type Transform = Transform
+export declare type Readable = _stream.Readable
+export declare type Writable = _stream.Writable
+export declare type Duplex = _stream.Duplex
+export declare type Transform = _stream.Transform
 
 export declare type Stream = Readable | Writable
 export declare type Callback<T = any> = (err?: any, data?: T) => any
