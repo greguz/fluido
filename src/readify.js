@@ -1,4 +1,4 @@
-import { transform } from './transform'
+import { writable } from './writable'
 import { readable } from './readable'
 import { pump } from './pump'
 
@@ -11,29 +11,34 @@ export function readify (streams, options) {
     return streams[0]
   }
 
-  let source
+  let collector
+
+  let next
 
   return readable({
     ...options,
     read () {
-      if (source) {
-        source.resume()
+      if (collector) {
+        if (next) {
+          const callback = next
+          next = undefined
+          callback()
+        }
         return
       }
 
-      source = transform({ objectMode: true })
-
-      const listener = chunk => {
-        if (!this.push(chunk)) {
-          source.pause()
+      collector = writable({
+        objectMode: true,
+        write: (chunk, encoding, callback) => {
+          if (this.push(chunk)) {
+            callback()
+          } else {
+            next = callback
+          }
         }
-      }
+      })
 
-      source.addListener('data', listener)
-
-      pump(...streams, source, err => {
-        source.removeListener('data', listener)
-
+      pump(...streams, collector, err => {
         if (err) {
           this.emit('error', err)
         } else {
@@ -42,7 +47,7 @@ export function readify (streams, options) {
       })
     },
     destroy (err, callback) {
-      callback(destroyStream(source, err))
+      callback(destroyStream(collector, err))
     }
   })
 }
