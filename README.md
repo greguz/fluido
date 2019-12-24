@@ -294,20 +294,7 @@ subscribe(
 )
 ```
 
-## Stream manipulation
-
-### collect([target])
-
-- target `<any>` Represents the expected output type.
-  - `'buffer'` Collect chunks into a single Buffer.
-  - `<String>` Decode buffers using this encoding and collect chunks as a   string.
-  - `false` Results an array of all collected raw chunks.
-  - `undefined` Enable auto-mode. It try to guess the correct output by
-    checking the first collected chunk from the source stream.
-- Returns: `<Transform>`
-
-Returns a *Transform* stream that collects all received chunks and then
-emits them.
+## Reduce
 
 ### readify(streams[], [options])
 
@@ -418,3 +405,28 @@ const singleWritableStream = mergeWritables([
 
 createReadStream('cat.jpg').pipe(singleWritableStream)
 ```
+
+## Other
+
+### collect([target])
+
+- target `<any>` Represents the expected output type.
+  - `'buffer'` Collect chunks into a single Buffer.
+  - `<String>` Decode buffers using this encoding and collect chunks as a   string.
+  - `false` Results an array of all collected raw chunks.
+  - `undefined` Enable auto-mode. It try to guess the correct output by
+    checking the first collected chunk from the source stream.
+- Returns: `<Transform>`
+
+Returns a *Transform* stream that collects all received chunks and then
+emits them.
+
+### readArray(arr[], [options])
+
+- arr `<any>`
+  Array data to read.
+- options `<Object>`
+  Readable options applied to the resulting stream.
+- Returns: `<Readable>`
+
+Cast an array into a *Readable* stream.
