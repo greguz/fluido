@@ -1,6 +1,6 @@
 {
   "name": "fluido",
-  "version": "0.14.5",
+  "version": "0.15.0",
   "description": "Hi, I'm Fluido!",
   "main": "index.js",
   "types": "index.d.ts",
