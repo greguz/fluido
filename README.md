@@ -76,10 +76,35 @@ use both *Promises* or *callbacks* on any internal method (`read`, `write`, `wri
 The `read` method is the only one that may be used synchronously,
 as the original implementation.
 
-Methods `read`, `transform` and `flush` treats
-the Promise's resolution value
-or the callback's second argument
-as incoming data to automatically `push()` into the stream.
+Methods `read`, `transform` and `flush` treats the Promise's resolution value or
+the callback's second argument as incoming data
+to automatically `push()` into the stream.
+
+```javascript
+const { readable, writable, duplex, transform } = require('fluido')
+
+const sc = writable({
+  write (chunk, encoding, callback) {
+    // do something
+    callback()
+  }
+})
+
+const sp = writable({
+  write (chunk, encoding) {
+    return new Promise(resolve => {
+      // do something
+      resolve()
+    })
+  }
+})
+
+const sa = writable({
+  async write (chunk, encoding) {
+    // do something
+  }
+})
+```
 
 ## Type check
 
@@ -154,6 +179,8 @@ is no longer readable, writable or has experienced an error
 or a premature close event.
 
 ```javascript
+const { eos } = require('fluido')
+
 // End of reading
 eos(readable, err => { })
 
