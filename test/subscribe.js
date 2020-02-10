@@ -16,8 +16,7 @@ test.cb('subscribe empty callback', t => {
 test('subscribe empty promise', async t => {
   await t.throwsAsync(
     () => subscribe(),
-    Error,
-    'Expected at least one readable stream'
+    { message: 'Expected at least one readable stream' }
   )
 })
 

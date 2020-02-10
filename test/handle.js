@@ -35,13 +35,13 @@ function buildWritables (length, t) {
 }
 
 test('handle no callback', t => {
-  t.throws(() => handle(), TypeError)
-  t.throws(() => handle(buildWritable()), TypeError)
-  t.throws(() => handle(buildWritable(), buildWritable()), TypeError)
+  t.throws(() => handle(), { instanceOf: TypeError })
+  t.throws(() => handle(buildWritable()), { instanceOf: TypeError })
+  t.throws(() => handle(buildWritable(), buildWritable()), { instanceOf: TypeError })
 })
 
 test('handle empty', t => {
-  t.throws(() => handle(() => {}), Error)
+  t.throws(() => handle(() => {}))
 })
 
 test.cb('handle single', t => {

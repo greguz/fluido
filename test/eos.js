@@ -21,9 +21,9 @@ function buildVoidWritable (t) {
 }
 
 test('eos no callback', t => {
-  t.throws(() => eos(), TypeError)
-  t.throws(() => eos(buildVoidWritable()), TypeError)
-  t.throws(() => eos(buildVoidWritable(), {}), TypeError)
+  t.throws(() => eos(), { instanceOf: TypeError })
+  t.throws(() => eos(buildVoidWritable()), { instanceOf: TypeError })
+  t.throws(() => eos(buildVoidWritable(), {}), { instanceOf: TypeError })
 })
 
 test.cb('eos clean', t => {

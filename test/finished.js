@@ -29,13 +29,13 @@ function buildWritables (length, t) {
 }
 
 test('finished no callback', t => {
-  t.throws(() => finished(), TypeError)
-  t.throws(() => finished(buildWritable()), TypeError)
-  t.throws(() => finished(buildWritable(), buildWritable()), TypeError)
+  t.throws(() => finished(), { instanceOf: TypeError })
+  t.throws(() => finished(buildWritable()), { instanceOf: TypeError })
+  t.throws(() => finished(buildWritable(), buildWritable()), { instanceOf: TypeError })
 })
 
 test('finished empty', t => {
-  t.throws(() => finished(() => {}), Error)
+  t.throws(() => finished(() => {}))
 })
 
 test.cb('finished single', t => {
