@@ -2,8 +2,8 @@
   "name": "fluido",
   "version": "0.15.1",
   "description": "Hi, I'm Fluido!",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "fluido.js",
+  "types": "fluido.d.ts",
   "scripts": {
     "build": "rollup --config",
     "test:lint": "eslint src test",
@@ -40,8 +40,8 @@
     "node": ">=8.0.0"
   },
   "files": [
-    "index.js",
-    "index.d.ts"
+    "fluido.js",
+    "fluido.d.ts"
   ],
   "repository": {
     "type": "git",

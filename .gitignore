@@ -1,6 +1,6 @@
 /node_modules
 /npm-debug.log
-/index.js
+/fluido.js
 /.vscode
 /.nyc_output
 /coverage
