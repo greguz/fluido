@@ -1,13 +1,13 @@
-import { EventEmitter } from 'events'
+import { Stream } from 'readable-stream'
 
-import { isFunction } from './internal/utils'
+import { isFunction } from './internal/util'
 
 export function isReadable (value) {
-  return value instanceof EventEmitter && isFunction(value.push)
+  return value instanceof Stream && isFunction(value.push)
 }
 
 export function isWritable (value) {
-  return value instanceof EventEmitter && isFunction(value.write)
+  return value instanceof Stream && isFunction(value.write)
 }
 
 export function isStream (value) {
