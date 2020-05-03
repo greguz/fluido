@@ -1,36 +1,38 @@
-import { writable } from './writable'
-import { readable } from './readable'
-import { pump } from './pump'
+import { Readable, Writable, pipeline } from 'readable-stream'
 
-import destroyStream from './internal/destroy'
+import { last } from './internal/util'
 
-export function readify (streams, options) {
+import { isStream } from './is'
+
+function wrapStreams (streams, options) {
   if (streams.length <= 0) {
-    return readable(options)
+    return new Readable(options)
   } else if (streams.length === 1) {
     return streams[0]
   }
 
-  let collector
-
   let next
+  let tail
 
-  return readable({
+  return new Readable({
     ...options,
     read () {
-      if (collector) {
-        if (next) {
-          const callback = next
-          next = undefined
-          callback()
-        }
+      if (next) {
+        const callback = next
+        next = undefined
+        callback()
+      }
+      if (tail) {
         return
       }
 
-      collector = writable({
-        objectMode: true,
-        write: (chunk, encoding, callback) => {
-          if (this.push(chunk)) {
+      const self = this
+
+      tail = new Writable({
+        highWaterMark: options.highWaterMark || options.readableHighWaterMark,
+        objectMode: options.objectMode || options.readableObjectMode,
+        write (chunk, encoding, callback) {
+          if (self.push(chunk, encoding)) {
             callback()
           } else {
             next = callback
@@ -38,16 +40,27 @@ export function readify (streams, options) {
         }
       })
 
-      pump(...streams, collector, err => {
+      pipeline(...streams, tail, err => {
         if (err) {
-          this.emit('error', err)
+          self.emit('error', err)
         } else {
-          this.push(null)
+          self.push(null)
         }
       })
     },
     destroy (err, callback) {
-      callback(destroyStream(collector, err))
+      if (tail) {
+        tail.destroy(err, callback)
+      } else {
+        callback(err)
+      }
     }
   })
+}
+
+export function readify (...args) {
+  return wrapStreams(
+    args,
+    isStream(last(args)) ? args.pop() : {}
+  )
 }
