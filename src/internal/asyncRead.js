@@ -11,24 +11,27 @@ export function createReadMethod (asyncRead) {
     }
     reading = true
 
+    const self = this
     function callback (err, data) {
       if (err) {
-        process.nextTick(() => this.emit('error', err))
+        process.nextTick(() => self.emit('error', err))
         return
       }
 
       if (data !== undefined) {
-        this.push(data)
+        self.push(data)
       }
 
-      if (this._readableState.ended) {
+      const state = self._readableState || {}
+
+      if (state.ended) {
         return
       }
 
       reading = false
 
-      if (this._readableState.length < this._readableState.highWaterMark) {
-        setImmediate(() => this._read(size))
+      if (state.length < state.highWaterMark) {
+        setImmediate(() => self._read(size))
       }
     }
 
