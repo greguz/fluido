@@ -61,6 +61,6 @@ function wrapStreams (streams, options) {
 export function readify (...args) {
   return wrapStreams(
     args,
-    isStream(last(args)) ? args.pop() : {}
+    isStream(last(args)) ? {} : args.pop()
   )
 }
