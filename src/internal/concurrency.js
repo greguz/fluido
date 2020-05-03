@@ -1,21 +1,8 @@
-import { once } from './utils'
+import { once } from './util'
 
-export default function supportConcurrency (
-  concurrency,
-  _transform,
-  _flush,
-  _destroy,
-  isTransform = false
-) {
+function makeConcurrentMethods (concurrency, _write, _final) {
   if (!Number.isInteger(concurrency) || concurrency <= 0) {
     throw new TypeError('Concurrency must be a positive integer')
-  }
-  if (typeof _transform !== 'function') {
-    throw new TypeError(
-      isTransform
-        ? 'Expected transform method to be a function'
-        : 'Expected write method to be a function'
-    )
   }
 
   // Active jobs counter
@@ -30,9 +17,9 @@ export default function supportConcurrency (
   // End stream callback
   let close
 
-  function transform (chunk, encoding, callback) {
+  function concurrentWrite (chunk, encoding, callback) {
     if (!error) {
-      job.call(this, chunk, encoding)
+      jobStart(this, chunk, encoding)
     }
 
     if (!error && jobs < concurrency) {
@@ -44,40 +31,45 @@ export default function supportConcurrency (
     }
   }
 
-  function job (chunk, encoding) {
+  function jobStart (stream, chunk, encoding) {
     jobs++
-
-    _transform.call(this, chunk, encoding, once((err, data) => {
-      jobs--
-
-      error = error || err
-
-      if (!error && data !== undefined && isTransform) {
-        this.push(data)
-      }
-
-      if (jobs <= 0) {
-        const callback = close || next
-        if (callback) {
-          callback(error)
-        } else if (error) {
-          this.emit('error', error)
-        }
-      } else if (!error && next) {
-        const callback = next
-        next = undefined
-        callback()
-      }
-    }))
+    _write.call(
+      stream,
+      chunk,
+      encoding,
+      once((err, data) => jobEnd(stream, err, data))
+    )
   }
 
-  function flush (callback) {
+  function jobEnd (stream, err, data) {
+    jobs--
+    error = error || err
+
+    if (!error && data !== undefined && stream.push) {
+      stream.push(data)
+    }
+
+    if (jobs <= 0) {
+      const callback = close || next
+      if (callback) {
+        callback(error)
+      } else if (error) {
+        stream.emit('error', error)
+      }
+    } else if (!error && next) {
+      const callback = next
+      next = undefined
+      callback()
+    }
+  }
+
+  function concurrentFinal (callback) {
     // Build close callback
     close = err => {
-      if (err || !_flush) {
+      if (err || !_final) {
         callback(err)
       } else {
-        _flush.call(this, callback)
+        _final.call(this, callback)
       }
     }
 
@@ -86,17 +78,25 @@ export default function supportConcurrency (
     }
   }
 
-  function destroy (err, callback) {
-    // Ensure error to stop data flowing
-    error = error || err || new Error('Premature close')
+  return [concurrentWrite, concurrentFinal]
+}
 
-    // Build close callback
-    close = _destroy ? _destroy.bind(this, error, callback) : callback
+export function patchWritable (stream, concurrency) {
+  const [_write, _final] = makeConcurrentMethods(
+    concurrency,
+    stream._write,
+    stream._final
+  )
+  stream._write = _write
+  stream._final = _final
+}
 
-    if (jobs <= 0) {
-      close()
-    }
-  }
-
-  return [transform, flush, destroy]
+export function patchTransform (stream, concurrency) {
+  const [_transform, _flush] = makeConcurrentMethods(
+    concurrency,
+    stream._transform,
+    stream._flush
+  )
+  stream._transform = _transform
+  stream._flush = _flush
 }
