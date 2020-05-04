@@ -18,11 +18,11 @@ export function isPromise (value) {
   return util.types.isPromise(value)
 }
 
-export function once (fn) {
+export function once (callback) {
   let called = false
-  return function (err, data) {
+  return function (err, res) {
     if (called) return
     called = true
-    fn(err, data)
+    callback(err, res)
   }
 }
