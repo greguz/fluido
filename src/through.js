@@ -1,5 +1,7 @@
 import { Transform } from './Transform'
 
+import { isFunction } from './internal/util'
+
 export function through (options, transform, flush) {
   if (isFunction(options)) {
     flush = transform
