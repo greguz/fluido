@@ -1,6 +1,5 @@
 export { Duplex } from './Duplex'
 export { finished } from './finished'
-export { handle } from './handle'
 export * from './is'
 export { pipeline } from './pipeline'
 export { Readable } from './Readable'
