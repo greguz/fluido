@@ -1,7 +1,7 @@
 export { Duplex } from './Duplex'
 export { finished } from './finished'
 export * from './is'
-export { pipeline } from './pipeline'
+export { pipeline, pump } from './pipeline'
 export { Readable } from './Readable'
 export { readify } from './readify'
 export { subscribe } from './subscribe'
