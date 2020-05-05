@@ -1,26 +1,22 @@
-import { pump } from './pump'
-import { writable } from './writable'
+import { Writable, pipeline } from 'readable-stream'
 
-import destroyStream from './internal/destroy'
+import { destroyStream } from './internal/destroy'
+import { isPlainObject } from './internal/util'
 
-export function writify (streams, options) {
+export function writify (...streams) {
+  const options = isPlainObject(streams[0]) ? streams.shift() : {}
+
   if (streams.length <= 0) {
-    return writable(options)
+    return new Writable(options)
   } else if (streams.length === 1) {
     return streams[0]
   }
 
-  // First writable stream in pipeline
-  let target
-
-  // Current write/final callback
+  let error
+  let head
   let next
 
-  // Current pipeline error
-  let error
-
-  // Update error and fire next if necessary
-  function call (err) {
+  function handle (err) {
     error = err || error
     if (next) {
       const callback = next
@@ -29,35 +25,41 @@ export function writify (streams, options) {
     }
   }
 
-  return writable({
+  return new Writable({
     ...options,
     write (chunk, encoding, callback) {
-      // Initialize the pipeline
-      if (!target) {
-        target = streams[0]
-        pump(...streams, call)
+      next = callback
+
+      if (!head) {
+        head = streams[0]
+        pipeline(...streams, handle)
       }
 
-      // Handle possible pipeline error
       if (error) {
-        callback(error)
+        handle(error)
         return
       }
 
-      // Perform write and handle backpressure
-      if (!target.write(chunk, encoding)) {
-        next = callback
-        target.once('drain', call)
+      if (head.write(chunk, encoding)) {
+        handle()
       } else {
-        callback()
+        head.once('drain', handle)
       }
     },
     final (callback) {
       next = callback
-      target.end()
+
+      if (error) {
+        handle(error)
+      } else {
+        head.end()
+      }
     },
     destroy (err, callback) {
-      callback(destroyStream(target, err))
+      if (head) {
+        destroyStream(head)
+      }
+      callback(err)
     }
   })
 }

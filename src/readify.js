@@ -1,10 +1,10 @@
 import { Readable, Writable, pipeline } from 'readable-stream'
 
-import { last } from './internal/util'
+import { isPlainObject } from './internal/util'
 
-import { isStream } from './is'
+export function readify (...streams) {
+  const options = isPlainObject(streams[0]) ? streams.shift() : {}
 
-function wrapStreams (streams, options) {
   if (streams.length <= 0) {
     return new Readable(options)
   } else if (streams.length === 1) {
@@ -56,11 +56,4 @@ function wrapStreams (streams, options) {
       }
     }
   })
-}
-
-export function readify (...args) {
-  return wrapStreams(
-    args,
-    isStream(last(args)) ? {} : args.pop()
-  )
 }

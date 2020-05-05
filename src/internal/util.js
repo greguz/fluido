@@ -10,6 +10,20 @@ export function isFunction (value) {
   return typeof value === 'function'
 }
 
+export function isPlainObject (value) {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  if (Object.getPrototypeOf(value) === null) {
+    return true
+  }
+  let proto = value
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto)
+  }
+  return Object.getPrototypeOf(value) === proto
+}
+
 export function last (arr) {
   return arr.length > 0 ? arr[arr.length - 1] : undefined
 }
