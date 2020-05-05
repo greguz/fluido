@@ -1,72 +1,66 @@
-import { transform } from './transform'
+import { Transform } from 'readable-stream'
 
-function asString (chunks, encoding, callback) {
-  let result = ''
-  for (const chunk of chunks) {
-    if (Buffer.isBuffer(chunk)) {
-      result += chunk.toString(encoding)
-    } else if (typeof chunk === 'string') {
-      result += chunk
-    } else {
-      return callback(new TypeError('Chunk must be buffer or string'))
-    }
+function guessTarget ({ chunk, encoding }) {
+  if (Buffer.isBuffer(chunk) || chunk instanceof Uint8Array) {
+    return 'buffer'
+  } else if (typeof chunk === 'string') {
+    return encoding
+  } else {
+    return false
   }
-  callback(null, result)
 }
 
-function asBuffer (chunks, callback) {
-  let result = Buffer.from([])
-  for (const chunk of chunks) {
-    if (Buffer.isBuffer(chunk)) {
-      result = Buffer.concat([result, chunk])
-    } else if (typeof chunk === 'string') {
-      result = Buffer.concat([result, Buffer.from(chunk)])
-    } else {
-      return callback(new TypeError('Chunk must be buffer or string'))
-    }
-  }
-  callback(null, result)
+function isBufferish (chunk) {
+  return Buffer.isBuffer(chunk) || chunk instanceof Uint8Array
 }
 
-function asIs (chunks, callback) {
-  callback(null, chunks)
+function asBuffer (items) {
+  return Buffer.concat(
+    items.map(
+      ({ chunk, encoding }) => isBufferish(chunk)
+        ? chunk
+        : Buffer.from(chunk, encoding)
+    )
+  )
+}
+
+function asString (items, encoding) {
+  return asBuffer(items).toString(encoding)
+}
+
+function compileItems (items, target) {
+  if (!target && items.length > 0) {
+    target = guessTarget(items[0])
+  }
+  if (target === 'buffer') {
+    return asBuffer(items)
+  } else if (typeof target === 'string') {
+    return asString(items, target)
+  } else {
+    return items
+  }
 }
 
 export function collect (target) {
-  let chunks = []
-
-  return transform({
+  if (typeof target !== 'string' && target !== false) {
+    throw new TypeError()
+  }
+  const items = []
+  return new Transform({
     objectMode: true,
     transform (chunk, encoding, callback) {
-      if (target === undefined) {
-        if (Buffer.isBuffer(chunk)) {
-          target = 'buffer'
-        } else if (typeof chunk === 'string') {
-          target = 'utf8'
-        } else {
-          target = false
-        }
-      }
-      chunks.push(
-        typeof chunk === 'string' && target === 'buffer'
-          ? Buffer.from(chunk, encoding)
-          : chunk
-      )
+      items.push({ chunk, encoding })
       callback()
     },
     flush (callback) {
-      if (target === 'buffer') {
-        asBuffer(chunks, callback)
-      } else if (typeof target === 'string') {
-        asString(chunks, target, callback)
-      } else {
-        asIs(chunks, callback)
+      let err = null
+      let res
+      try {
+        res = compileItems(items, target)
+      } catch (e) {
+        err = e
       }
-      chunks = []
-    },
-    destroy (err, callback) {
-      chunks = []
-      callback(err)
+      callback(err, res)
     }
   })
 }
