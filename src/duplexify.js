@@ -1,22 +1,23 @@
-import { duplex } from './duplex'
-import { eos } from './eos'
+import { Duplex, finished } from 'readable-stream'
 
-import destroyStream from './internal/destroy'
+import { destroyStream } from './internal/destroy'
 
 export function duplexify (readable, writable, options) {
+  let listener
+
   function read () {
-    if (readable.readableFlowing !== null) {
+    if (listener) {
       readable.resume()
       return
     }
 
-    const listener = data => {
+    listener = data => {
       if (!this.push(data)) {
         readable.pause()
       }
     }
 
-    eos(readable, { writable: false }, err => {
+    finished(readable, { writable: false }, err => {
       readable.removeListener('data', listener)
 
       if (err) {
@@ -39,15 +40,15 @@ export function duplexify (readable, writable, options) {
 
   function destroy (err, callback) {
     if (readable) {
-      err = destroyStream(readable, err)
+      destroyStream(readable, err)
     }
     if (writable) {
-      err = destroyStream(writable, err)
+      destroyStream(writable, err)
     }
     callback(err)
   }
 
-  return duplex({
+  return new Duplex({
     ...options,
     read: readable ? read : undefined,
     write: writable ? write : undefined,
