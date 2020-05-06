@@ -1,15 +1,9 @@
 import { Writable, pipeline } from 'readable-stream'
+import { fromCallback } from 'universalify'
 
-import { isFunction, last } from './internal/util'
-
-export function subscribe (...args) {
-  if (!isFunction(last(args))) {
-    return new Promise((resolve, reject) =>
-      subscribe(...args, (err, result) => (err ? reject(err) : resolve(result)))
-    )
-  }
+function subscribeStream (...args) {
   const end = args.pop()
-  let result
+  let result = null
   pipeline(
     ...args,
     new Writable({
@@ -22,3 +16,5 @@ export function subscribe (...args) {
     err => end(err, result)
   )
 }
+
+export const subscribe = fromCallback(subscribeStream)
