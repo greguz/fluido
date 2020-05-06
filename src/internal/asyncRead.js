@@ -24,7 +24,7 @@ export function createReadMethod (asyncRead) {
 
       const state = self._readableState || {}
 
-      if (state.ended) {
+      if (data === null || !!state.ended) {
         return
       }
 
