@@ -1,171 +1,216 @@
 /// <reference types="node" />
 
-import * as _stream from 'stream'
+import * as stream from 'stream'
 
-export declare type Readable = _stream.Readable
-export declare type Writable = _stream.Writable
-export declare type Duplex = _stream.Duplex
-export declare type Transform = _stream.Transform
+export declare type Callback<T = any> = (err?: any, data?: T) => void
+export declare type Methods =
+  | 'destroy'
+  | 'read'
+  | 'asyncRead'
+  | 'write'
+  | 'writev'
+  | 'final'
+  | 'transform'
+  | 'flush'
 
-export declare type Stream = Readable | Writable
-export declare type Callback<T = any> = (err?: any, data?: T) => any
-export declare type VoidFunction = () => void
-
-export declare type ReadableCallback<T> = (err?: any, data?: T | null) => any
-export interface ReadableOptions {
+export interface ReadableOptions<T = any> {
   autoDestroy?: boolean
   encoding?: string
   highWaterMark?: number
   objectMode?: boolean
-}
-export interface ReadableMethods<T = any> {
-  read?(
-    this: Readable,
+  read? (
+    this: Readable<T>,
+    size: number
+  ): void
+  asyncRead? (
+    this: Readable<T>,
     size: number,
-    callback: ReadableCallback<T>
-  ): Promise<T | null | undefined | void> | unknown
-  destroy?(this: Readable, err: any, callback: Callback): Promise<any> | unknown
+    callback: Callback<T | null>
+  ): Promise<T | null | void> | void
+  destroy? (
+    this: Readable<T>,
+    err: any,
+    callback: Callback
+  ): Promise<void> | void
 }
-export declare function readable<T = any>(
-  options?: ReadableOptions & ReadableMethods<T>
-): Readable
+export declare class Readable<T = any> extends stream.Readable {
+  constructor (options?: ReadableOptions<T>)
+  _asyncRead? (
+    size: number,
+    callback: Callback<T | null>
+  ): Promise<T | null | void> | void
+}
 
-export interface WritableOptions {
-  concurrency?: number
+export interface WritableOptions<T = any> {
   autoDestroy?: boolean
+  concurrency?: number
   decodeStrings?: boolean
   defaultEncoding?: string
   emitClose?: boolean
   highWaterMark?: number
   objectMode?: boolean
-}
-export interface WritableEntry<T = any> {
-  chunk: T
-  encoding: string
-}
-export interface WritableMethods<T = any> {
-  write?(
-    this: Writable,
+  write? (
+    this: Writable<T>,
     chunk: T,
     encoding: string,
     callback: Callback
-  ): Promise<any> | unknown
-  writev?(
-    this: Writable,
-    entries: Array<WritableEntry<T>>,
+  ): Promise<void> | void
+  writev? (
+    this: Writable<T>,
+    entries: Array<WritableItem<T>>,
     callback: Callback
-  ): Promise<any> | unknown
-  final?(this: Writable, callback: Callback): Promise<any> | unknown
-  destroy?(this: Writable, err: any, callback: Callback): Promise<any> | unknown
+  ): Promise<void> | void
+  final? (
+    this: Writable<T>,
+    callback: Callback
+  ): Promise<void> | void
+  destroy? (
+    this: Writable<T>,
+    err: any,
+    callback: Callback
+  ): Promise<void> | void
 }
-export declare function writable<T = any>(
-  options?: WritableOptions & WritableMethods<T>
-): Writable
+export interface WritableItem<T = any> {
+  chunk: T
+  encoding: string
+}
+export declare class Writable<T = any> extends stream.Writable {
+  constructor (options?: WritableOptions<T>)
+}
 
-export declare type DuplexOptions = ReadableOptions & WritableOptions & {
+export declare interface DuplexOptions<R = any, W = any> extends Omit<ReadableOptions<R>, 'destroy'>, Omit<WritableOptions<R>, 'destroy'> {
   allowHalfOpen?: boolean
   readableObjectMode?: boolean
   writableObjectMode?: boolean
   readableHighWaterMark?: number
   writableHighWaterMark?: number
-}
-export declare type DuplexMethods<R = any, W = any> = ReadableMethods<R> &
-  WritableMethods<W>
-export declare function duplex<R = any, W = any>(
-  options?: DuplexOptions & DuplexMethods<R, W>
-): Duplex
-
-export declare type TransformCallback<T = any> = (err?: any, data?: T) => any
-export declare type TransformOptions = ReadableOptions & WritableOptions
-export interface TransformMethods<R = any, W = any> {
-  transform?(
-    this: Transform,
-    chunk: R,
-    encoding: string,
-    callback: TransformCallback<W>
-  ): Promise<W | undefined | void> | unknown
-  flush?(
-    this: Transform,
-    callback: TransformCallback<W>
-  ): Promise<W | undefined | void> | unknown
-  destroy?(
-    this: Transform,
+  destroy? (
+    this: Duplex<R, W>,
     err: any,
     callback: Callback
-  ): Promise<any> | unknown
+  ): Promise<void> | void
 }
-export declare function transform<R = any, W = any>(
-  options?: TransformOptions & TransformMethods<R, W>
-): Transform
+export declare class Duplex<R = any, W = any> extends stream.Duplex {
+  constructor (options: DuplexOptions<R, W>)
+}
 
-export declare function collect(
-  encoding?: string | false | undefined
-): Transform
+export declare interface TransformOptions<R = any, W = any> extends Omit<DuplexOptions<R, W>, 'destroy'> {
+  transform? (
+    this: Transform<R, W>,
+    chunk: W,
+    encoding: string,
+    callback: Callback<R>
+  ): Promise<R | void> | void
+  flush? (
+    this: Transform<R, W>,
+    callback: Callback<R>
+  ): Promise<R | void> | void
+  destroy? (
+    this: Transform<R, W>,
+    err: any,
+    callback: Callback
+  ): Promise<void> | void
+}
+export declare class Transform<R = any, W = any> extends stream.Transform {
+  constructor (options?: TransformOptions<R, W>)
+}
 
-export interface EOSOptions {
+export declare function collect (encoding?: string | false): Transform
+
+export declare function duplexify(
+  readable?: stream.Readable | null,
+  writable?: stream.Writable | null,
+): Duplex
+
+export interface FinishedOptions {
   error?: boolean
   readable?: boolean
   writable?: boolean
 }
-export declare function eos(stream: Stream, callback: Callback): VoidFunction
-export declare function eos(
-  stream: Stream,
-  options: EOSOptions,
-  callback: Callback
-): VoidFunction
-
 export declare function finished(
-  ...args: Array<Stream | [Stream, EOSOptions] | Callback>
-): VoidFunction
+  stream: stream.Stream
+): Promise<void>
+export declare function finished(
+  stream: stream.Stream,
+  options: FinishedOptions
+): Promise<void>
+export declare function finished(
+  stream: stream.Stream,
+  callback: Callback
+): () => void
+export declare function finished(
+  stream: stream.Stream,
+  options: FinishedOptions,
+  callback: Callback
+): () => void
 
-export declare function handle(
-  ...args: Array<Stream | [Stream, EOSOptions] | Callback>
-): VoidFunction
+export declare function from<T = any> (
+  asyncRead: ReadableOptions<T>['asyncRead']
+): Readable
+export declare function from<T = any> (
+  options: Omit<ReadableOptions, Methods>,
+  asyncRead?: ReadableOptions<T>['asyncRead']
+): Readable
 
-export declare function pump(...args: Stream[]): Promise<void>
-export declare function pump(...args: Array<Stream | Callback>): void
+export declare function isReadable(value: any): value is stream.Readable
+export declare function isWritable(value: any): value is stream.Writable
+export declare function isStream(value: any): value is stream.Readable | stream.Writable
+export declare function isDuplex(value: any): value is stream.Duplex
+export declare function isReadableStrictly(value: any): value is stream.Readable
+export declare function isWritableStrictly(value: any): value is stream.Writable
 
-export declare function subscribe<T = any>(
-  ...args: Array<Readable | Transform>
-): Promise<T>
-export declare function subscribe<T = any>(
-  ...args: Array<Readable | Transform | Callback<T>>
+export declare function pipeline(
+  head: stream.Readable,
+  ...args: Array<stream.Duplex | stream.Writable>
+): Promise<void>
+export declare function pipeline(
+  head: stream.Readable,
+  ...args: Array<stream.Duplex | stream.Writable | Callback>
 ): void
 
-export declare function readify(
-  streams: Array<Readable | Transform>,
-  options?: ReadableOptions
+export declare function readify (
+  head?: stream.Readable,
+  ...body: stream.Transform[],
+): Readable
+export declare function readify (
+  options: Omit<ReadableOptions, Methods>,
+  head?: stream.Readable,
+  ...body: stream.Transform[],
 ): Readable
 
-export declare function writify(
-  streams: Array<Writable | Transform>,
-  options?: WritableOptions
+export declare function subscribe<T = any> (
+  head: stream.Readable,
+  ...body: stream.Duplex[]
+): Promise<T>
+export declare function subscribe<T = any> (
+  head: stream.Readable,
+  ...body: Array<stream.Duplex | Callback>
+): void
+
+export declare function through (
+  transform: TransformOptions['transform'],
+  flush?: TransformOptions['flush'],
+): Transform
+export declare function through (
+  options: Omit<TransformOptions, Methods>,
+  transform: TransformOptions['transform'],
+  flush?: TransformOptions['flush'],
+): Transform
+
+export declare function to<T = any> (
+  write: WritableOptions<T>['write'],
+  final?: WritableOptions<T>['final']
+): Writable
+export declare function to<T = any> (
+  options: Omit<WritableOptions, Methods>,
+  write: WritableOptions<T>['write'],
+  final?: WritableOptions<T>['final']
 ): Writable
 
-export declare function duplexify(
-  readable?: Readable | null | undefined,
-  writable?: Writable | null | undefined,
-  options?: DuplexOptions
-): Duplex
-
-export declare function mergeReadables(
-  sources: Readable[],
-  options?: ReadableOptions
-): Readable
-
-export declare function mergeWritables(
-  targets: Writable[],
-  options?: WritableMethods
+export declare function writify (
+  ...streams: Array<stream.Writable | stream.Duplex>
 ): Writable
-
-export declare function isReadable(value: any): value is Readable
-export declare function isWritable(value: any): value is Writable
-export declare function isStream(value: any): value is Stream
-export declare function isDuplex(value: any): value is Duplex
-export declare function isReadableStrictly(value: any): value is Readable
-export declare function isWritableStrictly(value: any): value is Writable
-
-export declare function readArray(
-  arr: any,
-  options?: ReadableOptions
-): Readable
+export declare function writify (
+  options: Omit<WritableOptions, Methods>,
+  ...streams: Array<stream.Writable | stream.Duplex>
+): Writable
