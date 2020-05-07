@@ -121,7 +121,7 @@ export declare class Transform<R = any, W = any> extends stream.Transform {
 
 export declare function collect (encoding?: string | false): Transform
 
-export declare function duplexify(
+export declare function duplexify (
   readable?: stream.Readable | null,
   writable?: stream.Writable | null,
 ): Duplex
@@ -164,26 +164,26 @@ export declare function eos (
   callback: Callback
 ): () => void
 
-export declare function from<T = any> (
-  asyncRead?: ReadableOptions<T>['asyncRead']
-): Readable
-export declare function from<T = any> (
-  options: Omit<ReadableOptions, Methods>,
-  asyncRead?: ReadableOptions<T>['asyncRead']
-): Readable
+export declare function isReadable (value: any): value is stream.Readable
+export declare function isWritable (value: any): value is stream.Writable
+export declare function isStream (value: any): value is stream.Readable | stream.Writable
+export declare function isDuplex (value: any): value is stream.Duplex
+export declare function isReadableStrictly (value: any): value is stream.Readable
+export declare function isWritableStrictly (value: any): value is stream.Writable
 
-export declare function isReadable(value: any): value is stream.Readable
-export declare function isWritable(value: any): value is stream.Writable
-export declare function isStream(value: any): value is stream.Readable | stream.Writable
-export declare function isDuplex(value: any): value is stream.Duplex
-export declare function isReadableStrictly(value: any): value is stream.Readable
-export declare function isWritableStrictly(value: any): value is stream.Writable
-
-export declare function pipeline(
+export declare function pipeline (
   head: stream.Readable,
   ...args: Array<stream.Duplex | stream.Writable>
 ): Promise<void>
-export declare function pipeline(
+export declare function pipeline (
+  head: stream.Readable,
+  ...args: Array<stream.Duplex | stream.Writable | Callback>
+): void
+export declare function pump (
+  head: stream.Readable,
+  ...args: Array<stream.Duplex | stream.Writable>
+): Promise<void>
+export declare function pump (
   head: stream.Readable,
   ...args: Array<stream.Duplex | stream.Writable | Callback>
 ): void
@@ -206,26 +206,6 @@ export declare function subscribe<T = any> (
   head: stream.Readable,
   ...body: Array<stream.Duplex | Callback<T>>
 ): void
-
-export declare function through (
-  transform?: TransformOptions['transform'],
-  flush?: TransformOptions['flush'],
-): Transform
-export declare function through (
-  options: Omit<TransformOptions, Methods>,
-  transform?: TransformOptions['transform'],
-  flush?: TransformOptions['flush'],
-): Transform
-
-export declare function to<T = any> (
-  write?: WritableOptions<T>['write'],
-  final?: WritableOptions<T>['final']
-): Writable
-export declare function to<T = any> (
-  options: Omit<WritableOptions, Methods>,
-  write?: WritableOptions<T>['write'],
-  final?: WritableOptions<T>['final']
-): Writable
 
 export declare function writify (
   ...streams: Array<stream.Writable | stream.Duplex>
