@@ -198,12 +198,12 @@ export declare function through (
 ): Transform
 
 export declare function to<T = any> (
-  write: WritableOptions<T>['write'],
+  write?: WritableOptions<T>['write'],
   final?: WritableOptions<T>['final']
 ): Writable
 export declare function to<T = any> (
   options: Omit<WritableOptions, Methods>,
-  write: WritableOptions<T>['write'],
+  write?: WritableOptions<T>['write'],
   final?: WritableOptions<T>['final']
 ): Writable
 

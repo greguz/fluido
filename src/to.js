@@ -2,6 +2,10 @@ import { Writable } from './Writable'
 
 import { isFunction } from './internal/util'
 
+function noTarget (chunk, encoding, callback) {
+  callback(null)
+}
+
 export function to (options, write, final) {
   if (isFunction(options)) {
     final = write
@@ -11,7 +15,7 @@ export function to (options, write, final) {
 
   return new Writable({
     ...options,
-    write,
+    write: write || noTarget,
     final
   })
 }
