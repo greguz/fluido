@@ -145,7 +145,7 @@ export declare function finished(
 ): () => void
 
 export declare function from<T = any> (
-  asyncRead: ReadableOptions<T>['asyncRead']
+  asyncRead?: ReadableOptions<T>['asyncRead']
 ): Readable
 export declare function from<T = any> (
   options: Omit<ReadableOptions, Methods>,
