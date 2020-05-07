@@ -204,7 +204,7 @@ export declare function subscribe<T = any> (
 ): Promise<T>
 export declare function subscribe<T = any> (
   head: stream.Readable,
-  ...body: Array<stream.Duplex | Callback>
+  ...body: Array<stream.Duplex | Callback<T>>
 ): void
 
 export declare function through (
