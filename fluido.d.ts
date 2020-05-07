@@ -127,18 +127,34 @@ export interface FinishedOptions {
   readable?: boolean
   writable?: boolean
 }
-export declare function finished(
+export declare function finished (
   stream: stream.Stream
 ): Promise<void>
-export declare function finished(
+export declare function finished (
   stream: stream.Stream,
   options: FinishedOptions
 ): Promise<void>
-export declare function finished(
+export declare function finished (
   stream: stream.Stream,
   callback: Callback
 ): () => void
-export declare function finished(
+export declare function finished (
+  stream: stream.Stream,
+  options: FinishedOptions,
+  callback: Callback
+): () => void
+export declare function eos (
+  stream: stream.Stream
+): Promise<void>
+export declare function eos (
+  stream: stream.Stream,
+  options: FinishedOptions
+): Promise<void>
+export declare function eos (
+  stream: stream.Stream,
+  callback: Callback
+): () => void
+export declare function eos (
   stream: stream.Stream,
   options: FinishedOptions,
   callback: Callback

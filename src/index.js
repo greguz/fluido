@@ -1,7 +1,7 @@
 export { collect } from './collect'
 export { Duplex } from './Duplex'
 export { duplexify } from './duplexify'
-export { finished } from './finished'
+export { eos, finished } from './finished'
 export { from } from './from'
 export * from './is'
 export { pipeline, pump } from './pipeline'
