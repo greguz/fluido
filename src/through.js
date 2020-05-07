@@ -1,10 +1,7 @@
 import { Transform } from './Transform'
 
 import { isFunction } from './internal/util'
-
-function passthrough (chunk, encoding, callback) {
-  callback(null, chunk)
-}
+import { passthrough } from './internal/void'
 
 export function through (options, transform, flush) {
   if (isFunction(options)) {

@@ -1,10 +1,7 @@
 import { Readable } from './Readable'
 
 import { isFunction } from './internal/util'
-
-function noSource (size, callback) {
-  callback(null, null)
-}
+import { noSource } from './internal/void'
 
 export function from (options, asyncRead) {
   if (isFunction(options)) {
@@ -14,6 +11,7 @@ export function from (options, asyncRead) {
 
   return new Readable({
     ...options,
-    asyncRead: asyncRead || noSource
+    read: !asyncRead ? noSource : undefined,
+    asyncRead
   })
 }

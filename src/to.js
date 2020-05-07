@@ -1,10 +1,7 @@
 import { Writable } from './Writable'
 
 import { isFunction } from './internal/util'
-
-function noTarget (chunk, encoding, callback) {
-  callback(null)
-}
+import { noTarget } from './internal/void'
 
 export function to (options, write, final) {
   if (isFunction(options)) {
