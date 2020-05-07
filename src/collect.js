@@ -1,17 +1,17 @@
 import { Transform } from 'readable-stream'
 
+function isBufferish (chunk) {
+  return Buffer.isBuffer(chunk) || chunk instanceof Uint8Array
+}
+
 function guessTarget ({ chunk, encoding }) {
-  if (Buffer.isBuffer(chunk) || chunk instanceof Uint8Array) {
+  if (isBufferish(chunk)) {
     return 'buffer'
   } else if (typeof chunk === 'string') {
     return encoding
   } else {
     return false
   }
-}
-
-function isBufferish (chunk) {
-  return Buffer.isBuffer(chunk) || chunk instanceof Uint8Array
 }
 
 function asBuffer (items) {
@@ -43,7 +43,7 @@ function compileItems (items, target) {
 
 export function collect (target) {
   if (typeof target !== 'string' && target !== false) {
-    throw new TypeError()
+    throw new TypeError('Invalid target')
   }
   const items = []
   return new Transform({
