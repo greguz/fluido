@@ -2,6 +2,14 @@ import { Duplex, finished } from 'readable-stream'
 
 import { destroyStream } from './internal/destroy'
 
+function noSource (size) {
+  this.push(null)
+}
+
+function noTarget (chunk, encoding, callback) {
+  callback(null)
+}
+
 export function duplexify (readable, writable) {
   let listener
 
@@ -54,9 +62,8 @@ export function duplexify (readable, writable) {
     readableObjectMode: readable.readableObjectMode,
     writableHighWaterMark: writable.writableHighWaterMark,
     writableObjectMode: writable.writableObjectMode,
-    read: readable ? read : undefined,
-    write: writable ? write : undefined,
-    writev: undefined,
+    read: readable ? read : noSource,
+    write: writable ? write : noTarget,
     final: writable ? final : undefined,
     destroy
   })
