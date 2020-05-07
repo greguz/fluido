@@ -2,6 +2,10 @@ import { Transform } from './Transform'
 
 import { isFunction } from './internal/util'
 
+function passthrough (chunk, encoding, callback) {
+  callback(null, chunk)
+}
+
 export function through (options, transform, flush) {
   if (isFunction(options)) {
     flush = transform
@@ -11,7 +15,7 @@ export function through (options, transform, flush) {
 
   return new Transform({
     ...options,
-    transform,
+    transform: transform || passthrough,
     flush
   })
 }

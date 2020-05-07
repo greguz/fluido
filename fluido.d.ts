@@ -188,12 +188,12 @@ export declare function subscribe<T = any> (
 ): void
 
 export declare function through (
-  transform: TransformOptions['transform'],
+  transform?: TransformOptions['transform'],
   flush?: TransformOptions['flush'],
 ): Transform
 export declare function through (
   options: Omit<TransformOptions, Methods>,
-  transform: TransformOptions['transform'],
+  transform?: TransformOptions['transform'],
   flush?: TransformOptions['flush'],
 ): Transform
 
