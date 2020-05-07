@@ -1,7 +1,14 @@
 import { Duplex, finished } from 'readable-stream'
 
 import { destroyStream } from './internal/destroy'
-import { noSource, noTarget } from './internal/void'
+
+function noSource () {
+  this.push(null)
+}
+
+function noTarget (chunk, encoding, callback) {
+  callback(null)
+}
 
 export function duplexify (readable, writable) {
   let listener
