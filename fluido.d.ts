@@ -34,12 +34,16 @@ export interface ReadableOptions<T = any> {
   ): Promise<void> | void
 }
 export declare class Readable<T = any> extends stream.Readable {
+  static from<T> (iterable: T[] | Iterable<T> | AsyncIterable<T>): Readable<T>
   constructor (options?: ReadableOptions<T>)
   _asyncRead? (
     size: number,
     callback: Callback<T | null>
   ): Promise<T | null | void> | void
 }
+export declare function readArray<T> (
+  iterable: T[] | Iterable<T> | AsyncIterable<T>
+): Readable<T>
 
 export interface WritableOptions<T = any> {
   autoDestroy?: boolean

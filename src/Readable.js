@@ -19,3 +19,7 @@ export function Readable (options) {
 inherits(Readable, stream.Readable)
 
 Readable.from = stream.Readable.from
+
+export function readArray (array) {
+  return Readable.from(array)
+}
