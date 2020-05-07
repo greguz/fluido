@@ -201,10 +201,10 @@ export declare function readify (
 export declare function subscribe<T = any> (
   head: stream.Readable,
   ...body: stream.Duplex[]
-): Promise<T>
+): Promise<T | null>
 export declare function subscribe<T = any> (
   head: stream.Readable,
-  ...body: Array<stream.Duplex | Callback<T>>
+  ...body: Array<stream.Duplex | Callback<T | null>>
 ): void
 
 export declare function writify (
