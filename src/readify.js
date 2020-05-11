@@ -50,10 +50,9 @@ export function readify (...streams) {
     },
     destroy (err, callback) {
       if (tail) {
-        tail.destroy(err, callback)
-      } else {
-        callback(err)
+        tail.destroy(err)
       }
+      callback(err)
     }
   })
 }
