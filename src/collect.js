@@ -24,25 +24,37 @@ function asBuffer (items) {
   )
 }
 
-function asString (items, encoding) {
-  return asBuffer(items).toString(encoding)
+function toString ({ chunk, encoding }) {
+  if (typeof chunk === 'string') {
+    return chunk
+  } else if (Buffer.isBuffer(chunk)) {
+    return chunk.toString(encoding)
+  } else if (chunk instanceof Uint8Array) {
+    return Buffer.from(chunk).toString(encoding)
+  } else {
+    return chunk.toString()
+  }
+}
+
+function asString (items) {
+  return items.map(toString).join('')
 }
 
 function compileItems (items, target) {
-  if (!target && items.length > 0) {
+  if (target === undefined && items.length > 0) {
     target = guessTarget(items[0])
   }
   if (target === 'buffer') {
     return asBuffer(items)
-  } else if (typeof target === 'string') {
+  } else if (target === 'string') {
     return asString(items, target)
   } else {
-    return items
+    return items.map(item => item.chunk)
   }
 }
 
 export function collect (target) {
-  if (typeof target !== 'string' && target !== false) {
+  if (target !== undefined && target !== false && target !== 'string' && target !== 'buffer') {
     throw new TypeError('Invalid target')
   }
   const items = []
