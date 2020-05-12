@@ -11,14 +11,7 @@ Hi, I'm Fluido!
 
 ## What
 
-Fluido is a drop-in replacement for native `stream` module.
-
-## Why
-
-- Adds **Promise support** to all internal methods (`read`, `write`, `writev`, `final`, `transform`, `flush`, `destroy`)
-- Enables **concurrency** on `write` and `transform` methods
-- Respects the [backpressure mechanism](https://nodejs.org/en/docs/guides/backpressuring-in-streams/)
-- TypeScript friendly
+Fluido is a drop-in replacement for the native `stream` module. It adds `Promise` support to the stream methods. It also exposes some utilities to work along Node.js streams.
 
 ## Install
 
