@@ -41,9 +41,6 @@ export declare class Readable<T = any> extends stream.Readable {
     callback: Callback<T | null>
   ): Promise<T | null | void> | void
 }
-export declare function readArray<T> (
-  iterable: T[] | Iterable<T> | AsyncIterable<T>
-): Readable<T>
 
 export interface WritableOptions<T = any> {
   autoDestroy?: boolean
