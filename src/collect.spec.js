@@ -82,3 +82,42 @@ test('collect array', async t => {
     'Hermione Granger'
   ])
 })
+
+test('collect auto buffer', async t => {
+  const result = await pump(
+    new Readable({
+      read () {
+        this.push(Buffer.from('Hello World'))
+        this.push(null)
+      }
+    })
+  )
+  t.true(Buffer.isBuffer(result))
+  t.is(result.toString(), 'Hello World')
+})
+
+test('collect auto string', async t => {
+  const result = await pump(
+    new Readable({
+      encoding: 'utf8',
+      read () {
+        this.push('Hello World')
+        this.push(null)
+      }
+    })
+  )
+  t.deepEqual(result, 'Hello World')
+})
+
+test('collect auto array', async t => {
+  const result = await pump(
+    new Readable({
+      objectMode: true,
+      read () {
+        this.push({ hello: 'world' })
+        this.push(null)
+      }
+    })
+  )
+  t.deepEqual(result, [{ hello: 'world' }])
+})

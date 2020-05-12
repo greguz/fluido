@@ -4,11 +4,11 @@ function isBufferish (chunk) {
   return Buffer.isBuffer(chunk) || chunk instanceof Uint8Array
 }
 
-function guessTarget ({ chunk, encoding }) {
+function guessTarget ({ chunk }) {
   if (isBufferish(chunk)) {
     return 'buffer'
   } else if (typeof chunk === 'string') {
-    return encoding
+    return 'string'
   } else {
     return false
   }
