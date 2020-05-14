@@ -13,6 +13,51 @@ const uDelay = fromCallback(
 
 const uPipeline = fromCallback(pipeline)
 
+test.cb('Transform transform callback', t => {
+  t.plan(200)
+  uPipeline(
+    Readable.from(new Array(100).fill(1)),
+    new Transform({
+      objectMode: true,
+      transform (chunk, encoding, callback) {
+        t.is(chunk, 1)
+        this.push(chunk * -1)
+        uDelay(10, callback)
+      }
+    }),
+    new Writable({
+      objectMode: true,
+      write (chunk, encoding, callback) {
+        t.is(chunk, -1)
+        callback()
+      }
+    }),
+    t.end
+  )
+})
+
+test('Transform transform promise', async t => {
+  t.plan(200)
+  await uPipeline(
+    Readable.from(new Array(100).fill(1)),
+    new Transform({
+      objectMode: true,
+      async transform (chunk) {
+        t.is(chunk, 1)
+        this.push(chunk * -1)
+        await uDelay(10)
+      }
+    }),
+    new Writable({
+      objectMode: true,
+      write (chunk, encoding, callback) {
+        t.is(chunk, -1)
+        callback()
+      }
+    })
+  )
+})
+
 test('Transform concurrency', async t => {
   t.plan(100)
 

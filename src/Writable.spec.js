@@ -42,6 +42,47 @@ test('Writable write promise', async t => {
   )
 })
 
+test.cb('Writable writev callback', t => {
+  t.plan(100)
+  uPipeline(
+    Readable.from(new Array(100).fill(1)),
+    new Writable({
+      objectMode: true,
+      write (chunk, encoding, callback) {
+        t.is(chunk, 1)
+        uDelay(10, callback)
+      },
+      writev (items, callback) {
+        for (const item of items) {
+          t.is(item.chunk, 1)
+        }
+        uDelay(10, callback)
+      }
+    }),
+    t.end
+  )
+})
+
+test('Writable writev promise', async t => {
+  t.plan(100)
+  await uPipeline(
+    Readable.from(new Array(100).fill(1)),
+    new Writable({
+      objectMode: true,
+      async write (chunk) {
+        t.is(chunk, 1)
+        await uDelay(10)
+      },
+      async writev (items) {
+        for (const item of items) {
+          t.is(item.chunk, 1)
+        }
+        await uDelay(10)
+      }
+    })
+  )
+})
+
 test.cb('Writable final callback', t => {
   t.plan(1)
   let count = 0
