@@ -11,10 +11,33 @@ Hi, I'm Fluido!
 
 ## What
 
-Fluido is a drop-in replacement for the native `stream` module. It adds `Promise` support to the stream methods. It also exposes some utilities to work along Node.js streams.
+Fluido is a drop-in replacement for the native `stream` module. It adds some functions that aren't included in the standard module and adds `Promise` support to stream methods. It also enables _concurrent_ jobs while writing or transforming.
 
 ## Install
 
 ```
 npm install --save fluido
 ```
+
+## Creation
+
+- [Readable](docs/Readable.md)
+- [Writable](docs/Writable.md)
+- [Duplex](docs/Duplex.md)
+- [Transform](docs/Transform.md)
+
+## Lifecycle
+
+- [finished](docs/finished.md)
+- [pipeline](docs/pipeline.md)
+- [subscribe](docs/subscribe.md)
+
+## Manipulation
+
+- [readify](docs/readify.md)
+- [writify](docs/writify.md)
+- [duplexify](docs/duplexify.md)
+
+## Operators
+
+- [collect](docs/collect.md)
