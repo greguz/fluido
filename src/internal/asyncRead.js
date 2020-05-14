@@ -5,7 +5,7 @@ export function createReadMethod (asyncRead) {
   asyncRead = handlePromise(asyncRead)
 
   let reading = false
-  return function fluidoMethod (size) {
+  return function _read (size) {
     if (reading) {
       return
     }

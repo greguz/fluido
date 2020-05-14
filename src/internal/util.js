@@ -24,10 +24,6 @@ export function isPlainObject (value) {
   return Object.getPrototypeOf(value) === proto
 }
 
-export function last (arr) {
-  return arr.length > 0 ? arr[arr.length - 1] : undefined
-}
-
 export function isPromise (value) {
   return util.types.isPromise(value)
 }

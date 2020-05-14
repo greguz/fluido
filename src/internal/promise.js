@@ -1,16 +1,20 @@
-import { isFunction, isPromise, last } from './util'
+import { isFunction, isPromise } from './util'
 
-export function handlePromise (method) {
-  if (!isFunction(method)) {
-    return method
+export function handlePromise (fn) {
+  if (!isFunction(fn)) {
+    return fn
   }
-  return function fluidoMethod (...args) {
-    const callback = last(args)
-    const out = method.call(this, ...args)
-    if (isPromise(out)) {
-      out
-        .then(result => callback(null, result))
-        .catch(callback)
-    }
-  }
+  return Object.defineProperty(
+    function (...args) {
+      const callback = args[args.length - 1]
+      const out = fn.call(this, ...args)
+      if (isPromise(out)) {
+        out
+          .then(result => callback(null, result))
+          .catch(callback)
+      }
+    },
+    'name',
+    { value: fn.name }
+  )
 }
