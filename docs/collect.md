@@ -2,7 +2,11 @@
 
 TODO
 
-- `target` `<String>` | `<Boolean>` May be `'string'`, `'buffer'`, `false` or `undefined`.
+- `target` `<String>`
+  - `'buffer'`
+  - `'string'`
+  - `'array'`
+  - `undefined`
 - Returns: `<Transform>`
 
 ## Examples

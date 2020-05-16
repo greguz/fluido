@@ -116,7 +116,7 @@ export declare class Transform<R = any, W = any> extends stream.Transform {
   constructor (options?: TransformOptions<R, W>)
 }
 
-export declare function collect (target?: 'buffer' | 'string' | false | undefined): Transform
+export declare function collect (target?: 'buffer' | 'string' | 'array'): Transform
 
 export declare function duplexify (
   readable?: stream.Readable | null,
