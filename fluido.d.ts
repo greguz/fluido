@@ -149,22 +149,6 @@ export declare function finished (
   options: FinishedOptions,
   callback: Callback
 ): () => void
-export declare function eos (
-  stream: stream.Stream
-): Promise<void>
-export declare function eos (
-  stream: stream.Stream,
-  options: FinishedOptions
-): Promise<void>
-export declare function eos (
-  stream: stream.Stream,
-  callback: Callback
-): () => void
-export declare function eos (
-  stream: stream.Stream,
-  options: FinishedOptions,
-  callback: Callback
-): () => void
 
 export declare function isReadable (value: any): value is stream.Readable
 export declare function isWritable (value: any): value is stream.Writable
@@ -178,14 +162,6 @@ export declare function pipeline (
   ...args: Array<stream.Duplex | stream.Writable>
 ): Promise<void>
 export declare function pipeline (
-  head: stream.Readable,
-  ...args: Array<stream.Duplex | stream.Writable | Callback>
-): void
-export declare function pump (
-  head: stream.Readable,
-  ...args: Array<stream.Duplex | stream.Writable>
-): Promise<void>
-export declare function pump (
   head: stream.Readable,
   ...args: Array<stream.Duplex | stream.Writable | Callback>
 ): void

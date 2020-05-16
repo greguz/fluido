@@ -1,16 +1,17 @@
+import stream from 'readable-stream'
+import { fromCallback } from 'universalify'
+
+const finished = fromCallback(stream.finished)
+const pipeline = fromCallback(stream.pipeline)
+export { finished, pipeline }
+
 export { collect } from './collect'
 export { Duplex } from './Duplex'
 export { duplexify } from './duplexify'
-export { finished } from './finished'
 export * from './is'
-export { pipeline } from './pipeline'
 export { Readable } from './Readable'
 export { readify } from './readify'
 export { subscribe } from './subscribe'
 export { Transform } from './Transform'
 export { Writable } from './Writable'
 export { writify } from './writify'
-
-// Aliases
-export { finished as eos } from './finished'
-export { pipeline as pump } from './pipeline'
