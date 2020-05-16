@@ -7,7 +7,7 @@ TODO
 - `target` `<Writable>`
 - Returns: `<Writable>`
 
-## Examples
+## Example
 
 ```javascript
 // TODO

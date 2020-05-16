@@ -7,7 +7,7 @@ TODO
 - `...transforms` `<Duplex>`
 - Returns: `<Readable>`
 
-## Examples
+## Example
 
 ```javascript
 // TODO

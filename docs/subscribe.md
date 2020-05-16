@@ -7,7 +7,7 @@ TODO
 - `callback` `<Function>`
 - Returns: `<Promise>`
 
-## Examples
+## Example
 
 ```javascript
 // TODO

@@ -1,13 +1,13 @@
-# duplexify([options, ][readable, ][writable])
+# duplexify([options, ]readable[, writable])
 
-TODO
+Generates a Duplex stream by joining a Readable and Writable stream.
 
 - `options` `<Object>`
 - `readable` `<Readable>` | `<null>`
 - `writable` `<Writable>` | `<null>`
 - Returns: `<Duplex>`
 
-## Examples
+## Example
 
 ```javascript
 // TODO
