@@ -10,7 +10,7 @@ function guessTarget ({ chunk }) {
   } else if (typeof chunk === 'string') {
     return 'string'
   } else {
-    return false
+    return 'array'
   }
 }
 
