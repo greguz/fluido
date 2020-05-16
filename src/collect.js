@@ -54,9 +54,6 @@ function compileItems (items, target) {
 }
 
 export function collect (target) {
-  if (target !== undefined && target !== false && target !== 'string' && target !== 'buffer') {
-    throw new TypeError('Invalid target')
-  }
   const items = []
   return new Transform({
     objectMode: true,
