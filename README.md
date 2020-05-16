@@ -26,6 +26,15 @@ npm install --save fluido
 - [Duplex](docs/Duplex.md)
 - [Transform](docs/Transform.md)
 
+## Detection
+
+- [isReadable](docs/is.md#isReadablevalue)
+- [isWritable](docs/is.md#isWritablevalue)
+- [isDuplex](docs/is.md#isDuplexvalue)
+- [isStream](docs/is.md#isStreamvalue)
+- [isReadableStrictly](docs/is.md#isReadableStrictlyvalue)
+- [isWritableStrictly](docs/is.md#isWritableStrictlyvalue)
+
 ## Lifecycle
 
 - [finished](docs/finished.md)
