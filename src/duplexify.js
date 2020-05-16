@@ -1,6 +1,7 @@
 import { Duplex, finished } from 'readable-stream'
 
 import { destroyStream } from './internal/destroy'
+import { isPlainObject } from './internal/util'
 
 function noSource () {
   this.push(null)
@@ -10,7 +11,13 @@ function noTarget (chunk, encoding, callback) {
   callback(null)
 }
 
-export function duplexify (readable, writable) {
+export function duplexify (options, readable, writable) {
+  if (!isPlainObject(options)) {
+    writable = readable
+    readable = options
+    options = {}
+  }
+
   let listener
 
   function read () {
@@ -57,13 +64,14 @@ export function duplexify (readable, writable) {
   }
 
   return new Duplex({
-    allowHalfOpen: true,
     readableHighWaterMark: readable.readableHighWaterMark,
     readableObjectMode: readable.readableObjectMode,
     writableHighWaterMark: writable.writableHighWaterMark,
     writableObjectMode: writable.writableObjectMode,
+    ...options,
     read: readable ? read : noSource,
     write: writable ? write : noTarget,
+    writev: undefined,
     final: writable ? final : undefined,
     destroy
   })

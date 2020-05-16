@@ -2,7 +2,7 @@
 
 import * as stream from 'stream'
 
-export declare type Callback<T = any> = (err?: any, data?: T) => void
+export declare type Callback<T = any> = (err?: any, result?: T) => void
 export declare type Methods =
   | 'destroy'
   | 'read'
@@ -34,7 +34,7 @@ export interface ReadableOptions<T = any> {
   ): Promise<void> | void
 }
 export declare class Readable<T = any> extends stream.Readable {
-  static from<T> (iterable: T[] | Iterable<T> | AsyncIterable<T>): Readable<T>
+  static from<T> (iterable: Iterable<T> | AsyncIterable<T>): Readable<T>
   constructor (options?: ReadableOptions<T>)
   _asyncRead? (
     size: number,
@@ -119,6 +119,11 @@ export declare class Transform<R = any, W = any> extends stream.Transform {
 export declare function collect (target?: 'buffer' | 'string' | false | undefined): Transform
 
 export declare function duplexify (
+  readable?: stream.Readable | null,
+  writable?: stream.Writable | null,
+): Duplex
+export declare function duplexify (
+  options: Omit<DuplexOptions, Methods>,
   readable?: stream.Readable | null,
   writable?: stream.Writable | null,
 ): Duplex
