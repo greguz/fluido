@@ -64,10 +64,10 @@ export function duplexify (options, readable, writable) {
   }
 
   return new Duplex({
-    readableHighWaterMark: readable.readableHighWaterMark,
-    readableObjectMode: readable.readableObjectMode,
-    writableHighWaterMark: writable.writableHighWaterMark,
-    writableObjectMode: writable.writableObjectMode,
+    readableHighWaterMark: readable ? readable.readableHighWaterMark : undefined,
+    readableObjectMode: readable ? readable.readableObjectMode : undefined,
+    writableHighWaterMark: writable ? writable.writableHighWaterMark : undefined,
+    writableObjectMode: writable ? writable.writableObjectMode : undefined,
     ...options,
     read: readable ? read : noSource,
     write: writable ? write : noTarget,
