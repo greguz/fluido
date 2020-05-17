@@ -47,7 +47,7 @@ function compileItems (items, target) {
   if (target === 'buffer') {
     return asBuffer(items)
   } else if (target === 'string') {
-    return asString(items, target)
+    return asString(items)
   } else {
     return items.map(item => item.chunk)
   }
