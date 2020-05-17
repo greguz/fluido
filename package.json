@@ -12,12 +12,11 @@
     "prepublishOnly": "npm test"
   },
   "keywords": [
-    "stream",
-    "toolkit",
-    "readable",
-    "writable",
-    "duplex",
-    "transform"
+    "concurrency",
+    "concurrent",
+    "extra",
+    "promise",
+    "stream"
   ],
   "author": "Giacomo Gregoletto",
   "license": "MIT",
