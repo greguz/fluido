@@ -43,9 +43,9 @@ export function readify (...streams) {
       pipeline(...streams, tail, err => {
         process.nextTick(() => {
           if (err) {
-            self.emit('error', err);
+            self.emit('error', err)
           } else {
-            self.push(null);
+            self.push(null)
           }
         })
       })
