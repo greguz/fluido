@@ -9,10 +9,13 @@ export function Readable (options) {
     return new Readable(options)
   }
   stream.Readable.call(this, options)
+  if (options && options.asyncRead) {
+    this._asyncRead = options.asyncRead
+  }
+  this._asyncRead = handlePromise(this._asyncRead)
   this._destroy = handlePromise(this._destroy)
-  const asyncRead = (options ? options.asyncRead : null) || this._asyncRead
-  if (asyncRead) {
-    this._read = createReadMethod(asyncRead)
+  if (this._asyncRead) {
+    this._read = createReadMethod(this._asyncRead)
   }
 }
 

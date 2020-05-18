@@ -1,9 +1,6 @@
-import { handlePromise } from './promise'
 import { once } from './util'
 
 export function createReadMethod (asyncRead) {
-  asyncRead = handlePromise(asyncRead)
-
   let reading = false
   return function _read (size) {
     if (reading) {
