@@ -2,6 +2,8 @@
 
 import * as stream from 'stream'
 
+export { PassThrough, Stream } from 'stream'
+
 export declare type Callback<T = any> = (err?: any, result?: T) => void
 export declare type Methods =
   | 'destroy'
@@ -114,10 +116,6 @@ export declare interface TransformOptions<R = any, W = any> extends Omit<DuplexO
 }
 export declare class Transform<R = any, W = any> extends stream.Transform {
   constructor (options?: TransformOptions<R, W>)
-}
-
-export declare class PassThrough extends stream.Transform {
-  constructor (options?: stream.TransformOptions)
 }
 
 export declare function collect (target?: 'buffer' | 'string' | 'array'): Transform

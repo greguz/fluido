@@ -1,7 +1,7 @@
 import stream from 'readable-stream'
 import { fromCallback } from 'universalify'
 
-export { PassThrough } from 'readable-stream'
+export { PassThrough, Stream } from 'readable-stream'
 
 const finished = fromCallback(stream.finished)
 const pipeline = fromCallback(stream.pipeline)
