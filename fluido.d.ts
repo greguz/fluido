@@ -116,6 +116,10 @@ export declare class Transform<R = any, W = any> extends stream.Transform {
   constructor (options?: TransformOptions<R, W>)
 }
 
+export declare class PassThrough extends stream.Transform {
+  constructor (options?: stream.TransformOptions)
+}
+
 export declare function collect (target?: 'buffer' | 'string' | 'array'): Transform
 
 export declare function duplexify (
