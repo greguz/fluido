@@ -10,13 +10,16 @@ export function Duplex (options) {
     return new Duplex(options)
   }
   stream.Duplex.call(this, options)
+  if (options && options.asyncRead) {
+    this._asyncRead = options.asyncRead
+  }
+  this._asyncRead = handlePromise(this._asyncRead)
   this._write = handlePromise(this._write)
   this._writev = handlePromise(this._writev)
   this._final = handlePromise(this._final)
   this._destroy = handlePromise(this._destroy)
-  const asyncRead = (options ? options.asyncRead : null) || this._asyncRead
-  if (asyncRead) {
-    this._read = createReadMethod(asyncRead)
+  if (this._asyncRead) {
+    this._read = createReadMethod(this._asyncRead)
   }
   if (options && options.concurrency > 0) {
     patchWritable(this, options.concurrency)
