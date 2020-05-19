@@ -28,12 +28,12 @@ export interface ReadableOptions<T = any> {
     this: Readable<T>,
     size: number,
     callback: Callback<T | null>
-  ): Promise<T | null | void> | void
+  ): Promise<T | null | undefined | void> | void
   destroy? (
     this: Readable<T>,
     err: any,
     callback: Callback
-  ): Promise<void> | void
+  ): Promise<any> | void
 }
 export declare class Readable<T = any> extends stream.Readable {
   static from<T> (iterable: Iterable<T> | AsyncIterable<T>): Readable<T>
@@ -41,7 +41,7 @@ export declare class Readable<T = any> extends stream.Readable {
   _asyncRead? (
     size: number,
     callback: Callback<T | null>
-  ): Promise<T | null | void> | void
+  ): Promise<T | null | undefined | void> | void
 }
 
 export interface WritableOptions<T = any> {
@@ -57,21 +57,21 @@ export interface WritableOptions<T = any> {
     chunk: T,
     encoding: string,
     callback: Callback
-  ): Promise<void> | void
+  ): Promise<any> | void
   writev? (
     this: Writable<T>,
     entries: Array<WritableItem<T>>,
     callback: Callback
-  ): Promise<void> | void
+  ): Promise<any> | void
   final? (
     this: Writable<T>,
     callback: Callback
-  ): Promise<void> | void
+  ): Promise<any> | void
   destroy? (
     this: Writable<T>,
     err: any,
     callback: Callback
-  ): Promise<void> | void
+  ): Promise<any> | void
 }
 export interface WritableItem<T = any> {
   chunk: T
@@ -91,31 +91,31 @@ export declare interface DuplexOptions<R = any, W = any> extends Omit<ReadableOp
     this: Duplex<R, W>,
     err: any,
     callback: Callback
-  ): Promise<void> | void
+  ): Promise<any> | void
 }
 export declare class Duplex<R = any, W = any> extends stream.Duplex {
   constructor (options: DuplexOptions<R, W>)
 }
 
-export declare interface TransformOptions<R = any, W = any> extends Omit<DuplexOptions<R, W>, 'destroy'> {
+export declare interface TransformOptions<S = any, T = any> extends Omit<DuplexOptions<T, S>, 'destroy'> {
   transform? (
-    this: Transform<R, W>,
-    chunk: W,
+    this: Transform<S, T>,
+    chunk: S,
     encoding: string,
-    callback: Callback<R>
-  ): Promise<R | void> | void
+    callback: Callback<T>
+  ): Promise<T | undefined | void> | void
   flush? (
-    this: Transform<R, W>,
-    callback: Callback<R>
-  ): Promise<R | void> | void
+    this: Transform<S, T>,
+    callback: Callback<T>
+  ): Promise<T | undefined | void> | void
   destroy? (
-    this: Transform<R, W>,
+    this: Transform<S, T>,
     err: any,
     callback: Callback
-  ): Promise<void> | void
+  ): Promise<any> | void
 }
-export declare class Transform<R = any, W = any> extends stream.Transform {
-  constructor (options?: TransformOptions<R, W>)
+export declare class Transform<S = any, T = any> extends stream.Transform {
+  constructor (options?: TransformOptions<S, T>)
 }
 
 export declare function collect (target?: 'buffer' | 'string' | 'array'): Transform
