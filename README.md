@@ -19,12 +19,60 @@ Fluido is a drop-in replacement for the native `stream` module. It adds some fun
 npm install --save fluido
 ```
 
-## Creation
+## Callback and Promise
 
-- [Readable](docs/Readable.md)
-- [Writable](docs/Writable.md)
-- [Duplex](docs/Duplex.md)
-- [Transform](docs/Transform.md)
+Stream methods use callbacks by default. Fluido adds `Promise` support to `_write`, `_writev`, `_final`, `_transform`, `_flush`, and `_destroy` methods. The method just needs to return a `Promise` somehow, that's It. Both "simplified constructor" and class inheritance ways are supported.
+
+Async `_write` with simplified constructor:
+
+```javascript
+new Writable({
+  async write (chunk, encoding) {
+    await doSomething(chunk)
+  }
+})
+```
+
+Async `_transform` with class inheritance:
+
+```javascript
+class MyTransform extends Transform {
+  async _transform (chunk, encoding) {
+    await doSomething(chunk)
+  }
+}
+```
+
+Readable streams do **not** use a callback inside the `_read` method. To support async readings, Fluido adds a new method, `_asyncRead`, that, if specified, will override the original one.
+
+```javascript
+new Readable({
+  async asyncRead (size, callback) {
+    readSource(size, (err, chunks) => {
+      if (err) {
+        callback(err)
+        return
+      }
+      for (const chunk of chunks) {
+        this.push(chunk)
+      }
+    })
+  }
+})
+```
+
+Class inheritance is still supported by the new method.
+
+```javascript
+class MyReadable extends Readable {
+  async _asyncRead (size) {
+    const chunks = await readSource(size)
+    for (const chunk of chunks) {
+      this.push(chunk)
+    }
+  }
+}
+```
 
 ## Detection
 
