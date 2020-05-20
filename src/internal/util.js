@@ -2,10 +2,6 @@ import util from 'util'
 
 export { inherits } from 'util'
 
-export function noop () {
-  // Nothing
-}
-
 export function isFunction (value) {
   return typeof value === 'function'
 }
