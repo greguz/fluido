@@ -21,7 +21,7 @@ export function Duplex (options) {
   if (this._asyncRead) {
     this._read = createReadMethod(this._asyncRead)
   }
-  if (options && options.concurrency > 0) {
+  if (options && options.concurrency >= 2) {
     patchWritable(this, options.concurrency)
   }
 }

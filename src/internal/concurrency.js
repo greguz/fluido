@@ -1,8 +1,8 @@
 import { once } from './util'
 
 function makeConcurrentMethods (concurrency, _write, _final) {
-  if (!Number.isInteger(concurrency) || concurrency <= 0) {
-    throw new TypeError('Concurrency must be a positive integer')
+  if (!Number.isInteger(concurrency) || concurrency < 2) {
+    throw new TypeError('Invalid concurrency')
   }
 
   // Active jobs counter

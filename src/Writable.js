@@ -13,7 +13,7 @@ export function Writable (options) {
   this._writev = handlePromise(this._writev)
   this._final = handlePromise(this._final)
   this._destroy = handlePromise(this._destroy)
-  if (options && options.concurrency > 0) {
+  if (options && options.concurrency >= 2) {
     patchWritable(this, options.concurrency)
   }
 }

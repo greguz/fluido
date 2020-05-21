@@ -12,7 +12,7 @@ export function Transform (options) {
   this._transform = handlePromise(this._transform)
   this._flush = handlePromise(this._flush)
   this._destroy = handlePromise(this._destroy)
-  if (options && options.concurrency > 0) {
+  if (options && options.concurrency >= 2) {
     patchTransform(this, options.concurrency)
   }
 }
