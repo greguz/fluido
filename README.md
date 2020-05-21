@@ -21,57 +21,76 @@ npm install --save fluido
 
 ## Callback and Promise
 
-Stream methods use callbacks by default. Fluido adds `Promise` support to `_write`, `_writev`, `_final`, `_transform`, `_flush`, and `_destroy` methods. The method just needs to return a `Promise` somehow, that's It. Both "simplified constructor" and class inheritance ways are supported.
-
-Async `_write` with simplified constructor:
+Normally, all Node.js async functions use callbacks as the output mode.
 
 ```javascript
-new Writable({
-  async write (chunk, encoding) {
-    await doSomething(chunk)
+const { Readable, Writable, pipeline } = require('stream')
+
+pipeline(
+  new Readable({
+    read (size) {
+      // Push some chunks
+    }
+  }),
+  new Writable({
+    write (chunk, encoding, callback) {
+      // Handle incoming chunk
+      callback()
+    }
+  }),
+  err => {
+    // Handle error
   }
-})
+)
 ```
 
-Async `_transform` with class inheritance:
+With Fluido, all functions will return a `Promise` if a callback is not provided. Plus, a `Promise` returned inside any internal streaming method (`_write`, `_writev`, `_final`, `_transform`, `_flush`, and `_destroy`) is correctly handled. Both "simplified constructor" and "class inheritance" methods are supported.
 
 ```javascript
-class MyTransform extends Transform {
-  async _transform (chunk, encoding) {
-    await doSomething(chunk)
-  }
-}
+const { Readable, Writable, pipeline } = require('fluido')
+
+pipeline(
+  new Readable({
+    read (size) {
+      // Push some chunks
+    }
+  }),
+  new Writable({
+    async write (chunk, encoding) {
+      await promisedStuff(chunk)
+    }
+  })
+).catch(err => console.error(err))
 ```
 
-Readable streams do **not** use a callback inside the `_read` method. To support async readings, Fluido adds a new method, `_asyncRead`, that, if specified, will override the original one.
+Readable streams do **not** use a callback inside the `_read` method. To support async readings, Fluido adds a new method, `_asyncRead`, that, if specified, will override the original one. Both callback and `Promise` are supported.
 
 ```javascript
+const { Readable } = require('fluido')
+
 new Readable({
-  async asyncRead (size, callback) {
-    readSource(size, (err, chunks) => {
-      if (err) {
-        callback(err)
-        return
-      }
-      for (const chunk of chunks) {
-        this.push(chunk)
-      }
-    })
-  }
-})
-```
-
-Class inheritance is still supported by the new method.
-
-```javascript
-class MyReadable extends Readable {
-  async _asyncRead (size) {
+  async asyncRead (size) {
     const chunks = await readSource(size)
     for (const chunk of chunks) {
       this.push(chunk)
     }
   }
-}
+})
+```
+
+## Concurrency
+
+Passing the `concurrency` option to the Writable (may be Duplex or Transform) constructor will cause _write (or _transform) calls to be concurrent.
+
+```javascript
+const { Writable } = require('fluido')
+
+new Writable({
+  concurrency: 8,
+  async write (chunk) {
+    // Max 8 _write calls at the same time
+  }
+})
 ```
 
 ## Detection
