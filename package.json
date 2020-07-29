@@ -1,6 +1,6 @@
 {
   "name": "fluido",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A drop in replacement for stream with Promise support and more!",
   "main": "fluido.js",
   "types": "fluido.d.ts",
