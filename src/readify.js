@@ -41,13 +41,11 @@ export function readify (...streams) {
       })
 
       pipeline(...streams, tail, err => {
-        process.nextTick(() => {
-          if (err) {
-            self.emit('error', err)
-          } else {
-            self.push(null)
-          }
-        })
+        if (err) {
+          self.destroy(err)
+        } else {
+          self.push(null)
+        }
       })
     },
     destroy (err, callback) {

@@ -36,7 +36,7 @@ export function duplexify (options, readable, writable) {
       readable.removeListener('data', listener)
 
       if (err) {
-        this.emit('error', err)
+        this.destroy(err)
       } else {
         this.push(null)
       }
