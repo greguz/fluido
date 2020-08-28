@@ -23,6 +23,11 @@ function compose (a, b) {
 }
 
 function handle (streams, options, callback) {
+  if (streams.length === 0) {
+    process.nextTick(callback, null)
+    return
+  }
+
   const destroy = streams.map(toDestroyer).reduce(compose)
 
   let count = streams.length
@@ -53,6 +58,9 @@ export function merge (...streams) {
 
   const readables = streams.filter(isReadable)
   const writables = streams.filter(isWritable)
+  if (readables.length + writables.length !== streams.length) {
+    throw new TypeError('Expected stream')
+  }
 
   let rListener
   let wCallback
@@ -150,10 +158,10 @@ export function merge (...streams) {
     readable: readables.length > 0,
     writable: writables.length > 0,
     ...options,
-    read: readables.length > 0 ? read : undefined,
-    write: writables.length > 0 ? write : undefined,
+    read,
+    write,
     writev: undefined,
-    final: writables.length > 0 ? final : undefined,
+    final,
     destroy
   })
 }
