@@ -194,3 +194,11 @@ export declare function writify (
   options: Omit<WritableOptions, Methods>,
   ...streams: Array<stream.Writable | stream.Duplex>
 ): Writable
+
+export declare function merge (
+  ...streams: Array<stream.Readable | stream.Writable>
+): stream.Duplex
+export declare function merge (
+  options: Omit<DuplexOptions, Methods>,
+  ...streams: Array<stream.Readable | stream.Writable>
+): stream.Duplex

@@ -113,6 +113,7 @@ new Writable({
 - [readify](docs/readify.md)
 - [writify](docs/writify.md)
 - [duplexify](docs/duplexify.md)
+- [merge](docs/merge.md)
 
 ## Operators
 
