@@ -128,7 +128,12 @@ export function merge (...streams) {
   }
 
   function final (callback) {
-    wCallback = callback
+    if (wCounter === undefined) {
+      handle(writables, { readable: false, writable: true }, callback)
+    } else {
+      wCallback = callback
+    }
+
     for (const target of writables) {
       target.end()
     }

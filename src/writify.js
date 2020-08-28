@@ -49,10 +49,10 @@ export function writify (...streams) {
     final (callback) {
       next = callback
 
-      if (error) {
-        handle(error)
-      } else {
+      if (head && !error) {
         head.end()
+      } else {
+        handle()
       }
     },
     destroy (err, callback) {

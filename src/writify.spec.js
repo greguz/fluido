@@ -130,3 +130,20 @@ test('writify final error', async t => {
     { message: 'Failed on final' }
   )
 })
+
+test.cb('writify without writes', t => {
+  pipeline(
+    Readable.from([]),
+    writify(
+      { objectMode: true },
+      new PassThrough({ objectMode: true }),
+      new Writable({
+        objectMode: true,
+        write (chunk, encoding, callback) {
+          callback()
+        }
+      })
+    ),
+    t.end
+  )
+})
