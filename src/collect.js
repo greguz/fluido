@@ -1,4 +1,4 @@
-import { Transform } from 'stream'
+import { Transform } from 'readable-stream'
 
 function isBufferish (chunk) {
   return Buffer.isBuffer(chunk) || chunk instanceof Uint8Array
