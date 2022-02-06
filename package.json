@@ -24,7 +24,7 @@
     "universalify": "^2.0.0"
   },
   "devDependencies": {
-    "ava": "^3.12.1",
+    "ava": "^4.0.1",
     "esm": "^3.2.25",
     "rollup": "^2.67.6",
     "standard": "^16.0.4"
