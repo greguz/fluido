@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/fluido.svg)](https://badge.fury.io/js/fluido)
 [![Dependencies Status](https://david-dm.org/greguz/fluido.svg)](https://david-dm.org/greguz/fluido.svg)
-[![Build Status](https://travis-ci.com/greguz/fluido.svg?branch=master)](https://travis-ci.com/greguz/fluido)
+[![ci](https://github.com/greguz/fluido/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/greguz/fluido/actions/workflows/ci.yaml)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 Fluido is a drop-in replacement for the native `stream` module. It adds some functions that aren't included in the standard module and adds `Promise` support to stream methods. It also enables _concurrent_ jobs while writing or transforming.
