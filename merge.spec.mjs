@@ -1,10 +1,12 @@
 import test from 'ava'
 
-import { Readable, Writable, finished, pipeline } from 'readable-stream'
+import { Readable, Writable } from 'readable-stream'
 
-import { merge } from './merge'
+import { finished } from './finished.mjs'
+import { merge } from './merge.mjs'
+import { pipeline } from './pipeline.mjs'
 
-test.cb('merge', t => {
+test('merge', async t => {
   t.plan(2)
 
   const readable = new Readable({
@@ -25,15 +27,16 @@ test.cb('merge', t => {
 
   const stream = merge({ objectMode: true }, readable, writable)
 
-  finished(stream, t.end)
+  const promise = finished(stream)
 
   stream.resume()
-
   stream.write({ dummy: true })
   stream.end()
+
+  return promise
 })
 
-test.cb('merge readables', t => {
+test('merge readables', async t => {
   t.plan(11)
 
   const stream = merge(
@@ -44,7 +47,7 @@ test.cb('merge readables', t => {
     Readable.from(['gentil', 'farfalletta'])
   )
 
-  pipeline(
+  await pipeline(
     stream,
     new Writable({
       highWaterMark: 2,
@@ -53,12 +56,11 @@ test.cb('merge readables', t => {
         t.pass()
         setTimeout(callback, 10)
       }
-    }),
-    t.end
+    })
   )
 })
 
-test.cb('merge writables', t => {
+test('merge writables', async t => {
   t.plan(6)
 
   const stream = merge(
@@ -89,43 +91,38 @@ test.cb('merge writables', t => {
     })
   )
 
-  pipeline(
+  await pipeline(
     Readable.from([42, 69]),
-    stream,
-    t.end
+    stream
   )
 })
 
-test.cb('merge writables without writes', t => {
-  pipeline(
+test('merge writables without writes', async t => {
+  await pipeline(
     Readable.from([]),
     merge(
       { objectMode: true },
       new Writable({
-        highWaterMark: 8,
-        objectMode: true,
         write (chunk, encoding, callback) {
-          t.pass()
-          setTimeout(callback, 10)
+          callback(new Error('Written something'))
         }
       })
-    ),
-    t.end
+    )
   )
+  t.pass()
 })
 
-test.cb('merge readables without reads', t => {
-  pipeline(
+test('merge readables without reads', async t => {
+  await pipeline(
     merge(
       { objectMode: true },
       Readable.from([])
     ),
     new Writable({
-      objectMode: true,
       write (chunk, encoding, callback) {
-        callback()
+        callback(new Error('Written something'))
       }
-    }),
-    t.end
+    })
   )
+  t.pass()
 })

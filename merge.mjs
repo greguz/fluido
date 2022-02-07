@@ -1,9 +1,9 @@
 import { Duplex, finished } from 'readable-stream'
 
-import { destroyStream } from './internal/destroy'
-import { isPlainObject } from './internal/util'
+import { destroyStream } from './lib/destroy.mjs'
+import { isPlainObject } from './lib/util.mjs'
 
-import { isReadable, isWritable } from './is'
+import { isReadable, isWritable } from './is.mjs'
 
 function toDestroyer (stream) {
   let destroyed = false

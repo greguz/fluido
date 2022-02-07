@@ -1,16 +1,14 @@
 import test from 'ava'
 
-import { PassThrough, Readable, Transform, Writable, pipeline } from 'readable-stream'
-import { promisify } from 'util'
+import { PassThrough, Readable, Transform, Writable } from 'readable-stream'
 
-import { writify } from './writify'
+import { pipeline } from './pipeline.mjs'
+import { writify } from './writify.mjs'
 
-const pPipeline = promisify(pipeline)
-
-test.cb('writify', t => {
+test('writify', async t => {
   t.plan(101)
   let counter = 0
-  pipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     writify(
       { objectMode: true },
@@ -27,55 +25,51 @@ test.cb('writify', t => {
           callback()
         }
       })
-    ),
-    t.end
+    )
   )
 })
 
-test.cb('writify destroy', t => {
-  t.plan(3)
-
-  pipeline(
-    new Readable({
-      read () {
-        this.push('42')
-      },
-      destroy (err, callback) {
-        t.pass()
-        callback(err)
-      }
-    }),
-    writify(
-      new Transform({
-        transform (chunk, encoding, callback) {
-          callback(null, chunk)
+test('writify destroy', async t => {
+  t.plan(4)
+  await t.throwsAsync(
+    () => pipeline(
+      new Readable({
+        read () {
+          this.push('42')
         },
         destroy (err, callback) {
           t.pass()
           callback(err)
         }
       }),
-      new Writable({
-        write (chunk, encoding, callback) {
-          callback(new Error())
-        },
-        destroy (err, callback) {
-          t.pass()
-          callback(err)
-        }
-      })
-    ),
-    () => {
-      setImmediate(
-        () => t.end()
+      writify(
+        new Transform({
+          transform (chunk, encoding, callback) {
+            callback(null, chunk)
+          },
+          destroy (err, callback) {
+            t.pass()
+            callback(err)
+          }
+        }),
+        new Writable({
+          write (chunk, encoding, callback) {
+            callback(new Error("Pool's closed"))
+          },
+          destroy (err, callback) {
+            t.pass()
+            callback(err)
+          }
+        })
       )
-    }
+    ),
+    { message: "Pool's closed" }
   )
 })
 
 test('writify transform error', async t => {
   await t.throwsAsync(
-    pPipeline(
+    pipeline(
       Readable.from(new Array(100).fill('42')),
       writify(
         new Transform({
@@ -96,7 +90,7 @@ test('writify transform error', async t => {
 
 test('writify write error', async t => {
   await t.throwsAsync(
-    pPipeline(
+    pipeline(
       Readable.from(new Array(100).fill('42')),
       writify(
         new PassThrough(),
@@ -113,7 +107,7 @@ test('writify write error', async t => {
 
 test('writify final error', async t => {
   await t.throwsAsync(
-    pPipeline(
+    pipeline(
       Readable.from(new Array(100).fill('42')),
       writify(
         new PassThrough(),
@@ -131,8 +125,8 @@ test('writify final error', async t => {
   )
 })
 
-test.cb('writify without writes', t => {
-  pipeline(
+test('writify without writes', async t => {
+  await pipeline(
     Readable.from([]),
     writify(
       { objectMode: true },
@@ -143,7 +137,7 @@ test.cb('writify without writes', t => {
           callback()
         }
       })
-    ),
-    t.end
+    )
   )
+  t.pass()
 })

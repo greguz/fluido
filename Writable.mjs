@@ -1,8 +1,8 @@
 import stream from 'readable-stream'
 
-import { patchWritable } from './internal/concurrency'
-import { handlePromise } from './internal/promise'
-import { inherits } from './internal/util'
+import { patchWritable } from './lib/concurrency.mjs'
+import { handlePromise } from './lib/promise.mjs'
+import { inherits } from './lib/util.mjs'
 
 export function Writable (options) {
   if (!(this instanceof Writable)) {

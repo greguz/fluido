@@ -1,8 +1,8 @@
 import stream from 'readable-stream'
 
-import { patchTransform } from './internal/concurrency'
-import { handlePromise } from './internal/promise'
-import { inherits } from './internal/util'
+import { patchTransform } from './lib/concurrency.mjs'
+import { handlePromise } from './lib/promise.mjs'
+import { inherits } from './lib/util.mjs'
 
 export function Transform (options) {
   if (!(this instanceof Transform)) {

@@ -1,7 +1,7 @@
 import { Duplex, finished } from 'readable-stream'
 
-import { destroyStream } from './internal/destroy'
-import { isPlainObject } from './internal/util'
+import { destroyStream } from './lib/destroy.mjs'
+import { isPlainObject } from './lib/util.mjs'
 
 function noSource () {
   this.push(null)

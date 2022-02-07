@@ -1,28 +1,27 @@
 import test from 'ava'
 
-import { Readable, Writable, pipeline } from 'readable-stream'
-import { fromCallback } from 'universalify'
+import { Readable, Writable } from 'readable-stream'
 
-import { Transform } from './Transform'
+import { pipeline } from './pipeline.mjs'
+import { Transform } from './Transform.mjs'
 
-const uDelay = fromCallback(
-  function delay (ms, callback) {
-    setTimeout(callback, ms, null)
+function sleep (ms, callback) {
+  if (callback) {
+    return sleep(ms).then(callback)
   }
-)
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
-const uPipeline = fromCallback(pipeline)
-
-test.cb('Transform transform callback', t => {
+test('Transform transform callback', async t => {
   t.plan(200)
-  uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Transform({
       objectMode: true,
       transform (chunk, encoding, callback) {
         t.is(chunk, 1)
         this.push(chunk * -1)
-        uDelay(10, callback)
+        sleep(10, callback)
       }
     }),
     new Writable({
@@ -31,21 +30,20 @@ test.cb('Transform transform callback', t => {
         t.is(chunk, -1)
         callback()
       }
-    }),
-    t.end
+    })
   )
 })
 
 test('Transform transform promise', async t => {
   t.plan(200)
-  await uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Transform({
       objectMode: true,
       async transform (chunk) {
         t.is(chunk, 1)
         this.push(chunk * -1)
-        await uDelay(10)
+        await sleep(10)
       }
     }),
     new Writable({
@@ -67,7 +65,7 @@ test('Transform concurrency', async t => {
   let jobs = 0
   let index = 0
 
-  await uPipeline(
+  await pipeline(
     Readable.from(new Array(items).fill(1)),
     new Transform({
       concurrency,
@@ -85,7 +83,7 @@ test('Transform concurrency', async t => {
         }
 
         jobs++
-        await uDelay(10)
+        await sleep(10)
         jobs--
       }
     }),

@@ -1,6 +1,6 @@
 import { Stream } from 'readable-stream'
 
-import { isFunction } from './internal/util'
+import { isFunction } from './lib/util.mjs'
 
 export function isReadable (value) {
   return value instanceof Stream && isFunction(value.push)

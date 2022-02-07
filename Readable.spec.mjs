@@ -1,8 +1,9 @@
 import test from 'ava'
 
-import { Writable, pipeline } from 'readable-stream'
+import { Writable } from 'readable-stream'
 
-import { Readable } from './Readable'
+import { pipeline } from './pipeline.mjs'
+import { Readable } from './Readable.mjs'
 
 test('Readable read', t => {
   t.plan(21)
@@ -22,14 +23,14 @@ test('Readable read', t => {
   }
 })
 
-test.cb('Readable asyncRead', t => {
+test('Readable asyncRead', async t => {
   t.plan(23)
 
   const steps = 10
   let ri = 0
   let wi = 0
 
-  pipeline(
+  await pipeline(
     new Readable({
       objectMode: true,
       asyncRead (size, callback) {
@@ -46,13 +47,9 @@ test.cb('Readable asyncRead', t => {
         t.is(chunk, wi++)
         callback()
       }
-    }),
-    err => {
-      if (!err) {
-        t.is(ri, 10)
-        t.is(wi, 10)
-      }
-      t.end(err)
-    }
+    })
   )
+
+  t.is(ri, 10)
+  t.is(wi, 10)
 })

@@ -2,26 +2,21 @@ import test from 'ava'
 
 import { Readable, Transform } from 'readable-stream'
 
-import { subscribe } from './subscribe'
+import { subscribe } from './subscribe.mjs'
 
-test.cb('subscribe resolved callback', t => {
+test('subscribe resolved callback', async t => {
   const length = 100
   let accumulator = 0
-  subscribe(
+  const res = await subscribe(
     Readable.from(new Array(length).fill(1)),
     new Transform({
       objectMode: true,
       transform (chunk, encoding, callback) {
         callback(null, accumulator += chunk)
       }
-    }),
-    (err, res) => {
-      if (!err) {
-        t.is(res, length)
-      }
-      t.end(err)
-    }
+    })
   )
+  t.is(res, length)
 })
 
 test('subscribe rejected callback', async t => {

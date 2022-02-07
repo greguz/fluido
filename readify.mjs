@@ -1,6 +1,6 @@
 import { Readable, Writable, pipeline } from 'readable-stream'
 
-import { isPlainObject } from './internal/util'
+import { isPlainObject } from './lib/util.mjs'
 
 export function readify (...streams) {
   const options = isPlainObject(streams[0]) ? streams.shift() : {}

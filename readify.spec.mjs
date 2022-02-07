@@ -1,16 +1,14 @@
 import test from 'ava'
 
-import { PassThrough, Readable, Transform, Writable, pipeline } from 'readable-stream'
-import { promisify } from 'util'
+import { PassThrough, Readable, Transform, Writable } from 'readable-stream'
 
-import { readify } from './readify'
+import { pipeline } from './pipeline.mjs'
+import { readify } from './readify.mjs'
 
-const pPipeline = promisify(pipeline)
-
-test.cb('readify', t => {
+test('readify', async t => {
   t.plan(101)
   let counter = 0
-  pipeline(
+  await pipeline(
     readify(
       { objectMode: true },
       Readable.from(new Array(100).fill(1)),
@@ -27,28 +25,37 @@ test.cb('readify', t => {
         t.is(counter, 100)
         callback()
       }
-    }),
-    t.end
+    })
   )
 })
 
-test.cb('readify destroy', t => {
-  t.plan(3)
-
-  pipeline(
-    readify(
-      new Readable({
-        read () {
-          this.push('42')
-        },
-        destroy (err, callback) {
-          t.pass()
-          callback(err)
-        }
-      }),
-      new Transform({
-        transform (chunk, encoding, callback) {
-          callback(null, chunk)
+test('readify destroy', async t => {
+  t.plan(4)
+  await t.throwsAsync(
+    () => pipeline(
+      readify(
+        new Readable({
+          read () {
+            this.push('42')
+          },
+          destroy (err, callback) {
+            t.pass()
+            callback(err)
+          }
+        }),
+        new Transform({
+          transform (chunk, encoding, callback) {
+            callback(null, chunk)
+          },
+          destroy (err, callback) {
+            t.pass()
+            callback(err)
+          }
+        })
+      ),
+      new Writable({
+        write (chunk, encoding, callback) {
+          callback(new Error("Pool's closed"))
         },
         destroy (err, callback) {
           t.pass()
@@ -56,26 +63,13 @@ test.cb('readify destroy', t => {
         }
       })
     ),
-    new Writable({
-      write (chunk, encoding, callback) {
-        callback(new Error())
-      },
-      destroy (err, callback) {
-        t.pass()
-        callback(err)
-      }
-    }),
-    () => {
-      setImmediate(
-        () => t.end()
-      )
-    }
+    { message: "Pool's closed" }
   )
 })
 
 test('readify read error', async t => {
   await t.throwsAsync(
-    pPipeline(
+    pipeline(
       readify(
         new Readable({
           read () {
@@ -102,7 +96,7 @@ test('readify read error', async t => {
 
 test('readify transform error', async t => {
   await t.throwsAsync(
-    pPipeline(
+    pipeline(
       readify(
         Readable.from(new Array(100).fill('42')),
         new Transform({

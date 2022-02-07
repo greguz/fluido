@@ -1,92 +1,89 @@
 import test from 'ava'
 
-import { Readable, pipeline } from 'readable-stream'
-import { fromCallback } from 'universalify'
+import { Readable } from 'readable-stream'
 
-import { Writable } from './Writable'
+import { pipeline } from './pipeline.mjs'
+import { Writable } from './Writable.mjs'
 
-const uDelay = fromCallback(
-  function delay (ms, callback) {
-    setTimeout(callback, ms, null)
+function sleep (ms, callback) {
+  if (callback) {
+    return sleep(ms).then(callback)
   }
-)
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
-const uPipeline = fromCallback(pipeline)
-
-test.cb('Writable write callback', t => {
+test('Writable write callback', async t => {
   t.plan(100)
-  uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Writable({
       objectMode: true,
       write (chunk, encoding, callback) {
         t.is(chunk, 1)
-        uDelay(10, callback)
+        sleep(10, callback)
       }
-    }),
-    t.end
+    })
   )
 })
 
 test('Writable write promise', async t => {
   t.plan(100)
-  await uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Writable({
       objectMode: true,
       async write (chunk) {
         t.is(chunk, 1)
-        await uDelay(10)
+        await sleep(10)
       }
     })
   )
 })
 
-test.cb('Writable writev callback', t => {
+test('Writable writev callback', async t => {
   t.plan(100)
-  uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Writable({
       objectMode: true,
       write (chunk, encoding, callback) {
         t.is(chunk, 1)
-        uDelay(10, callback)
+        sleep(10, callback)
       },
       writev (items, callback) {
         for (const item of items) {
           t.is(item.chunk, 1)
         }
-        uDelay(10, callback)
-      }
-    }),
-    t.end
-  )
-})
-
-test('Writable writev promise', async t => {
-  t.plan(100)
-  await uPipeline(
-    Readable.from(new Array(100).fill(1)),
-    new Writable({
-      objectMode: true,
-      async write (chunk) {
-        t.is(chunk, 1)
-        await uDelay(10)
-      },
-      async writev (items) {
-        for (const item of items) {
-          t.is(item.chunk, 1)
-        }
-        await uDelay(10)
+        sleep(10, callback)
       }
     })
   )
 })
 
-test.cb('Writable final callback', t => {
+test('Writable writev promise', async t => {
+  t.plan(100)
+  await pipeline(
+    Readable.from(new Array(100).fill(1)),
+    new Writable({
+      objectMode: true,
+      async write (chunk) {
+        t.is(chunk, 1)
+        await sleep(10)
+      },
+      async writev (items) {
+        for (const item of items) {
+          t.is(item.chunk, 1)
+        }
+        await sleep(10)
+      }
+    })
+  )
+})
+
+test('Writable final callback', async t => {
   t.plan(1)
   let count = 0
-  uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Writable({
       objectMode: true,
@@ -96,17 +93,16 @@ test.cb('Writable final callback', t => {
       },
       final (callback) {
         t.is(count, 100)
-        uDelay(10, callback)
+        sleep(10, callback)
       }
-    }),
-    t.end
+    })
   )
 })
 
 test('Writable final promise', async t => {
   t.plan(1)
   let count = 0
-  await uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Writable({
       objectMode: true,
@@ -115,7 +111,7 @@ test('Writable final promise', async t => {
       },
       async final () {
         t.is(count, 100)
-        await uDelay(10)
+        await sleep(10)
       }
     })
   )
@@ -130,7 +126,7 @@ test('Writable concurrency', async t => {
   let jobs = 0
   let index = 0
 
-  await uPipeline(
+  await pipeline(
     Readable.from(new Array(items).fill(1)),
     new Writable({
       concurrency,
@@ -148,7 +144,7 @@ test('Writable concurrency', async t => {
         }
 
         jobs++
-        await uDelay(10)
+        await sleep(10)
         jobs--
       }
     })

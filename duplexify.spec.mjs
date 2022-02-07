@@ -1,16 +1,14 @@
 import test from 'ava'
 
-import { Readable, Writable, pipeline } from 'readable-stream'
-import { fromCallback } from 'universalify'
+import { Readable, Writable } from 'readable-stream'
 
-import { duplexify } from './duplexify'
-
-const uPipeline = fromCallback(pipeline)
+import { duplexify } from './duplexify.mjs'
+import { pipeline } from './pipeline.mjs'
 
 test('duplexify', async t => {
   const stream = duplexify()
 
-  await uPipeline(
+  await pipeline(
     new Readable({
       read () {
         this.push('something')
@@ -20,7 +18,7 @@ test('duplexify', async t => {
     stream
   )
 
-  await uPipeline(
+  await pipeline(
     stream,
     new Writable()
   )

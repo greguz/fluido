@@ -9,7 +9,7 @@ import {
   isStream,
   isWritable,
   isWritableStrictly
-} from './is'
+} from './is.mjs'
 
 test('isReadable', t => {
   t.true(isReadable(new Readable()))

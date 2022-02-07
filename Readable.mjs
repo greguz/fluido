@@ -1,8 +1,8 @@
 import stream from 'readable-stream'
 
-import { createReadMethod } from './internal/asyncRead'
-import { handlePromise } from './internal/promise'
-import { inherits } from './internal/util'
+import { createReadMethod } from './lib/asyncRead.mjs'
+import { handlePromise } from './lib/promise.mjs'
+import { inherits } from './lib/util.mjs'
 
 export function Readable (options) {
   if (!(this instanceof Readable)) {

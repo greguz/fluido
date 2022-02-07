@@ -1,9 +1,9 @@
 import stream from 'readable-stream'
 
-import { patchWritable } from './internal/concurrency'
-import { handlePromise } from './internal/promise'
-import { createReadMethod } from './internal/asyncRead'
-import { inherits } from './internal/util'
+import { patchWritable } from './lib/concurrency.mjs'
+import { handlePromise } from './lib/promise.mjs'
+import { createReadMethod } from './lib/asyncRead.mjs'
+import { inherits } from './lib/util.mjs'
 
 export function Duplex (options) {
   if (!(this instanceof Duplex)) {

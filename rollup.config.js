@@ -1,7 +1,7 @@
 export default {
-  input: 'src/index.js',
+  input: 'fluido.mjs',
   output: {
-    file: 'fluido.js',
+    file: 'fluido.cjs',
     format: 'cjs'
   },
   external: ['readable-stream', 'universalify', 'util']

@@ -1,17 +1,16 @@
 import test from 'ava'
 
-import { Readable, Writable, pipeline } from 'readable-stream'
-import { fromCallback } from 'universalify'
+import { Readable, Writable } from 'readable-stream'
 
-import { Duplex } from './Duplex'
+import { Duplex } from './Duplex.mjs'
+import { pipeline } from './pipeline.mjs'
 
-const uDelay = fromCallback(
-  function delay (ms, callback) {
-    setTimeout(callback, ms, null)
+function sleep (ms, callback) {
+  if (callback) {
+    return sleep(ms).then(callback)
   }
-)
-
-const uPipeline = fromCallback(pipeline)
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 test('Duplex read', t => {
   t.plan(21)
@@ -31,14 +30,14 @@ test('Duplex read', t => {
   }
 })
 
-test.cb('Duplex asyncRead', t => {
+test('Duplex asyncRead', async t => {
   t.plan(23)
 
   const steps = 10
   let ri = 0
   let wi = 0
 
-  pipeline(
+  await pipeline(
     new Duplex({
       objectMode: true,
       asyncRead (size, callback) {
@@ -55,91 +54,85 @@ test.cb('Duplex asyncRead', t => {
         t.is(chunk, wi++)
         callback()
       }
-    }),
-    err => {
-      if (!err) {
-        t.is(ri, 10)
-        t.is(wi, 10)
-      }
-      t.end(err)
-    }
+    })
   )
+
+  t.is(ri, 10)
+  t.is(wi, 10)
 })
 
-test.cb('Duplex write callback', t => {
+test('Duplex write callback', async t => {
   t.plan(100)
-  uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Duplex({
       objectMode: true,
       write (chunk, encoding, callback) {
         t.is(chunk, 1)
-        uDelay(10, callback)
+        sleep(10, callback)
       }
-    }),
-    t.end
+    })
   )
 })
 
 test('Duplex write promise', async t => {
   t.plan(100)
-  await uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Duplex({
       objectMode: true,
       async write (chunk) {
         t.is(chunk, 1)
-        await uDelay(10)
+        await sleep(10)
       }
     })
   )
 })
 
-test.cb('Duplex writev callback', t => {
+test('Duplex writev callback', async t => {
   t.plan(100)
-  uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Duplex({
       objectMode: true,
       write (chunk, encoding, callback) {
         t.is(chunk, 1)
-        uDelay(10, callback)
+        sleep(10, callback)
       },
       writev (items, callback) {
         for (const item of items) {
           t.is(item.chunk, 1)
         }
-        uDelay(10, callback)
-      }
-    }),
-    t.end
-  )
-})
-
-test('Duplex writev promise', async t => {
-  t.plan(100)
-  await uPipeline(
-    Readable.from(new Array(100).fill(1)),
-    new Duplex({
-      objectMode: true,
-      async write (chunk) {
-        t.is(chunk, 1)
-        await uDelay(10)
-      },
-      async writev (items) {
-        for (const item of items) {
-          t.is(item.chunk, 1)
-        }
-        await uDelay(10)
+        sleep(10, callback)
       }
     })
   )
 })
 
-test.cb('Duplex final callback', t => {
+test('Duplex writev promise', async t => {
+  t.plan(100)
+  await pipeline(
+    Readable.from(new Array(100).fill(1)),
+    new Duplex({
+      objectMode: true,
+      async write (chunk) {
+        t.is(chunk, 1)
+        await sleep(10)
+      },
+      async writev (items) {
+        for (const item of items) {
+          t.is(item.chunk, 1)
+        }
+        await sleep(10)
+      }
+    })
+  )
+})
+
+test('Duplex final callback', async t => {
   t.plan(1)
   let count = 0
-  uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Duplex({
       objectMode: true,
@@ -149,17 +142,16 @@ test.cb('Duplex final callback', t => {
       },
       final (callback) {
         t.is(count, 100)
-        uDelay(10, callback)
+        sleep(10, callback)
       }
-    }),
-    t.end
+    })
   )
 })
 
 test('Duplex final promise', async t => {
   t.plan(1)
   let count = 0
-  await uPipeline(
+  await pipeline(
     Readable.from(new Array(100).fill(1)),
     new Duplex({
       objectMode: true,
@@ -168,7 +160,7 @@ test('Duplex final promise', async t => {
       },
       async final () {
         t.is(count, 100)
-        await uDelay(10)
+        await sleep(10)
       }
     })
   )
@@ -183,7 +175,7 @@ test('Duplex concurrency', async t => {
   let jobs = 0
   let index = 0
 
-  await uPipeline(
+  await pipeline(
     Readable.from(new Array(items).fill(1)),
     new Duplex({
       concurrency,
@@ -201,7 +193,7 @@ test('Duplex concurrency', async t => {
         }
 
         jobs++
-        await uDelay(10)
+        await sleep(10)
         jobs--
       }
     })

@@ -2,7 +2,7 @@ import test from 'ava'
 
 import { Readable, Writable, pipeline } from 'readable-stream'
 
-import { collect } from './collect'
+import { collect } from './collect.mjs'
 
 function pump (source, target) {
   return new Promise((resolve, reject) => {
