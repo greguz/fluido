@@ -12,8 +12,8 @@
   "scripts": {
     "build": "rollup --config",
     "lint": "standard",
-    "test": "ava",
-    "prepublishOnly": "npm run lint && npm run test"
+    "test": "c8 ava",
+    "prepublishOnly": "npm run lint && npm run build && npm test"
   },
   "keywords": [
     "concurrency",
@@ -25,32 +25,20 @@
   "author": "Giacomo Gregoletto",
   "license": "MIT",
   "dependencies": {
-    "readable-stream": "^3.6.0",
-    "universalify": "^2.0.0"
+    "readable-stream": "^4.0.0"
   },
   "devDependencies": {
-    "ava": "^4.0.1",
-    "esm": "^3.2.25",
-    "rollup": "^2.67.0",
-    "standard": "^16.0.4"
+    "ava": "^4.3.0",
+    "c8": "^7.11.3",
+    "rollup": "^2.75.6",
+    "standard": "^17.0.0"
   },
   "files": [
-    "collect.mjs",
-    "Duplex.mjs",
-    "duplexify.mjs",
-    "finished.mjs",
+    "!**/*.spec.mjs",
+    "lib",
     "fluido.cjs",
     "fluido.d.ts",
-    "fluido.mjs",
-    "is.mjs",
-    "merge.mjs",
-    "pipeline.mjs",
-    "Readable.mjs",
-    "readify.mjs",
-    "subscribe.mjs",
-    "Transform.mjs",
-    "Writable.mjs",
-    "writify.mjs"
+    "fluido.mjs"
   ],
   "repository": {
     "type": "git",

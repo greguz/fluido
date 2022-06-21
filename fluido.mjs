@@ -1,15 +1,17 @@
-export { PassThrough, Stream } from 'readable-stream'
+export {
+  PassThrough,
+  Stream,
+  compose,
+  isErrored,
+  isReadable,
+  addAbortSignal
+} from 'readable-stream'
 
-export { collect } from './collect.mjs'
-export { Duplex } from './Duplex.mjs'
-export { duplexify } from './duplexify.mjs'
-export { finished } from './finished.mjs'
-export * from './is.mjs'
-export { merge } from './merge.mjs'
-export { pipeline } from './pipeline.mjs'
-export { Readable } from './Readable.mjs'
-export { readify } from './readify.mjs'
-export { subscribe } from './subscribe.mjs'
-export { Transform } from './Transform.mjs'
-export { Writable } from './Writable.mjs'
-export { writify } from './writify.mjs'
+export * from './lib/callback.mjs'
+export { Duplex } from './lib/Duplex.mjs'
+export { finished } from './lib/finished.mjs'
+export * from './lib/is.mjs'
+export { pipeline } from './lib/pipeline.mjs'
+export { Readable } from './lib/Readable.mjs'
+export { Transform } from './lib/Transform.mjs'
+export { Writable } from './lib/Writable.mjs'

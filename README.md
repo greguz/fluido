@@ -89,26 +89,16 @@ new Writable({
 
 ## Detection
 
-- [isReadable](docs/is.md#isReadablevalue)
-- [isWritable](docs/is.md#isWritablevalue)
-- [isDuplex](docs/is.md#isDuplexvalue)
-- [isStream](docs/is.md#isStreamvalue)
-- [isReadableStrictly](docs/is.md#isReadableStrictlyvalue)
-- [isWritableStrictly](docs/is.md#isWritableStrictlyvalue)
+- [isNodeStream](docs/is.md#isNodeStreamvalue)
+- [isReadableStream](docs/is.md#isReadableStreamvalue)
+- [isWritableStream](docs/is.md#isWritableStreamvalue)
+- [isDuplexStream](docs/is.md#isDuplexStreamvalue)
 
 ## Lifecycle
 
 - [finished](docs/finished.md)
 - [pipeline](docs/pipeline.md)
-- [subscribe](docs/subscribe.md)
 
 ## Manipulation
 
-- [readify](docs/readify.md)
-- [writify](docs/writify.md)
-- [duplexify](docs/duplexify.md)
 - [merge](docs/merge.md)
-
-## Operators
-
-- [collect](docs/collect.md)

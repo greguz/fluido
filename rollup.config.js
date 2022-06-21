@@ -4,5 +4,5 @@ export default {
     file: 'fluido.cjs',
     format: 'cjs'
   },
-  external: ['readable-stream', 'universalify', 'util']
+  external: ['readable-stream']
 }

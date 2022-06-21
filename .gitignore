@@ -1,7 +1,8 @@
-/node_modules
-/npm-debug.log
-/fluido.cjs
-/.vscode
-/.nyc_output
-/coverage
-/package-lock.json
+.*
+!.editorconfig
+!.github
+!.gitignore
+coverage
+fluido.cjs
+node_modules
+package-lock.json
