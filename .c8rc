@@ -1,0 +1,11 @@
+{
+  "all": true,
+  "reporter": ["html", "lcov", "text"],
+  "include": [
+    "lib/**/*.mjs",
+    "fluido.mjs"
+  ],
+  "exclude": [
+    "**/*.spec.mjs"
+  ]
+}
