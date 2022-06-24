@@ -325,18 +325,19 @@ export declare type PipelineDestinationFunction<T = unknown> = (
 ) => Promise<T>;
 
 export interface PipelineOptions {
+  end?: any;
   signal?: AbortSignal;
 }
 
 /**
  * A module method to pipe between streams and generators forwarding errors and properly cleaning up and provide a callback when the pipeline is complete.
  */
-export declare function pipeline(
+export declare function pipeline<T = unknown>(
   source: PipelineSource,
   ...args: Array<
-    PipelineTransform | PipelineDestination | PipelineCallback | PipelineOptions
+    PipelineTransform | PipelineDestination<T> | PipelineCallback<T>
   >
-): void;
+): stream.Writable;
 export declare function pipeline<T = unknown>(
   source: PipelineSource,
   ...args: Array<PipelineTransform | PipelineDestination<T> | PipelineOptions>
