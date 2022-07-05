@@ -7,98 +7,193 @@
 
 Fluido is a drop-in replacement for the native `stream` module. It adds some functions that aren't included in the standard module and adds `Promise` support to stream methods. It also enables _concurrent_ jobs while writing or transforming.
 
+## Features
+
+- **Promise**: you can use `async/await` inside stream methods, and functions without a callback will return a `Promise`.
+- **Concurrency**: a concurrency option available for `Writable` and `Transform` streams.
+- **ESM**: support native ESM (`import` and `export` keywords).
+- **CommonJS**: support old Node.js runtimes (`require`).
+- **TypeScript**: types declaration are included.
+
 ## Install
 
 ```
 npm install --save fluido
 ```
 
-## Callback and Promise
+## Usage
 
-Normally, all Node.js async functions use callbacks as the output mode.
+### Callback and `Promise`
+
+The [`pipeline`](https://nodejs.org/api/stream.html#streampipelinestreams-callback) and [`finished`](https://nodejs.org/api/stream.html#streamfinishedstream-options-callback) functions now returns a `Promise` if a callback function is not provided as last argument.
+
+The `pipeline` function supports mapping functions as argument. This makes not possibile to Fluido to understand when the last function passed inside the pipeline is a callback or a mapping function.
+
+A special type of callback needs to be used in that case:
 
 ```javascript
-const { Readable, Writable, pipeline } = require('stream')
+import { asCallback, isCallback, pipeline } from 'fluido'
 
-pipeline(
-  new Readable({
-    read (size) {
-      // Push some chunks
-    }
-  }),
-  new Writable({
-    write (chunk, encoding, callback) {
-      // Handle incoming chunk
-      callback()
-    }
-  }),
-  err => {
-    // Handle error
+const callback = asCallback(err => {
+  if (err) {
+    // handle error
+  } else {
+    // all done
   }
-)
+})
+
+console.log(isCallback(callback)) // true
+console.log(isCallback(() => {})) // false
+
+pipeline(source, mapSource, callback)
 ```
 
-With Fluido, all functions will return a `Promise` if a callback is not provided. Plus, a `Promise` returned inside any internal streaming method (`_write`, `_writev`, `_final`, `_transform`, `_flush`, and `_destroy`) is correctly handled. Both "simplified constructor" and "class inheritance" methods are supported.
+### Stream with `async/await`
+
+Stream implementation methods `_construct`, `_write`, `_writev`, `_final`, `_transform`, `_flush`, and `_destroy` (and their option conunterpart) now support the `async` keyword and/or a `Promise` as return value.
 
 ```javascript
-const { Readable, Writable, pipeline } = require('fluido')
+import { Readable, Transform, Writable } from 'fluido'
 
-pipeline(
-  new Readable({
-    read (size) {
-      // Push some chunks
-    }
-  }),
-  new Writable({
-    async write (chunk, encoding) {
-      await promisedStuff(chunk)
-    }
-  })
-).catch(err => console.error(err))
-```
+const r = new Readable({
+  async construct () {
+    // construct async stuff
+  },
+  async destroy () {
+    // destroy async stuff
+  }
+})
 
-Readable streams do **not** use a callback inside the `_read` method. To support async readings, Fluido adds a new method, `_asyncRead`, that, if specified, will override the original one. Both callback and `Promise` are supported.
+const t = new Transform({
+  async construct () {
+    // construct async stuff
+  },
+  async transform (chunk) {
+    // transform async stuff
+  },
+  async flush () {
+    // flush async stuff
+  },
+  async destroy () {
+    // destroy async stuff
+  }
+})
 
-```javascript
-const { Readable } = require('fluido')
-
-new Readable({
-  async asyncRead (size) {
-    const chunks = await readSource(size)
-    for (const chunk of chunks) {
-      this.push(chunk)
-    }
+const w = new Writable({
+  async construct () {
+    // construct async stuff
+  },
+  async write (chunk) {
+    // write async stuff
+  },
+  async writev (items) {
+    // write async stuff
+  },
+  async final () {
+    // finalize async stuff
+  },
+  async destroy () {
+    // destroy async stuff
   }
 })
 ```
 
-## Concurrency
+A _Readable_ stream does not implement a callback for the `_read` method by default. Because of that, It's not possible for Fluido to automatically detect when the `_read` method needs to be `async`.
+
+To support `async` reads, a new method is available: `_asyncRead` (along side with its `asyncRead` option).
+
+```javascript
+import { Readable } from 'fluido'
+
+const r = new Readable({
+  async asyncRead (size) {
+    // read async stuff
+  }
+})
+```
+
+### Concurrency
 
 Passing the `concurrency` option to the Writable (may be Duplex or Transform) constructor will cause _write (or _transform) calls to be concurrent.
 
 ```javascript
-const { Writable } = require('fluido')
+const { Transform, Writable } = require('fluido')
 
-new Writable({
+const w = new Writable({
   concurrency: 8,
   async write (chunk) {
-    // Max 8 _write calls at the same time
+    // At most 8 concurrent writes
+  }
+})
+
+const t = new Transform({
+  concurrency: 8,
+  async transform (chunck) {
+    // At most 8 concurrent transforms
   }
 })
 ```
 
-## Detection
+### isNodeStream(value)
 
-- [isNodeStream](docs/is.md#isNodeStreamvalue)
-- [isReadableStream](docs/is.md#isReadableStreamvalue)
-- [isWritableStream](docs/is.md#isWritableStreamvalue)
-- [isDuplexStream](docs/is.md#isDuplexStreamvalue)
+Returns `true` if `value` is a _Readable_ **or** a _Writable_ stream.
 
-## Lifecycle
+- `value` `<*>`
+- Returns: `<Boolean>`
 
-- [finished](docs/finished.md)
-- [pipeline](docs/pipeline.md)
+```javascript
+import { Readable, Writable, isNodeStream } from 'fluido'
 
-## Manipulation
+console.log(isNodeStream(new Readable())) // true
+console.log(isNodeStream(new Writable())) // true
+```
 
-- [merge](docs/merge.md)
+### isReadableStream(value)
+
+Returns `true` if `value` is a _Readable_ stream.
+
+- `value` `<*>`
+- Returns: `<Boolean>`
+
+```javascript
+import { Readable, Writable, isReadableStream } from 'fluido'
+
+console.log(isReadableStream(new Readable())) // true
+console.log(isReadableStream(new Writable())) // false
+```
+
+### isWritableStream(value)
+
+Returns `true` if `value` is a _Writable_ stream.
+
+- `value` `<*>`
+- Returns: `<Boolean>`
+
+```javascript
+import { Readable, Writable, isWritableStream } from 'fluido'
+
+console.log(isWritableStream(new Readable())) // false
+console.log(isWritableStream(new Writable())) // true
+```
+
+### isDuplexStream(value)
+
+Returns `true` if `value` is both a _Readable_ **and** a _Writable_ stream.
+
+- `value` `<*>`
+- Returns: `<Boolean>`
+
+```javascript
+import { Duplex, Readable, Writable, isDuplexStream } from 'fluido'
+
+console.log(isDuplexStream(new Readable())) // false
+console.log(isDuplexStream(new Writable())) // false
+console.log(isDuplexStream(new Duplex())) // true
+```
+
+### merge(...streams)
+
+Combines two or more streams into a _Duplex_ stream that writes concurrently to all _Writable_ streams and reads concurrently from all _Readable_ streams.
+
+- `streams` `<Stream[]>`
+- Returns: `<Duplex>`

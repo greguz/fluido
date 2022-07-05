@@ -20,7 +20,11 @@
     "concurrent",
     "extra",
     "promise",
-    "stream"
+    "stream",
+    "promise",
+    "parallel",
+    "merge",
+    "join"
   ],
   "author": "Giacomo Gregoletto",
   "license": "MIT",
