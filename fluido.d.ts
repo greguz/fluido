@@ -243,25 +243,24 @@ export declare function finished(
 ): () => void;
 
 /**
- * Returns `true` when the argument is an instance of a NodeJS stream.
+ * Returns `true` when the argument is a NodeJS stream (Readable or Writable).
  */
 export declare function isNodeStream(
   value: any
 ): value is stream.Readable | stream.Writable;
 
 /**
- * Returns `true` when the argument is an instance of a `Readable` stream.
+ * Returns `true` when the argument is a NodeJS Readable stream.
  */
 export declare function isReadableStream(value: any): value is stream.Readable;
 
 /**
- * Returns `true` when the argument is an instance of a `Writable` stream.
+ * Returns `true` when the argument is a NodeJS Writable stream.
  */
 export declare function isWritableStream(value: any): value is stream.Writable;
 
 /**
- * Returns `true` when the argument is an instance of a `Duplex` stream.
- * `Tranform` streams are also `Duplex`.
+ * Returns `true` when the argument is a NodeJS Duplex (both Readable and Writable) stream.
  */
 export declare function isDuplexStream(value: any): value is stream.Duplex;
 
