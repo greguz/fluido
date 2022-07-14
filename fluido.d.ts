@@ -334,14 +334,14 @@ export interface PipelineOptions {
  */
 export declare function pipeline<T = unknown>(
   source: PipelineSource,
+  ...args: Array<PipelineTransform | PipelineDestination<T> | PipelineOptions>
+): Promise<T>;
+export declare function pipeline<T = unknown>(
+  source: PipelineSource,
   ...args: Array<
     PipelineTransform | PipelineDestination<T> | PipelineCallback<T>
   >
 ): stream.Writable;
-export declare function pipeline<T = unknown>(
-  source: PipelineSource,
-  ...args: Array<PipelineTransform | PipelineDestination<T> | PipelineOptions>
-): Promise<T>;
 
 /**
  * Merge zero, one, or more streams into a single `Duplex` stream.
