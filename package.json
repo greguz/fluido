@@ -4,11 +4,12 @@
   "description": "A drop in replacement for stream with Promise support and more!",
   "type": "module",
   "main": "./fluido.cjs",
+  "types": "./fluido.d.ts",
   "exports": {
     "import": "./fluido.mjs",
-    "require": "./fluido.cjs"
+    "require": "./fluido.cjs",
+    "types": "./fluido.d.ts"
   },
-  "types": "./fluido.d.ts",
   "scripts": {
     "build": "rollup --config",
     "lint": "standard",
