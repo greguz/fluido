@@ -1,7 +1,6 @@
 /// <reference types="node" />
 
 import stream from "stream";
-import streamWeb from "stream/web";
 
 // Proxied (no mods) exports
 export {
@@ -18,33 +17,18 @@ export {
  */
 export declare type Callback<T = any> = (err?: any, result?: T) => void;
 
-export interface ReadableOptions<T = any> {
-  autoDestroy?: boolean;
-  emitClose?: boolean;
-  encoding?: string;
-  highWaterMark?: number;
-  objectMode?: boolean;
-  signal?: AbortSignal;
+export interface ReadableOptions<T = any> extends stream.ReadableOptions {
   /**
    * This optional function will be called in a tick after the stream constructor has returned, delaying any `_write()`, `_final()` and `_destroy()` calls until callback is called.
    * This is useful to initialize state or asynchronously initialize resources before the stream can be used.
    */
   construct?(this: Readable<T>, callback: Callback): Promise<void> | void;
-  /**
-   *
-   */
   read?(this: Readable<T>, size: number): void;
-  /**
-   *
-   */
   asyncRead?(
     this: Readable<T>,
     size: number,
     callback: Callback<T | null>
   ): Promise<T | null | undefined | void> | void;
-  /**
-   *
-   */
   destroy?(
     this: Readable<T>,
     err: any,
@@ -53,16 +37,6 @@ export interface ReadableOptions<T = any> {
 }
 
 export declare class Readable<T = any> extends stream.Readable {
-  static from<T>(
-    iterable: Iterable<T> | AsyncIterable<T>,
-    options?: ReadableOptions<T>
-  ): stream.Readable;
-  static fromWeb(
-    stream: streamWeb.ReadableStream,
-    options?: object
-  ): stream.Readable;
-  static isDisturbed(stream: any): boolean;
-  static toWeb(stream: stream.Readable): streamWeb.ReadableStream;
   constructor(options?: ReadableOptions<T>);
   _asyncRead?(
     size: number,
@@ -70,31 +44,14 @@ export declare class Readable<T = any> extends stream.Readable {
   ): Promise<T | null | undefined | void> | void;
 }
 
-export interface WritableOptions<T = any> {
-  autoDestroy?: boolean;
-  concurrency?: number;
-  decodeStrings?: boolean;
-  defaultEncoding?: string;
-  emitClose?: boolean;
-  highWaterMark?: number;
-  objectMode?: boolean;
-  signal?: AbortSignal;
-  /**
-   *
-   */
+export interface WritableOptions<T = any> extends stream.WritableOptions {
   construct?(this: Writable<T>, callback: Callback): Promise<void> | void;
-  /**
-   *
-   */
   write?(
     this: Writable<T>,
     chunk: T,
     encoding: string,
     callback: Callback
   ): Promise<void> | void;
-  /**
-   *
-   */
   writev?(
     this: Writable<T>,
     entries: Array<WritableEntry<T>>,
@@ -105,9 +62,6 @@ export interface WritableOptions<T = any> {
    * This is useful to close resources or write buffered data before a stream ends.
    */
   final?(this: Writable<T>, callback: Callback): Promise<void> | void;
-  /**
-   *
-   */
   destroy?(
     this: Writable<T>,
     err: any,
@@ -117,68 +71,36 @@ export interface WritableOptions<T = any> {
 
 export interface WritableEntry<T = any> {
   chunk: T;
-  encoding: string;
+  encoding: BufferEncoding;
 }
 
 export declare class Writable<T = any> extends stream.Writable {
-  static fromWeb<W>(
-    stream: streamWeb.WritableStream,
-    options?: WritableOptions
-  ): stream.Writable;
-  static toWeb(stream: stream.Writable): streamWeb.WritableStream;
   constructor(options?: WritableOptions<T>);
 }
 
 export declare interface DuplexOptions<T = any, U = any>
-  extends ReadableOptions<U>,
+  extends stream.DuplexOptions,
+    ReadableOptions<U>,
     WritableOptions<T> {
-  allowHalfOpen?: boolean;
-  readable?: boolean;
-  writable?: boolean;
-  readableObjectMode?: boolean;
-  writableObjectMode?: boolean;
-  readableHighWaterMark?: number;
-  writableHighWaterMark?: number;
-  /**
-   *
-   */
   construct?(this: Duplex<T, U>, callback: Callback): Promise<void> | void;
-  /**
-   *
-   */
   read?(this: Duplex<T, U>, size: number): void;
-  /**
-   *
-   */
   asyncRead?(
     this: Duplex<T, U>,
     size: number,
     callback: Callback<U | null>
   ): Promise<U | null | undefined | void> | void;
-  /**
-   *
-   */
   write?(
     this: Duplex<T, U>,
     chunk: T,
     encoding: string,
     callback: Callback
   ): Promise<void> | void;
-  /**
-   *
-   */
   writev?(
     this: Duplex<T, U>,
     entries: Array<WritableEntry<T>>,
     callback: Callback
   ): Promise<void> | void;
-  /**
-   *
-   */
   final?(this: Duplex<T, U>, callback: Callback): Promise<void> | void;
-  /**
-   *
-   */
   destroy?(
     this: Duplex<T, U>,
     err: any,
@@ -187,26 +109,17 @@ export declare interface DuplexOptions<T = any, U = any>
 }
 
 export declare class Duplex<T = any, U = any> extends stream.Duplex {
-  // TODO: fix this
-  // static fromWeb({}, options?: object): stream.Duplex;
-  // static toWeb(stream: stream.Duplex): { readable: streamWeb.ReadableStream; writable: streamWeb.WritableStream; };
   constructor(options: DuplexOptions<T, U>);
 }
 
 export declare interface TransformOptions<T = any, U = any>
   extends DuplexOptions<T, U> {
-  /**
-   *
-   */
   transform?(
     this: Transform<T, U>,
     chunk: T,
     encoding: string,
     callback: Callback<U>
   ): Promise<U | void> | void;
-  /**
-   *
-   */
   flush?(
     this: Transform<T, U>,
     callback: Callback<U>
@@ -289,39 +202,53 @@ export declare function isCallback(value: any): value is PipelineCallback;
  * Those types can be cast as `Readable` streams.
  */
 export declare type PipelineSource =
-  | stream.Readable
+  | NodeJS.ReadableStream
   | Iterable<any>
-  | AsyncIterable<any>;
+  | AsyncIterable<any>
+  | PipelineSourceFunction;
+
+/**
+ * Generates a stream-like source data.
+ */
+export type PipelineSourceFunction = () => Iterable<any> | AsyncIterable<any>;
 
 /**
  * Streaming transform.
  * Those types can be cast as `Transform` streams.
  */
 export declare type PipelineTransform =
-  | stream.Duplex
+  | NodeJS.ReadWriteStream
   | PipelineTransformFunction;
-
-/**
- * Streaming destination.
- * Those types can be cast as `Writable` streams.
- */
-export declare type PipelineDestination<T = unknown> =
-  | stream.Writable
-  | PipelineDestinationFunction<T>;
 
 /**
  * Map an async iterable into another async iterable.
  */
 export declare type PipelineTransformFunction = (
-  source: AsyncIterable<any>
+  source: PipelineSource | PipelineTransform
 ) => AsyncIterable<any>;
 
 /**
- * A function that consumes an async iterable.
+ * Streaming destination.
+ * Those types can be cast as `Writable` streams.
  */
-export declare type PipelineDestinationFunction<T = unknown> = (
+export declare type PipelineDestination =
+  | NodeJS.WritableStream
+  | PipelineDestinationIterableFunction
+  | PipelineDestinationPromiseFunction;
+
+export declare type PipelineDestinationIterableFunction = (
   source: AsyncIterable<any>
-) => Promise<T>;
+) => AsyncIterable<any>;
+
+export declare type PipelineDestinationPromiseFunction = (
+  source: AsyncIterable<any>
+) => Promise<any>;
+
+/**
+ * @deprecated Use `PipelineDestinationPromiseFunction`.
+ */
+export declare type PipelineDestinationFunction<T> =
+  PipelineDestinationPromiseFunction;
 
 export interface PipelineOptions {
   end?: any;
@@ -331,15 +258,13 @@ export interface PipelineOptions {
 /**
  * A module method to pipe between streams and generators forwarding errors and properly cleaning up and provide a callback when the pipeline is complete.
  */
-export declare function pipeline<T = unknown>(
+export declare function pipeline(
   source: PipelineSource,
-  ...args: Array<PipelineTransform | PipelineDestination<T> | PipelineOptions>
-): Promise<T>;
-export declare function pipeline<T = unknown>(
+  ...args: Array<PipelineTransform | PipelineDestination | PipelineOptions>
+): Promise<any>;
+export declare function pipeline(
   source: PipelineSource,
-  ...args: Array<
-    PipelineTransform | PipelineDestination<T> | PipelineCallback<T>
-  >
+  ...args: Array<PipelineTransform | PipelineDestination | PipelineCallback>
 ): stream.Writable;
 
 /**
