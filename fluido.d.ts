@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import stream from "stream";
+import * as stream from "stream";
 
 // Proxied (no mods) exports
 export {
@@ -45,6 +45,7 @@ export declare class Readable<T = any> extends stream.Readable {
 }
 
 export interface WritableOptions<T = any> extends stream.WritableOptions {
+  concurrency?: number
   construct?(this: Writable<T>, callback: Callback): Promise<void> | void;
   write?(
     this: Writable<T>,
