@@ -35,15 +35,15 @@
   "devDependencies": {
     "ava": "^6.0.1",
     "c8": "^8.0.1",
-    "rollup": "^4.6.1",
+    "rollup": "^4.8.0",
     "standard": "^17.1.0"
   },
   "files": [
-    "!**/*.spec.mjs",
     "lib",
     "fluido.cjs",
     "fluido.d.ts",
-    "fluido.mjs"
+    "fluido.mjs",
+    "!**/*.spec.mjs"
   ],
   "repository": {
     "type": "git",
