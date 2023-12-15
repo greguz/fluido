@@ -197,3 +197,9 @@ Combines two or more streams into a _Duplex_ stream that writes concurrently to 
 
 - `streams` `<Stream[]>`
 - Returns: `<Duplex>`
+
+## Donate
+
+Thank you!
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/greguz)
